@@ -62,5 +62,5 @@ The one nordicsemi dev kit can only emulate the 'direction' feature. Maybe need 
 1. nRF Connect app for trials
 
 # Github project
-Need another user, not connected to other project. 
+user: saliWd
 
