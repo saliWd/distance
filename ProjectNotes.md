@@ -1,6 +1,8 @@
 # TODO
 1. @latop: follow instructions on the [Development Software](#Development-Software)
+   * not sure whether it's really worth it, to install all the python and stuff, still have issues with the standard hello world example. Most probably just go for the newest segger link and newest SDK... Can install the gnuarm stuff later on...
 1. @desk: (maybe) try out taiyo yuden with debugger, lower priority
+1. understand toolchain, have one (simple) working example (@desk)
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
@@ -24,6 +26,17 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 
 # Github project
 user: saliWd
+
+# Building the Project
+issues with segger:
+```
+cd nrf
+git checkout master
+git pull
+git checkout v1.0.0
+west update
+```
+
 
 ---
 # Outdated
