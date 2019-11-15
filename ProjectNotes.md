@@ -28,6 +28,10 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 user: saliWd
 
 # Building the Project
+[getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
+
+
+
 issues with segger:
 ```
 cd nrf
