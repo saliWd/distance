@@ -5,11 +5,14 @@
 
 
 # @laptop
-## TODO
+## Done
 1. examples\peripheral\blinky\hex, copy to jlink folder, check whether it's working
-1. get segger license
+1. get segger license (hooked to bluetooth connection, not ideal)
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+
+## TODO
+1. try to advertise my own data
 
 # @desk
 ## TODO
