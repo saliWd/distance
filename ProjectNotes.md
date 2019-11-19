@@ -1,18 +1,36 @@
-# TODO
-1. @latop: follow instructions on the [Development Software](#Development-Software)
-   * not sure whether it's really worth it, to install all the python and stuff, still have issues with the standard hello world example. Most probably just go for the newest segger link and newest SDK... Can install the gnuarm stuff later on...
-1. @desk: (maybe) try out taiyo yuden with debugger, lower priority
-1. understand toolchain, have one (simple) working example (@desk)
+# Project documentation
+1. This file: on google drive, folder distance
+1. later: github project, user: saliWd
+
+
+
+# @laptop
+## TODO
+1. examples\peripheral\blinky\hex, copy to jlink folder, check whether it's working
+1. get segger license
+1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
+1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+
+# @desk
+## TODO
+1. get the taiyo yuden running. With the DK sw?
+## Done
+1. compile an example project from the SDK: works fine
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
 
-¿ The one nordicsemi dev kit can only emulate the 'direction' feature?
 #### Purchased
 1. [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-Dongle): USB connection, small and simple, 10$.
-1. [nRF52 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK): standard dev kit. 40$.   
+1. [nRF52 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK): standard dev kit. 40$. ¿The one nordicsemi dev kit can only emulate the 'direction' feature?
 
 
+# Building the Project
+[getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
+* SDK at c:\Nordic\SDK\nRF5SDK16\
+* 
+
+# Other Docu
 ## Nordicsemi Code
 [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), requires the SoftDevice S132.
 
@@ -24,22 +42,6 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 # Mobile side
 1. nRF Connect app for trials
 
-# Github project
-user: saliWd
-
-# Building the Project
-[getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
-
-
-
-issues with segger:
-```
-cd nrf
-git checkout master
-git pull
-git checkout v1.0.0
-west update
-```
 
 
 ---
@@ -83,3 +85,13 @@ Seems to be a real problem to get the stuff into CH. Either
 (not really sure whether that's the correct device but at least it's available in CH and has the beacon feature on. Module itself is only 8€)
 Most probably will require the JTAG Adapter and a special 10pin header to program it / interface with it?
 -> it's not the correct device. Should have gone for a nordicsemi dev kit directly.
+
+
+issues with segger:
+```
+cd nrf
+git checkout master
+git pull
+git checkout v1.0.0
+west update
+```
