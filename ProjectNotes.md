@@ -19,6 +19,7 @@
 1. get the taiyo yuden running. With the DK sw?
 ## Done
 1. compile an example project from the SDK: works fine
+1. use SDK15 to build advertising example: works fine
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
@@ -31,7 +32,6 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 # Building the Project
 [getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
 * SDK at c:\Nordic\SDK\nRF5SDK16\
-* 
 
 # Other Docu
 ## Nordicsemi Code
