@@ -1,7 +1,5 @@
 # Project documentation
-1. This file: on google drive, folder distance
-1. later: github project, user: saliWd
-
+1. This file: on github project, user: saliWd
 
 
 # @laptop
@@ -10,16 +8,15 @@
 1. get segger license (hooked to bluetooth connection, not ideal)
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+1. advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 
 ## TODO
-1. try to advertise my own data
+1. get the taiyo yuden running. With the DK sw?
 
 # @desk
 ## TODO
-1. get the taiyo yuden running. With the DK sw?
+
 ## Done
-1. compile an example project from the SDK: works fine
-1. use SDK15 to build advertising example: works fine
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
@@ -35,7 +32,6 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 
 # Other Docu
 ## Nordicsemi Code
-[ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), requires the SoftDevice S132.
 
 
 ## Development Software 
