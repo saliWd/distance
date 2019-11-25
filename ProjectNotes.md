@@ -15,13 +15,12 @@
 
 # @desk
 ## TODO
-1. get the taiyo yuden running. With the DK sw?
-
-example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
-
+1. get the taiyo yuden running. With the DK sw? example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
 From FQA: _each  BLE  module  has  an  internal  32MHz crystal.  Please  note,  Nordic's  nRF51DK (evaluation board)and nRF51 sample applicationsincluded in SDKare designed to run on a 16MHz  clock.Since  TAIYO  YUDENmodules  run  on  a  32MHz  clock,  Nordic'snRF51  sample applications  will  need  some  modification  in  order  for  it  to  work  on  TAIYO  YUDENmodules. Please see a page “Notes”in Data Report for modification details._
-
-Defines are available in the sdk_config.h
+Defines are available in the sdk_config.h. Also I guess I need the S112 soft device [see here](https://devzone.nordicsemi.com/f/nordic-q-a/39981/nrf52810-taiyo-yuden-eyslcnzww-problem-with-nrfgo-studio). Flush that one nRFGo?
+1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
+   - Need to get the whole app building environment again
+   - Simulator etc
 
 ## Done
 
@@ -31,7 +30,9 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 #### Purchased
 1. [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-Dongle): USB connection, small and simple, 10$.
 1. [nRF52 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK): standard dev kit. 40$. ¿The one nordicsemi dev kit can only emulate the 'direction' feature?
-
+1. Eval kit: EBSLCNZWW, contains a EYSLCNZWW module
+1. Module: EYSLCNZWW, this contains a nRF52810 (192kB Flash, 24kB RAM). 
+   - NordicSemi nRF52810 does not have advertising capacity and no long-range support.
 
 # Building the Project
 [getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
@@ -57,8 +58,8 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 1. Eddystone: same area, further development
 1. Ultrawideband uwb
 1. Magnet on the swimmer, electronic compass as detector
-   * Drawback: cannot distinguish several swimmers
-   * nice and easy solution. However: technically not that interesting
+   - Drawback: cannot distinguish several swimmers
+   - nice and easy solution. However: technically not that interesting
 
 ## Receiver
 1. Bluetooth beacon: mobile/tablet will serve fine, whatever microcontroller system should as well (either on board or with bluetooth expansion)
@@ -84,20 +85,3 @@ Seems to be a real problem to get the stuff into CH. Either
 [Family overview](https://www.yuden.co.jp/wireless_module/document/overview/TY_BLE_Overview_V1_8_20180530.pdf) | 
 [Digikey link](https://www.digikey.ch/products/de?keywords=EBSLCNZWW) | 
 [data report, not very useful](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLCNZWW_DataReport_V1_0_20180530E.pdf)
-
-- Eval kit: EBSLCNZWW
-- Module: EYSLCNZWW 
-
-(not really sure whether that's the correct device but at least it's available in CH and has the beacon feature on. Module itself is only 8€)
-Most probably will require the JTAG Adapter and a special 10pin header to program it / interface with it?
--> it's not the correct device. Should have gone for a nordicsemi dev kit directly.
-
-
-issues with segger:
-```
-cd nrf
-git checkout master
-git pull
-git checkout v1.0.0
-west update
-```
