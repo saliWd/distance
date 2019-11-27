@@ -11,12 +11,35 @@
 1. advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 
 ## TODO
-1. get the taiyo yuden running. With the DK sw?
+1. get the taiyo yuden running
+   * need the s112? Maybe "nRF5SDK16"\ble_app_beacon\pca10056e\s112\ses
+   * or "nRF5SDK16"\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 # @desk
 ## TODO
 1. get the taiyo yuden running. With the DK sw? example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
-From FQA: _each  BLE  module  has  an  internal  32MHz crystal.  Please  note,  Nordic's  nRF51DK (evaluation board)and nRF51 sample applicationsincluded in SDKare designed to run on a 16MHz  clock.Since  TAIYO  YUDENmodules  run  on  a  32MHz  clock,  Nordic'snRF51  sample applications  will  need  some  modification  in  order  for  it  to  work  on  TAIYO  YUDENmodules. Please see a page “Notes”in Data Report for modification details._
+From FQA: _each BLE module has an internal 32MHz crystal. Please note, Nordic's nRF51DK (evaluation board) and nRF51 sample applications included in SDK are designed to run on a 16MHz clock. Since TAIYO YUDEN modules run on a 32MHz clock, Nordic's nRF51 sample applications will need some modification in order for it to work on TAIYO YUDEN modules._
+
+_To fix this issue, we need to write the value 0xFFFFFF00 to the UICR (User Information Configuration Register) at address 0x10001008. Please note that the UICR is erased whenever you download a SoftDevice._ 
+ 
+_The UICR can be written by using the debug tools:
+nrfjprog.exe --snr <your_jlink_debugger_serial_number> --memwr 0x10001008 --val 0xFFFFFF00_ 
+ 
+_Or the following code can be added to the SystemInit function in the system_nRF51.c file, right 
+before launching the TASK_HFCLKSTART task:_
+
+```
+if (*(uint32_t *)0x10001008 == 0xFFFFFFFF)  
+{ 
+    NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen << NVMC_CONFIG_WEN_Pos;  
+    while (NRF_NVMC->READY == NVMC_READY_READY_Busy){}  
+    *(uint32_t *)0x10001008 = 0xFFFFFF00;  
+    NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren << NVMC_CONFIG_WEN_Pos;  
+    while (NRF_NVMC->READY == NVMC_READY_READY_Busy){}   
+    NVIC_SystemReset();  
+    while (true){}  
+}  
+```
 Defines are available in the sdk_config.h. Also I guess I need the S112 soft device [see here](https://devzone.nordicsemi.com/f/nordic-q-a/39981/nrf52810-taiyo-yuden-eyslcnzww-problem-with-nrfgo-studio). Flush that one nRFGo?
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    - Need to get the whole app building environment again
