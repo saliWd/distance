@@ -11,13 +11,38 @@
 1. advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 
 ## TODO
-1. get the taiyo yuden running
-   * need the s112? Maybe "nRF5SDK16"\ble_app_beacon\pca10056e\s112\ses
-   * or "nRF5SDK16"\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
+1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )   
+   need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 # @desk
 ## TODO
-1. get the taiyo yuden running. With the DK sw? example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
+1. visio drawing
+1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
+   - Need to get the whole app building environment again
+   - Simulator etc
+1. Try out nord dongles?
+
+## Done
+
+# Beacon HW
+Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
+
+#### Purchased
+1. [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-Dongle): USB connection, small and simple, 10$.
+1. [nRF52 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK): standard dev kit. 40$. ¿The one nordicsemi dev kit can only emulate the 'direction' feature?
+1. Eval kit: EBSLCNZWW, contains a EYSLCNZWW module
+1. Module: EYSLCNZWW, this contains a nRF52810 (192kB Flash, 24kB RAM). 
+   - NordicSemi nRF52810 does not have advertising capacity and no long-range support.
+
+# Building the Project
+[getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
+* SDK at c:\Nordic\SDK\nRF5SDK16\
+
+# Other Docu
+ <!--- ## Nordicsemi Code --->
+
+## Taiyo Yuden adaptions
+example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
 From FQA: _each BLE module has an internal 32MHz crystal. Please note, Nordic's nRF51DK (evaluation board) and nRF51 sample applications included in SDK are designed to run on a 16MHz clock. Since TAIYO YUDEN modules run on a 32MHz clock, Nordic's nRF51 sample applications will need some modification in order for it to work on TAIYO YUDEN modules._
 
 _To fix this issue, we need to write the value 0xFFFFFF00 to the UICR (User Information Configuration Register) at address 0x10001008. Please note that the UICR is erased whenever you download a SoftDevice._ 
@@ -41,29 +66,6 @@ if (*(uint32_t *)0x10001008 == 0xFFFFFFFF)
 }  
 ```
 Defines are available in the sdk_config.h. Also I guess I need the S112 soft device [see here](https://devzone.nordicsemi.com/f/nordic-q-a/39981/nrf52810-taiyo-yuden-eyslcnzww-problem-with-nrfgo-studio). Flush that one nRFGo?
-1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
-   - Need to get the whole app building environment again
-   - Simulator etc
-
-## Done
-
-# Beacon HW
-Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
-
-#### Purchased
-1. [nRF52840 Dongle](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-Dongle): USB connection, small and simple, 10$.
-1. [nRF52 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK): standard dev kit. 40$. ¿The one nordicsemi dev kit can only emulate the 'direction' feature?
-1. Eval kit: EBSLCNZWW, contains a EYSLCNZWW module
-1. Module: EYSLCNZWW, this contains a nRF52810 (192kB Flash, 24kB RAM). 
-   - NordicSemi nRF52810 does not have advertising capacity and no long-range support.
-
-# Building the Project
-[getting started pdf](https://infocenter.nordicsemi.com/pdf/getting_started_ses.pdf)
-* SDK at c:\Nordic\SDK\nRF5SDK16\
-
-# Other Docu
-## Nordicsemi Code
-
 
 ## Development Software 
 [flasher / SDK / HowToStart: all in one](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs)
@@ -71,7 +73,6 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 
 # Mobile side
 1. nRF Connect app for trials
-
 
 
 ---
