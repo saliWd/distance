@@ -16,11 +16,14 @@
 
 # @desk
 ## TODO
+1. nRF52840 dongle. Board definition in SDK: PCA10059. Changes between boards are in the sdk_config.h (do I really need to adapt all the pin numbers stuff?)
+   1. Softdevice must be added, e.g. from nRF5SDK16\components\softdevice\s140\hex
+   1. blinky seems to work, the ble_beacon however not really. Can't really decide though. Need to adapt the advertising example on SDK15? Because that one was working on the DK
+
 1. visio drawing
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    - Need to get the whole app building environment again
    - Simulator etc
-1. Try out nord dongles?
 
 ## Done
 
