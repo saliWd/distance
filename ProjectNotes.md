@@ -8,17 +8,17 @@
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
 
 ## nRF52840 Dongle
-1. ble advertise is working (active for about 30min, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
-   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex
-   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132\ses\ \ble_app_template_pca10040_s132.hex" -> DeviceName = WidmediaDistance
+1. ble advertise is working (active infinite, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
+   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex 
+   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance
    * did not do any board adaptions
 ## EBSLCNZWW TY
 1. debugger connection with J-link edu ok
 
 # TODO
 1. visio drawing, documentation
-1. prep pool trial: advertising for a long time
 1. prep pool trial: waterproof setup
+   * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    - Need to get the whole app building environment again
@@ -27,7 +27,6 @@
 1. port the ble-tutorial-advertising to SDK16. Understand the code of this example
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )   
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
-
 
 # Done
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
