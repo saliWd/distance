@@ -1,33 +1,37 @@
 # Project documentation
 1. This file: on github project, user: saliWd
 
-# @desk
-## TODO
+# working
+## nRF52 DK
+1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
+1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
+1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+
+## nRF52840 Dongle
+1. ble advertise is working (active for about 30min, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
+   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex
+   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132\ses\ \ble_app_template_pca10040_s132.hex" -> DeviceName = WidmediaDistance
+   * did not do any board adaptions
+## EBSLCNZWW TY
+1. debugger connection with J-link edu ok
+
+# TODO
 1. visio drawing, documentation
+1. prep pool trial: advertising for a long time
+1. prep pool trial: waterproof setup
+1. trial in pool, acquire some rssi data
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    - Need to get the whole app building environment again
    - Simulator etc
 1. beautifications: add DFU interface to dongle setup? (Nordic DFU Trigger Interface)
 1. port the ble-tutorial-advertising to SDK16. Understand the code of this example
-
-## Done
-1. nRF52840 dongle is working (active for 3min, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
-   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex
-   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132\ses\ \ble_app_template_pca10040_s132.hex" -> DeviceName = WidmediaDistance
-   * did not do any board adaptions
-
-# @laptop
-## Done
-1. examples\peripheral\blinky\hex, copy to jlink folder, check whether it's working
-1. get segger license (hooked to bluetooth connection, not ideal)
-1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
-1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
-1. advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
-
-## TODO
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )   
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
+
+# Done
+1. laptop: segger license (hooked to bluetooth connection, not ideal)
+1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)

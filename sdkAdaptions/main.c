@@ -85,7 +85,7 @@
 #define DEVICE_NAME                     "WidmediaDistance"                      /**< Name of device. Will be included in the advertising data. */
 #define APP_ADV_INTERVAL                300                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
 
-#define APP_ADV_DURATION                180000                                  /**< The advertising duration (30 minutes) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                0                                       /**< The advertising duration (18000 = 3 minutes) in units of 10 milliseconds. 0 = no timeout*/
 #define APP_BLE_OBSERVER_PRIO           3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 #define APP_BLE_CONN_CFG_TAG            1                                       /**< A tag identifying the SoftDevice BLE configuration. */
 
