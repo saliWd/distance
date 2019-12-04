@@ -16,15 +16,16 @@
 1. debugger connection with J-link edu ok
 
 # TODO
+1. search for a RSSI logging app. again.
+1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
+   - Need to get the whole app building environment again
+   - Simulator etc
 1. visio drawing, documentation
 1. think about iBeacon instead of ble advertising? Or eddystone? Check what's supported by nRF
 1. prep pool trial: waterproof setup
    * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
    * need some rssi logger app. Did not find something meaningful
-1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
-   - Need to get the whole app building environment again
-   - Simulator etc
 1. beautifications: add DFU interface to dongle setup? (Nordic DFU Trigger Interface)
 1. port the ble-tutorial-advertising to SDK16. Understand the code of this example
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )   
