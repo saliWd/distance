@@ -16,12 +16,16 @@
 1. debugger connection with J-link edu ok
 
 # TODO
+1. understand the board adaption. It should go like this: use the 10056 examples (as it is the same chip), change the board definition (in emProject file, replace the 10056 with a 10059).
 1. search for a RSSI logging app. again.
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
-   - Need to get the whole app building environment again
-   - Simulator etc
+   * Need to get the whole app building environment again
+   * Simulator etc
 1. visio drawing, documentation
 1. think about iBeacon instead of ble advertising? Or eddystone? Check what's supported by nRF
+   * there is the ble_peripheral\ble_app_eddystone on SDK16
+   * ¿don't think this is ibeacon: ble_peripheral\ble_app_beacon? does not seem to work
+   * nRF beacon app
 1. prep pool trial: waterproof setup
    * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
