@@ -10,8 +10,10 @@
 ## nRF52840 Dongle
 1. ble advertise is working (active infinite, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
    * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex 
-   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance
+   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
    * did not do any board adaptions
+1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
+1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. Cannot be connected
 ## EBSLCNZWW TY
 1. debugger connection with J-link edu ok
 
@@ -36,6 +38,7 @@
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 # Done
+1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety 
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 
