@@ -13,7 +13,7 @@
    * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
    * did not do any board adaptions
 1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
-1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. Cannot be connected
+1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. 1. ble beacon with a device name is working as well: ble_app_beacon.zip
 ## EBSLCNZWW TY
 1. debugger connection with J-link edu ok
 
@@ -26,8 +26,8 @@
 1. visio drawing, documentation
 1. think about iBeacon instead of ble advertising? Or eddystone? Check what's supported by nRF
    * there is the ble_peripheral\ble_app_eddystone on SDK16
-   * ¿don't think this is ibeacon: ble_peripheral\ble_app_beacon? does not seem to work
-   * nRF beacon app
+   * could be adapted to ibeacon: ble_peripheral\ble_app_beacon
+   * ¿nRF beacon app: does not find my beacon? 
 1. prep pool trial: waterproof setup
    * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
