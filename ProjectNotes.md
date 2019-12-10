@@ -14,6 +14,11 @@
    * did not do any board adaptions
 1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
 1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. 1. ble beacon with a device name is working as well: ble_app_beacon.zip
+1. eddystone seems to be the right example: transmit URL etc. (widmedia.ch = 77 69 64 6D 65 64 69 61 2E 63 68)
+1. eddystone example requires micro-ecc. To do that: run SDK16\external\micro-ecc\build_all.bat
+   1. need [make](https://sourceforge.net/projects/gnuwin32/) for that: C:\Program Files (x86)\GnuWin32\bin
+   1. need to get [GNU Tools ARM Embedded](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) and specify (e.g. 9 2019-q4-major, version=9.2.1) in SDK16\components\toolchain\gcc\Makefile.windows
+   1. (or use compiled version which I added to repository)
 ## EBSLCNZWW TY
 1. debugger connection with J-link edu ok
 
