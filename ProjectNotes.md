@@ -14,7 +14,7 @@
    * did not do any board adaptions
 1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
 1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. 1. ble beacon with a device name is working as well: ble_app_beacon.zip
-1. eddystone seems to be the right example: transmit URL etc. (widmedia.ch = 77 69 64 6D 65 64 69 61 2E 63 68)
+1. eddystone seems to be the right example: transmit URL working, no device name though (not supported by non-connectable beacons like eddystone) (widmedia.ch = 77 69 64 6D 65 64 69 61 2E 63 68)
 1. eddystone example requires micro-ecc. To do that: run SDK16\external\micro-ecc\build_all.bat
    1. need [make](https://sourceforge.net/projects/gnuwin32/) for that: C:\Program Files (x86)\GnuWin32\bin
    1. need to get [GNU Tools ARM Embedded](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) and specify (e.g. 9 2019-q4-major, version=9.2.1) in SDK16\components\toolchain\gcc\Makefile.windows
@@ -23,16 +23,14 @@
 1. debugger connection with J-link edu ok
 
 # TODO
-1. understand the board adaption. It should go like this: use the 10056 examples (as it is the same chip), change the board definition (in emProject file, replace the 10056 with a 10059).
+1. find a name for the whole project: SwimMeter or WellenLänge. The Ä is bad in Wellenlänge...
+1. create the /SwimMeter page. (and swimmeter, swim-meter etc)
 1. search for a RSSI logging app. again.
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    * Need to get the whole app building environment again
    * Simulator etc
 1. visio drawing, documentation
-1. think about iBeacon instead of ble advertising? Or eddystone? Check what's supported by nRF
-   * there is the ble_peripheral\ble_app_eddystone on SDK16
-   * could be adapted to ibeacon: ble_peripheral\ble_app_beacon
-   * ¿nRF beacon app: does not find my beacon? 
+1. ¿nRF beacon app: does not find my beacon?
 1. prep pool trial: waterproof setup
    * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
