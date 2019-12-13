@@ -2,11 +2,6 @@
 1. This file: on github project, user: saliWd. Project name: SwimMeter (alternative: WellenLänge)
 
 # working
-## nRF52 DK
-1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
-1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
-1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
-
 ## nRF52840 Dongle
 1. ble advertise is working (active infinite, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
    * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex 
@@ -19,12 +14,19 @@
    1. need [make](https://sourceforge.net/projects/gnuwin32/) for that: C:\Program Files (x86)\GnuWin32\bin
    1. need to get [GNU Tools ARM Embedded](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) and specify (e.g. 9 2019-q4-major, version=9.2.1) in SDK16\components\toolchain\gcc\Makefile.windows
    1. (or use compiled version which I added to repository)
+
+## nRF52 DK
+1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
+1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
+1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+
 ## EBSLCNZWW TY
 1. debugger connection with J-link edu ok
 
 # TODO
 1. search for a RSSI logging app. again.
    * or on pc: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
+   * want to change it: should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    * Need to get the whole app building environment again
    * Simulator etc
