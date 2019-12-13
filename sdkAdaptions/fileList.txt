@@ -1,1 +1,0 @@
-main.c from "C:\Nordic\SDK\nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\main.c"

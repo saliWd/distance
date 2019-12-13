@@ -160,16 +160,15 @@
 #define APP_ES_URL_URL                      0x77, 0x69, 0x64, 0x6D, \
                                             0x65, 0x64, 0x69, 0x61, \
                                             0x2E, 0x63, 0x68, 0x2F, \
-                                            0x53, 0x77, 0x69, 0x6D, \
-                                            0x4D, 0x65, 0x74, 0x65, \
-                                            0x72                                        //!< "widmedia.ch/SwimMeter" (21 bytes)
+                                            0x73, 0x77, 0x69, 0x6D
+                                                                                    //!< "widmedia.ch/swim" (21 bytes)
 
 #define DEFAULT_FRAME_TYPE                  APP_ES_URL_FRAME_TYPE                       //!< Frame type of default frame.
 #define DEFAULT_FRAME_TX_POWER              0x00                                        //!< Default frame TX power.
 
 /** @brief This value should mimic the data that would be written to the RW ADV Slot characteristic (for example, no RSSI for UID). */
 #define DEFAULT_FRAME_DATA                  {DEFAULT_FRAME_TYPE, DEFAULT_FRAME_TX_POWER, APP_ES_URL_SCHEME, APP_ES_URL_URL}
-#define DEFAULT_FRAME_LENGTH                24                                          //!< 24=trialAndError...  (1 - Frame Type, 1 - TX - power 1 - URL Scheme, URL - 11 = 14)
+#define DEFAULT_FRAME_LENGTH                19                                          //!< 24=trialAndError...  (1 - Frame Type, 1 - TX - power 1 - URL Scheme, URL - 11 = 14)
 
 // SCHEDULER CONFIGS
 #define SCHED_MAX_EVENT_DATA_SIZE           APP_TIMER_SCHED_EVENT_DATA_SIZE             //!< Maximum size of the scheduler event data.

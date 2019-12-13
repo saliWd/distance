@@ -1,5 +1,5 @@
 # Project documentation
-1. This file: on github project, user: saliWd
+1. This file: on github project, user: saliWd. Project name: SwimMeter (alternative: WellenLänge)
 
 # working
 ## nRF52 DK
@@ -23,9 +23,8 @@
 1. debugger connection with J-link edu ok
 
 # TODO
-1. find a name for the whole project: SwimMeter or WellenLänge. The Ä is bad in Wellenlänge...
-1. create the /SwimMeter page. (and swimmeter, swim-meter etc)
 1. search for a RSSI logging app. again.
+   * or on pc: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    * Need to get the whole app building environment again
    * Simulator etc
@@ -36,14 +35,15 @@
 1. trial in pool, acquire some rssi data
    * need some rssi logger app. Did not find something meaningful
 1. beautifications: add DFU interface to dongle setup? (Nordic DFU Trigger Interface)
-1. port the ble-tutorial-advertising to SDK16. Understand the code of this example
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )   
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 # Done
+1. widmedia.ch/swim page. (SwimMeter, swimmeter, swim-meter etc)... must not be more than 17chars: . /swim is the main page, others just forwardings. SwimMeter however shall be the main name
 1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety 
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
+1. not doing it, working with other examples: ~~port the ble-tutorial-advertising to SDK16. Understand the code of this example~~
 
 # Beacon HW
 Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconductor/nrf52840-dk/dev-kit-bluetooth-low-energy-soc/dp/2842321?ost=NRF52840-DK&ddkey=https%3Ade-CH%2FElement14_Switzerland%2Fsearch) , contains a nordicsemi module. [SDK](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/nrf52810_user_guide.html)
