@@ -24,14 +24,15 @@
 1. debugger connection with J-link edu ok
 
 # TODO
-1. search for a RSSI logging app. again.
-   * or on pc: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
-   * want to change it: should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot
+1. distance 'calibration' (change the value at 0m)
+1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
+1. ¿adapt windows beacon display? Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot. 
+   * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess) / --> will give it another try
+1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
 1. check the app side. E.g. https://github.com/alt236/Bluetooth-LE-Library---Android as a starting point. 
    * Need to get the whole app building environment again
    * Simulator etc
 1. visio drawing, documentation
-1. ¿nRF beacon app: does not find my beacon?
 1. prep pool trial: waterproof setup
    * as a first trial, could just pack everything into my swimming bag
 1. trial in pool, acquire some rssi data
@@ -41,6 +42,9 @@
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 # Done
+1. reliable logging setup: beacon scanner is working with non-modified beacon as well (just the programmed URL slot). Distance and RSSI are closely related but not exactly the same
+1. beacon display on PC: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
+1. eddystone logging app. With logging to file: beacon scanner
 1. widmedia.ch/swim page. (SwimMeter, swimmeter, swim-meter etc)... must not be more than 17chars: . /swim is the main page, others just forwardings. SwimMeter however shall be the main name
 1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety 
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
