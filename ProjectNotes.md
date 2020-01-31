@@ -6,23 +6,26 @@
 
 ### nRF52840 Dongle
 
-1. ble advertise is working (active infinite, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
-   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex
-   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
-   * did not do any board adaptions
-1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
-1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses. 1. ble beacon with a device name is working as well: ble_app_beacon.zip
-1. eddystone seems to be the right example: transmit URL working, no device name though (not supported by non-connectable beacons like eddystone) (widmedia.ch = 77 69 64 6D 65 64 69 61 2E 63 68)
+(newer to older)
+
 1. eddystone example requires micro-ecc. To do that: run SDK16\external\micro-ecc\build_all.bat
    1. need [make](https://sourceforge.net/projects/gnuwin32/) for that: C:\Program Files (x86)\GnuWin32\bin
    1. need to get [GNU Tools ARM Embedded](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) and specify (e.g. 9 2019-q4-major, version=9.2.1) in SDK16\components\toolchain\gcc\Makefile.windows
    1. (or use compiled version which I added to repository)
+1. eddystone seems to be the right example: transmit URL working, no device name though (not supported by non-connectable beacons like eddystone) (widmedia.ch = 77 69 64 6D 65 64 69 61 2E 63 68)
+1. ble beacon with a device name is working as well: ble_app_beacon.zip
+1. ble beacon is working as well: nRF5SDK16\ ...\ble_app_beacon\pca10056_adapted59\s140\ses.
+1. ble advertise for the 10059 is working: use the adapted file (origin was 10056) for the 10059 code. Can connect to it as well.
+1. ble advertise is working (active infinite, survives power cycle, widmediaDistance, between -60 and -70 dBm). Needs:
+   * nRF5SDK15\components\softdevice\s132\hex\s132_nrf52_6.0.0_softdevice.hex
+   * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
+   * did not do any board adaptions
 
 ### nRF52 DK
 
-1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
-1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
+1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
+1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
 
 ### EBSLCNZWW TY
 
@@ -49,14 +52,14 @@
 
 ## Done
 
-1. reliable logging setup: beacon scanner is working with non-modified beacon as well (just the programmed URL slot). Distance and RSSI are closely related but not exactly the same
-1. beacon display on PC: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
-1. eddystone logging app. With logging to file: beacon scanner
-1. widmedia.ch/swim page. (SwimMeter, swimmeter, swim-meter etc)... must not be more than 17chars: . /swim is the main page, others just forwardings. SwimMeter however shall be the main name
-1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety
-1. laptop: segger license (hooked to bluetooth connection, not ideal)
-1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 1. not doing it, working with other examples: ~~port the ble-tutorial-advertising to SDK16. Understand the code of this example~~
+1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
+1. laptop: segger license (hooked to bluetooth connection, not ideal)
+1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety
+1. widmedia.ch/swim page. (SwimMeter, swimmeter, swim-meter etc)... must not be more than 17chars: . /swim is the main page, others just forwardings. SwimMeter however shall be the main name
+1. eddystone logging app. With logging to file: beacon scanner
+1. beacon display on PC: [beacon interactor: works, displays stuff](https://www.andreasjakl.com/bluetooth-beacon-interactor-2-for-windows-10/)
+1. reliable logging setup: beacon scanner is working with non-modified beacon as well (just the programmed URL slot). Distance and RSSI are closely related but not exactly the same
 
 ## Beacon HW
 
@@ -137,8 +140,8 @@ Defines are available in the sdk_config.h. Also I guess I need the S112 soft dev
 
 #### Beacon Providers
 
-1. [beaconstac](https://www.beaconstac.com/buy-beacons/): 3 pieces for 69$, either USB or keychain or small stationary
-1. [bluebeacon](https://blueup.myshopify.com/products/bluebeacon-tag): 1 piece for 20€ (+39€ shipping, also when ordering 40€ goods), either USB or keychain
+1. [beaconstac](https://www.beaconstac.com/buy-beacons/) 3 pieces for 69$, either USB or keychain or small stationary
+1. [bluebeacon](https://blueup.myshopify.com/products/bluebeacon-tag) 1 piece for 20€ (+39€ shipping, also when ordering 40€ goods), either USB or keychain
 1. [beaconzone](https://www.beaconzone.co.uk/usb-beacons) 1 piece for 18.6 £ (cannot buy one piece only)
 1. [amazon](https://www.amazon.de/DSD-TECH-SH-A11-Bluetooth-Technologie/) do not send to CH
 1. [amazon](https://www.amazon.de/JINOU-Bluetooth-Programmierbarer-staubdichtem-wasserdichtem-Unterst%C3%BCtzung) do not send to CH
