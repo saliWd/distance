@@ -33,7 +33,8 @@
 
 ## TODO
 
-1. distance 'calibration' (change the value at 0m)
+1. upgrade to segger 4.42 on home
+1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm).
 1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
 1. ¿adapt windows beacon display? Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot.
    * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess) / --> will give it another try
@@ -42,11 +43,7 @@
    * Need to get the whole app building environment again
    * Simulator etc
 1. visio drawing, documentation
-1. prep pool trial: waterproof setup
-   * as a first trial, could just pack everything into my swimming bag
-1. trial in pool, acquire some rssi data
-   * need some rssi logger app. Did not find something meaningful
-1. beautifications: add DFU interface to dongle setup? (Nordic DFU Trigger Interface)
+1. trial in pool, acquire some rssi data. As a first trial, just pack everything into my swimming bag. Next step: waterproof setup
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
