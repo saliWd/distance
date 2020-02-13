@@ -33,12 +33,25 @@
 
 ## TODO
 
+1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
+   1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
+   1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
+   1. button_init(): init and enable buttons are activated.
+   1. scheduler_init(): allocates a buffer, related to SCHED_MAX_EVENT_DATA_SIZE / SCHED_QUEUE_SIZE. Not fully clear which different tasks are scheduled.
+   1. power_management_init(): unclear (apart from the self-explanatory function name)
+   1. ble_stack_init(): sets up number of connections, what roles (peripheral or whatnot), does register a handler for BLE events.
+   1. TODO. gap_params_init(): will set up all the necessary GAP (Generic Access Profile) parameters of the device and sets the permissions and appearance. Probably the part to adapt, e.g. sets the device name (SwimCounter). Uses values defined in es_app_config.h.
+   1. gatt_init(): GATT = generic attribute profile, specifies the structure in which profile data is exchanged. Seems like it's not intended to be configurable.
+   1. conn_params_init(): update delays and update counts are configured here.
+   1. TODO. nrf_ble_es_init(on_es_evt): argument is the function handler (function defined in the same file). Sets up security stuff and lot more, es_event here seems like 'big' events, like connectable_started, connectable_stopped.
+   1. for(ever) loop idle_state_handle(): call event handler and pwr management. Makes sense.
+      1. app_sched_execute(): processes the event queue one after the other while not empty
+      1. nrf_pwr_mgmt_run(): waiting for an event from the softdevice. Does some power management stuff like sleep, runs cpu usage monitors.
 1. upgrade to segger 4.42 on home
-1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm).
+1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm). --> changing APP_CFG_DEFAULT_RADIO_TX_POWER value does not help
 1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
 1. ¿adapt windows beacon display? Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot.
    * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess) / --> will give it another try
-1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
 1. check the app side. E.g. [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) as a starting point.
    * Need to get the whole app building environment again
    * Simulator etc
