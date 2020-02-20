@@ -33,6 +33,9 @@
 
 ## TODO
 
+1. check the app side. E.g. start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. to get a 'build successful': use android SDK manager (android 6), in 'signingConfigs': remove the release block and in build types: remove the release part as well.
+   1. did get a firebaseProject (google-services.json file). Not clear what this changed actually? Still has issues with building...
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
@@ -52,16 +55,13 @@
 1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
 1. ¿adapt windows beacon display? Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot.
    * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess) / --> will give it another try
-1. check the app side. E.g. [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) as a starting point.
-   * Need to get the whole app building environment again
-   * Simulator etc
-1. documentation. The github md file?
 1. trial in pool, acquire some rssi data. As a first trial, just pack everything into my swimming bag. Next step: waterproof setup
 1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )
    need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
 
 ## Done
 
+1. documentation. The github md file?
 1. not doing it, working with other examples: ~~port the ble-tutorial-advertising to SDK16. Understand the code of this example~~
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
