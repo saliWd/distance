@@ -36,6 +36,7 @@
 1. check the app side. E.g. start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
    1. to get a 'build successful': use android SDK manager (android 6), in 'signingConfigs': remove the release block and in build types: remove the release part as well.
    1. did get a firebaseProject (google-services.json file). Not clear what this changed actually? Still has issues with building...
+   1. changed package name to com.bridou_n.beaconscanner.debug in firebug json. Now: sync ok, gradle build ok, run ok on mobile (and on simulator but bluetooth is difficult) with the various workarounds depicted in the word document (check again whether all of them are necessary).
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
