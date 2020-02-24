@@ -33,9 +33,10 @@
 
 ## TODO
 
-1. check the app side. E.g. start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
-   1. Now: sync ok, gradle build ok, run ok on mobile (and on simulator but bluetooth is difficult) with the various workarounds depicted in the word document (check again whether all of them are necessary). Can change some strings, show up in App. So, hello world is done... 
-   1. Do a clean setup @PC.
+1. app stuff
+   1. remove firebase stuff
+   1. remove any warnings on the beacon scanner app (maybe related to: use the most current version of all the plugins)
+   1. have a clean release with own account
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
@@ -59,6 +60,9 @@
 
 ## Done
 
+1. check the app side. E.g. start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. Now: sync ok, gradle build ok, run ok on mobile (and on simulator but bluetooth is difficult) with the various workarounds depicted in the word document (check again whether all of them are necessary). Can change some strings, show up in App. So, hello world is done... 
+   1. Do a clean setup @PC.
 1. will not do: ~~adapt windows beacon display. Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot.~~
    * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess)
 1. documentation. The github md file?

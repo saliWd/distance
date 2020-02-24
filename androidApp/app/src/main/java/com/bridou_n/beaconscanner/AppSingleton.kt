@@ -7,7 +7,6 @@ import com.bridou_n.beaconscanner.dagger.ContextModule
 import com.bridou_n.beaconscanner.dagger.DaggerAppComponent
 import com.bridou_n.beaconscanner.utils.BuildTypes
 import com.crashlytics.android.Crashlytics
-import com.google.firebase.analytics.FirebaseAnalytics
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,9 +19,7 @@ class AppSingleton : MultiDexApplication() {
 	companion object {
 		lateinit var appComponent: AppComponent
 	}
-	
-	@Inject
-	lateinit var tracker: FirebaseAnalytics
+		
 	
 	override fun onCreate() {
 		super.onCreate()
@@ -35,9 +32,6 @@ class AppSingleton : MultiDexApplication() {
 		
 		// Timber
 		Timber.plant(CrashReportingTree())
-		
-		// Analytics
-		tracker.setAnalyticsCollectionEnabled(BuildTypes.isRelease())
 	}
 }
 

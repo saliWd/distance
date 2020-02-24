@@ -19,10 +19,9 @@ import com.bridou_n.beaconscanner.R
 import com.bridou_n.beaconscanner.features.blockedList.BlockedActivity
 import com.bridou_n.beaconscanner.utils.PreferencesHelper
 import com.bridou_n.beaconscanner.utils.extensionFunctions.component
-import com.bridou_n.beaconscanner.utils.extensionFunctions.log
+//import com.bridou_n.beaconscanner.utils.extensionFunctions.log
 import com.bridou_n.beaconscanner.utils.extensionFunctions.setHomeIcon
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_settings.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,7 +30,6 @@ import javax.inject.Inject
 class SettingsActivity : AppCompatActivity() {
 	
 	@Inject lateinit var prefs: PreferencesHelper
-	@Inject lateinit var tracker: FirebaseAnalytics
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -77,18 +75,11 @@ class SettingsActivity : AppCompatActivity() {
 		
 		prevent_sleep_container.setOnClickListener { prevent_sleep.isChecked = !prevent_sleep.isChecked }
 		prevent_sleep.setOnCheckedChangeListener { _, isChecked ->
-			
-			tracker.logEvent("prevent_sleep_changed", Bundle().apply {
-				putBoolean("status", isChecked)
-			})
 			prefs.preventSleep = isChecked
 		}
 		
 		logging_container.setOnClickListener { logging_enabled.isChecked = !logging_enabled.isChecked }
 		logging_enabled.setOnCheckedChangeListener { _, isChecked ->
-			tracker.logEvent("logging_changed", Bundle().apply {
-				putBoolean("status", isChecked)
-			})
 			prefs.isLoggingEnabled = isChecked
 			handleLoggingState(isChecked)
 		}
@@ -176,13 +167,10 @@ class SettingsActivity : AppCompatActivity() {
 		}
 		
 		blacklist.setOnClickListener {
-			tracker.log("blacklist_clicked")
-			
 			startActivity(Intent(this, BlockedActivity::class.java))
 		}
 		
 		rate.setOnClickListener {
-			tracker.log("rate_clicked")
 			val appPackageName = packageName
 			
 			try {
@@ -197,7 +185,6 @@ class SettingsActivity : AppCompatActivity() {
 		}
 		
 		tutorial.setOnClickListener {
-			tracker.log("tutorial_reset_clicked")
 			prefs.setHasSeenTutorial(false)
 			Snackbar.make(content, getString(R.string.the_tutorial_has_been_reset), Snackbar.LENGTH_LONG).show()
 		}

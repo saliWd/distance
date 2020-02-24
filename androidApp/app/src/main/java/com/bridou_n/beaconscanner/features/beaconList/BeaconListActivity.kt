@@ -33,7 +33,6 @@ import com.bridou_n.beaconscanner.utils.extensionFunctions.*
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.analytics.FirebaseAnalytics
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -68,8 +67,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	@Inject lateinit var bluetoothState: BluetoothManager
 	@Inject lateinit var db: AppDatabase
 	@Inject lateinit var loggingService: LoggingService
-	@Inject lateinit var prefs: PreferencesHelper
-	@Inject lateinit var tracker: FirebaseAnalytics
+	@Inject lateinit var prefs: PreferencesHelper	
 	
 	private var dialog: MaterialDialog? = null
 	private var menu: Menu? = null
@@ -112,11 +110,9 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	}
 	
 	private fun toggleScan() {
-		if (!isScanning()) {
-			tracker.logEvent("start_scanning_clicked", null)
+		if (!isScanning()) {			
 			return startScan()
-		}
-		tracker.logEvent("stop_scanning_clicked", null)
+		}		
 		stopScan()
 	}
 	
@@ -328,12 +324,9 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 			RC_COARSE_LOCATION -> {
 				Timber.d("granted -> ${grantResults.hasGrantedPermission()}")
 				
-				if (grantResults.hasGrantedPermission()) {
-					tracker.log("permission_granted", null)
+				if (grantResults.hasGrantedPermission()) {					
 					startScan()
-				} else {
-					tracker.log("permission_denied")
-					
+				} else {					
 					Snackbar.make(root_view, getString(R.string.enable_permission_from_settings), Snackbar.LENGTH_INDEFINITE)
 						.setAction(getString(R.string.enable)) {
 							startActivity(Intent(
@@ -351,8 +344,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	private fun showBluetoothNotEnabledError() {
 		Snackbar.make(root_view, getString(R.string.enable_bluetooth_to_start_scanning), Snackbar.LENGTH_LONG)
 			.setAction(getString(R.string.enable)) { _ ->
-				bluetoothState.toggle()
-				tracker.log("action_bluetooth")
+				bluetoothState.toggle()				
 			}
 			.show()
 	}
@@ -393,8 +385,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 		dialog = MaterialDialog(this)
 			.title(R.string.delete_all)
 			.message(R.string.are_you_sure_delete_all)
-			.positiveButton(android.R.string.ok, click = {
-				tracker.log("action_clear_accepted")
+			.positiveButton(android.R.string.ok, click = {				
 				loggingRequests.add(
 					Completable.fromCallable {
 						db.beaconsDao().clearBeacons()
@@ -408,15 +399,12 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
 			R.id.action_bluetooth -> {
-				bluetoothState.toggle()
-				tracker.log("action_bluetooth")
+				bluetoothState.toggle()				
 			}
-			R.id.action_clear -> {
-				tracker.log("action_clear")
+			R.id.action_clear -> {				
 				showClearDialog()
 			}
-			R.id.action_settings -> {
-				tracker.log("action_settings")
+			R.id.action_settings -> {				
 				startActivity(Intent(this, SettingsActivity::class.java))
 			}
 			else -> return super.onOptionsItemSelected(item)
