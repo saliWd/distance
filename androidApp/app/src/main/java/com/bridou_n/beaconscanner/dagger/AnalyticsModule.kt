@@ -10,6 +10,4 @@ import javax.inject.Singleton
  */
 
 @Module
-object AnalyticsModule {
-
-}
+object AnalyticsModule
