@@ -19,21 +19,21 @@ android {
     }
 
     signingConfigs {
-        release {
-            keyAlias 'BeaconScannerKey'
-            keyPassword beacon_scanner_key_password
-            storeFile file(beacon_scanner_store_file)
-            storePassword beacon_scanner_store_password
-        }
+//        release {
+//            keyAlias 'BeaconScannerKey'
+//            keyPassword beacon_scanner_key_password
+//            storeFile file(beacon_scanner_store_file)
+//            storePassword beacon_scanner_store_password
+//        }
     }
 
     buildTypes {
-        release {
-            minifyEnabled true
-            resValue "string", "app_name", "Beacon Scanner"
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
+//        release {
+//            minifyEnabled true
+//            resValue "string", "app_name", "Beacon Scanner"
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+//        }
 
         debug {
             minifyEnabled true
