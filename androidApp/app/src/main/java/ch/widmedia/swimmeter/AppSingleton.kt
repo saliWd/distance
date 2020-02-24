@@ -1,14 +1,12 @@
-package com.bridou_n.beaconscanner
+package ch.widmedia.swimmeter
 
 import android.util.Log.ERROR
 import androidx.multidex.MultiDexApplication
-import com.bridou_n.beaconscanner.dagger.AppComponent
-import com.bridou_n.beaconscanner.dagger.ContextModule
-import com.bridou_n.beaconscanner.dagger.DaggerAppComponent
-import com.bridou_n.beaconscanner.utils.BuildTypes
+import ch.widmedia.swimmeter.dagger.AppComponent
+import ch.widmedia.swimmeter.dagger.ContextModule
+import ch.widmedia.swimmeter.dagger.DaggerAppComponent
 import com.crashlytics.android.Crashlytics
 import timber.log.Timber
-import javax.inject.Inject
 
 /**
  * Created by bridou_n on 30/09/2016.
@@ -27,7 +25,7 @@ class AppSingleton : MultiDexApplication() {
 		// Dagger
 		appComponent = DaggerAppComponent.builder()
 			.contextModule(ContextModule(this))
-			.build()
+				.build()
 		appComponent.inject(this)
 		
 		// Timber

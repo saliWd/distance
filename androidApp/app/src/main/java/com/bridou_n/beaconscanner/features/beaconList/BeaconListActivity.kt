@@ -20,12 +20,12 @@ import androidx.core.content.ContextCompat
 import androidx.room.EmptyResultSetException
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bridou_n.beaconscanner.API.LoggingService
-import com.bridou_n.beaconscanner.Database.AppDatabase
+import ch.widmedia.swimmeter.API.LoggingService
+import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
 import com.bridou_n.beaconscanner.features.settings.SettingsActivity
-import com.bridou_n.beaconscanner.models.BeaconSaved
-import com.bridou_n.beaconscanner.models.LoggingRequest
+import ch.widmedia.swimmeter.models.BeaconSaved
+import ch.widmedia.swimmeter.models.LoggingRequest
 import com.bridou_n.beaconscanner.utils.AndroidVersion
 import com.bridou_n.beaconscanner.utils.BluetoothManager
 import com.bridou_n.beaconscanner.utils.PreferencesHelper
@@ -303,7 +303,10 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 			loggingRequests.add(db.beaconsDao().getBeaconsSeenAfter(prefs.lasLoggingCall)
 				.filter { it.isNotEmpty() }
 				.doOnSuccess { Timber.d("list to log: $it") }
-				.map { LoggingRequest(prefs.loggingDeviceName ?: "", it) }
+				.map {
+					LoggingRequest(prefs.loggingDeviceName
+							?: "", it)
+				}
 				.flatMapCompletable {
 					loggingService.postLogs(prefs.loggingEndpoint ?: "", it)
 				}

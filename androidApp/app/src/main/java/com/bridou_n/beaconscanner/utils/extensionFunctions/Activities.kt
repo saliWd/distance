@@ -14,7 +14,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
-import com.bridou_n.beaconscanner.AppSingleton
+import ch.widmedia.swimmeter.AppSingleton
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

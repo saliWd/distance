@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.bridou_n.beaconscanner.AppSingleton
-import com.bridou_n.beaconscanner.Database.AppDatabase
+import ch.widmedia.swimmeter.AppSingleton
+import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
 import com.bridou_n.beaconscanner.utils.dialogs.RoundedBottomSheetDialog
 import com.bridou_n.beaconscanner.utils.extensionFunctions.showSnackBar

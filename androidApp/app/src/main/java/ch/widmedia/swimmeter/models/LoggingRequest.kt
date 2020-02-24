@@ -1,5 +1,6 @@
-package com.bridou_n.beaconscanner.models
+package ch.widmedia.swimmeter.models
 
+import ch.widmedia.swimmeter.models.BeaconSaved
 import com.google.gson.annotations.SerializedName
 
 /**

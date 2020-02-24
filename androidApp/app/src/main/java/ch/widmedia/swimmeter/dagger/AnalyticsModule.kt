@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.dagger
+package ch.widmedia.swimmeter.dagger
 
 import android.content.Context
 import dagger.Module

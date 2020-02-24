@@ -1,6 +1,6 @@
-package com.bridou_n.beaconscanner.API
+package ch.widmedia.swimmeter.API
 
-import com.bridou_n.beaconscanner.models.LoggingRequest
+import ch.widmedia.swimmeter.models.LoggingRequest
 import io.reactivex.Completable
 import retrofit2.http.Body
 import retrofit2.http.POST

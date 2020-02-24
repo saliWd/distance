@@ -1,6 +1,6 @@
-package com.bridou_n.beaconscanner.dagger
+package ch.widmedia.swimmeter.dagger
 
-import com.bridou_n.beaconscanner.API.LoggingService
+import ch.widmedia.swimmeter.API.LoggingService
 import com.bridou_n.beaconscanner.utils.PreferencesHelper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

@@ -1,8 +1,8 @@
-package com.bridou_n.beaconscanner.dagger
+package ch.widmedia.swimmeter.dagger
 
 import android.content.Context
 import androidx.room.Room
-import com.bridou_n.beaconscanner.Database.AppDatabase
+import ch.widmedia.swimmeter.Database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

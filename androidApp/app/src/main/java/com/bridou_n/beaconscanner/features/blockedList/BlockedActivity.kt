@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bridou_n.beaconscanner.Database.AppDatabase
+import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
 import com.bridou_n.beaconscanner.features.beaconList.BeaconRow
 import com.bridou_n.beaconscanner.features.beaconList.BeaconsRecyclerViewAdapter

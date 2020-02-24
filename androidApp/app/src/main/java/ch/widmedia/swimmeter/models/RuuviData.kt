@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.models
+package ch.widmedia.swimmeter.models
 
 import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName

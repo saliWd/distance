@@ -1,11 +1,11 @@
-package com.bridou_n.beaconscanner.Database
+package ch.widmedia.swimmeter.Database
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.bridou_n.beaconscanner.models.BeaconSaved
+import ch.widmedia.swimmeter.models.BeaconSaved
 import io.reactivex.Flowable
 import io.reactivex.Single
 

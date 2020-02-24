@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bridou_n.beaconscanner.R
-import com.bridou_n.beaconscanner.models.BeaconSaved
-import com.bridou_n.beaconscanner.models.BeaconSaved.Companion.TYPE_ALTBEACON
-import com.bridou_n.beaconscanner.models.BeaconSaved.Companion.TYPE_EDDYSTONE_UID
-import com.bridou_n.beaconscanner.models.BeaconSaved.Companion.TYPE_EDDYSTONE_URL
-import com.bridou_n.beaconscanner.models.BeaconSaved.Companion.TYPE_RUUVITAG
+import ch.widmedia.swimmeter.models.BeaconSaved
+import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_ALTBEACON
+import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_EDDYSTONE_UID
+import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_EDDYSTONE_URL
+import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_RUUVITAG
 import com.bridou_n.beaconscanner.utils.extensionFunctions.toCoolFormat
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager

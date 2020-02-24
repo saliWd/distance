@@ -1,6 +1,6 @@
-package com.bridou_n.beaconscanner.dagger
+package ch.widmedia.swimmeter.dagger
 
-import com.bridou_n.beaconscanner.AppSingleton
+import ch.widmedia.swimmeter.AppSingleton
 import com.bridou_n.beaconscanner.features.beaconList.BeaconListActivity
 import com.bridou_n.beaconscanner.features.beaconList.ControlsBottomSheetDialog
 import com.bridou_n.beaconscanner.features.blockedList.BlockedActivity

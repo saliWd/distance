@@ -1,8 +1,8 @@
-package com.bridou_n.beaconscanner.Database
+package ch.widmedia.swimmeter.Database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.bridou_n.beaconscanner.models.BeaconSaved
+import ch.widmedia.swimmeter.models.BeaconSaved
 
 @Database(
         entities = [
