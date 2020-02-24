@@ -1,7 +1,7 @@
 package ch.widmedia.swimmeter.dagger
 
 import android.content.Context
-import com.bridou_n.beaconscanner.utils.PreferencesHelper
+import ch.widmedia.swimmeter.utils.PreferencesHelper
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

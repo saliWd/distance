@@ -13,7 +13,7 @@
     <string name="metters_abbreviation">m</string>
 
     <string name="eddystone_uid">Eddystone-UID</string>
-    <string name="eddystone_url">WID-Eddystone-URL</string>
+    <string name="eddystone_url">V1-Eddystone-URL</string>
     <string name="clear">Clear</string>
     <string name="no_scanned_beacons_yet">No scanned beacons yet!</string>
     <string name="empty_state_content">Looks like there is nothing here just yet!</string>

@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.utils
+package ch.widmedia.swimmeter.utils
 
 import android.content.Context
 import android.content.SharedPreferences

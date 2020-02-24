@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.features.blockedList
+package ch.widmedia.swimmeter.features.blockedList
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
-import com.bridou_n.beaconscanner.features.beaconList.BeaconRow
-import com.bridou_n.beaconscanner.features.beaconList.BeaconsRecyclerViewAdapter
-import com.bridou_n.beaconscanner.features.beaconList.ControlsBottomSheetDialog
-import com.bridou_n.beaconscanner.utils.extensionFunctions.component
+import ch.widmedia.swimmeter.features.beaconList.BeaconRow
+import ch.widmedia.swimmeter.features.beaconList.BeaconsRecyclerViewAdapter
+import ch.widmedia.swimmeter.features.beaconList.ControlsBottomSheetDialog
+import ch.widmedia.swimmeter.utils.extensionFunctions.component
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers

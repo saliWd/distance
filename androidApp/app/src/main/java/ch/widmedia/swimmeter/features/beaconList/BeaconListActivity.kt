@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.features.beaconList
+package ch.widmedia.swimmeter.features.beaconList
 
 import android.Manifest
 import android.content.Intent
@@ -23,13 +23,16 @@ import com.afollestad.materialdialogs.MaterialDialog
 import ch.widmedia.swimmeter.API.LoggingService
 import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
-import com.bridou_n.beaconscanner.features.settings.SettingsActivity
+import ch.widmedia.swimmeter.features.settings.SettingsActivity
 import ch.widmedia.swimmeter.models.BeaconSaved
 import ch.widmedia.swimmeter.models.LoggingRequest
-import com.bridou_n.beaconscanner.utils.AndroidVersion
-import com.bridou_n.beaconscanner.utils.BluetoothManager
-import com.bridou_n.beaconscanner.utils.PreferencesHelper
-import com.bridou_n.beaconscanner.utils.extensionFunctions.*
+import ch.widmedia.swimmeter.utils.AndroidVersion
+import ch.widmedia.swimmeter.utils.BluetoothManager
+import ch.widmedia.swimmeter.utils.PreferencesHelper
+import ch.widmedia.swimmeter.utils.extensionFunctions.component
+import ch.widmedia.swimmeter.utils.extensionFunctions.hasGrantedPermission
+import ch.widmedia.swimmeter.utils.extensionFunctions.isPermissionGranted
+import ch.widmedia.swimmeter.utils.extensionFunctions.reqPermission
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
@@ -67,7 +70,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	@Inject lateinit var bluetoothState: BluetoothManager
 	@Inject lateinit var db: AppDatabase
 	@Inject lateinit var loggingService: LoggingService
-	@Inject lateinit var prefs: PreferencesHelper	
+	@Inject lateinit var prefs: PreferencesHelper
 	
 	private var dialog: MaterialDialog? = null
 	private var menu: Menu? = null

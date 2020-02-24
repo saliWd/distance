@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.utils.copyPaste;
+package ch.widmedia.swimmeter.utils.copyPaste;
 
 import java.io.ByteArrayOutputStream;
 

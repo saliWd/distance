@@ -1,11 +1,11 @@
-package com.bridou_n.beaconscanner.utils
+package ch.widmedia.swimmeter.utils
 
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import com.bridou_n.beaconscanner.features.beaconList.BeaconListActivity
+import ch.widmedia.swimmeter.features.beaconList.BeaconListActivity
 import io.reactivex.Flowable
 import io.reactivex.processors.BehaviorProcessor
 import javax.inject.Inject

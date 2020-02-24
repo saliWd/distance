@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.features.beaconList
+package ch.widmedia.swimmeter.features.beaconList
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bridou_n.beaconscanner.R
-import com.bridou_n.beaconscanner.utils.extensionFunctions.addRipple
+import ch.widmedia.swimmeter.utils.extensionFunctions.addRipple
 import kotlinx.android.synthetic.main.item_beacon_info.view.*
 
 typealias OnBeaconInfoClick = () -> Unit

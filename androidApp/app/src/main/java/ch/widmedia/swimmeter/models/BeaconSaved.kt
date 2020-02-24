@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import ch.widmedia.swimmeter.Database.BeaconsDao
-import com.bridou_n.beaconscanner.utils.BuildTypes
-import com.bridou_n.beaconscanner.utils.RuuviParser
+import ch.widmedia.swimmeter.utils.BuildTypes
+import ch.widmedia.swimmeter.utils.RuuviParser
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import org.altbeacon.beacon.Beacon

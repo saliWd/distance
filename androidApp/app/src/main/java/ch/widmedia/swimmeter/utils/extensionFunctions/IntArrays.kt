@@ -1,7 +1,7 @@
-package com.bridou_n.beaconscanner.utils.extensionFunctions
+package ch.widmedia.swimmeter.utils.extensionFunctions
 
 import android.content.pm.PackageManager
-import com.bridou_n.beaconscanner.utils.CountHelper
+import ch.widmedia.swimmeter.utils.CountHelper
 
 /**
  * Created by bridou_n on 05/09/2017.

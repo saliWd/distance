@@ -1,11 +1,11 @@
-package com.bridou_n.beaconscanner.utils;
+package ch.widmedia.swimmeter.utils;
 
 import androidx.annotation.NonNull;
 
-import com.bridou_n.beaconscanner.utils.copyPaste.Base64;
-import com.bridou_n.beaconscanner.utils.copyPaste.Base91;
-import com.bridou_n.beaconscanner.utils.extensionFunctions.IntArraysKt;
+import ch.widmedia.swimmeter.utils.copyPaste.Base64;
+import ch.widmedia.swimmeter.utils.copyPaste.Base91;
 
+import ch.widmedia.swimmeter.utils.extensionFunctions.IntArraysKt;
 import timber.log.Timber;
 
 /**

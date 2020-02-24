@@ -1,7 +1,7 @@
 package ch.widmedia.swimmeter.dagger
 
 import ch.widmedia.swimmeter.API.LoggingService
-import com.bridou_n.beaconscanner.utils.PreferencesHelper
+import ch.widmedia.swimmeter.utils.PreferencesHelper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

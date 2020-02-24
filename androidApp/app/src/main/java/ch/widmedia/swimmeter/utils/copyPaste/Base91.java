@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.utils.copyPaste;
+package ch.widmedia.swimmeter.utils.copyPaste;
 
 /**
  * Created by bridou_n on 05/09/2017.

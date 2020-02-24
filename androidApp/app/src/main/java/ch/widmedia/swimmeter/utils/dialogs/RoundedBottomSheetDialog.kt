@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.utils.dialogs
+package ch.widmedia.swimmeter.utils.dialogs
 
 import android.app.Dialog
 import android.os.Bundle

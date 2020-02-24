@@ -2,7 +2,7 @@ package ch.widmedia.swimmeter.dagger
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import com.bridou_n.beaconscanner.utils.PreferencesHelper
+import ch.widmedia.swimmeter.utils.PreferencesHelper
 import dagger.Module
 import dagger.Provides
 import org.altbeacon.beacon.BeaconManager

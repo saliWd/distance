@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.features.beaconList
+package ch.widmedia.swimmeter.features.beaconList
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import ch.widmedia.swimmeter.AppSingleton
 import ch.widmedia.swimmeter.Database.AppDatabase
 import com.bridou_n.beaconscanner.R
-import com.bridou_n.beaconscanner.utils.dialogs.RoundedBottomSheetDialog
-import com.bridou_n.beaconscanner.utils.extensionFunctions.showSnackBar
+import ch.widmedia.swimmeter.utils.dialogs.RoundedBottomSheetDialog
+import ch.widmedia.swimmeter.utils.extensionFunctions.showSnackBar
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

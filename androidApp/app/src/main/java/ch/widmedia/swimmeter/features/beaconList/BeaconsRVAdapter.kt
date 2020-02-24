@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.features.beaconList
+package ch.widmedia.swimmeter.features.beaconList
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -17,7 +17,7 @@ import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_ALTBEACON
 import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_EDDYSTONE_UID
 import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_EDDYSTONE_URL
 import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_RUUVITAG
-import com.bridou_n.beaconscanner.utils.extensionFunctions.toCoolFormat
+import ch.widmedia.swimmeter.utils.extensionFunctions.toCoolFormat
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent

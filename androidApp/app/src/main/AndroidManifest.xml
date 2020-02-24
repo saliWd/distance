@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".features.beaconList.BeaconListActivity"
+            android:name="ch.widmedia.swimmeter.features.beaconList.BeaconListActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,11 +31,11 @@
         </activity>
 
         <activity
-            android:name=".features.settings.SettingsActivity"
+            android:name="ch.widmedia.swimmeter.features.settings.SettingsActivity"
             />
 
         <activity
-            android:name=".features.blockedList.BlockedActivity"
+            android:name="ch.widmedia.swimmeter.features.blockedList.BlockedActivity"
             />
     </application>
 

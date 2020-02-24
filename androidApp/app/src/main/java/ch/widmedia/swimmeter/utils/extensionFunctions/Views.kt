@@ -1,4 +1,4 @@
-package com.bridou_n.beaconscanner.utils.extensionFunctions
+package ch.widmedia.swimmeter.utils.extensionFunctions
 
 import android.util.TypedValue
 import android.view.View

@@ -5,7 +5,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	tools:context="com.bridou_n.beaconscanner.features.settings.SettingsActivity">
+	tools:context="com.bridou_n.beaconscanner.ch.widmedia.swimmeter.features.settings.SettingsActivity">
 	
 	<!-- Toolbar -->
 	<androidx.appcompat.widget.Toolbar
