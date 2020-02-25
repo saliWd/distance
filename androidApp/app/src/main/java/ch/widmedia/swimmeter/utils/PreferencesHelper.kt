@@ -3,7 +3,7 @@ package ch.widmedia.swimmeter.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 
 /**
  * Created by bridou_n on 03/04/2017.

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.utils.extensionFunctions.addRipple
 import kotlinx.android.synthetic.main.item_beacon_info.view.*
 

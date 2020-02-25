@@ -14,8 +14,8 @@ import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.bridou_n.beaconscanner.BuildConfig
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.BuildConfig
+import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.features.blockedList.BlockedActivity
 import ch.widmedia.swimmeter.utils.PreferencesHelper
 import ch.widmedia.swimmeter.utils.extensionFunctions.component

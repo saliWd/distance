@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ch.widmedia.swimmeter.AppSingleton
 import ch.widmedia.swimmeter.Database.AppDatabase
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.utils.dialogs.RoundedBottomSheetDialog
 import ch.widmedia.swimmeter.utils.extensionFunctions.showSnackBar
 import io.reactivex.Completable

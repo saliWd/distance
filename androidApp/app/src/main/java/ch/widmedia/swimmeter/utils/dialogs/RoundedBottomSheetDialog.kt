@@ -3,7 +3,7 @@ package ch.widmedia.swimmeter.utils.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

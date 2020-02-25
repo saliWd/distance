@@ -22,7 +22,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import ch.widmedia.swimmeter.API.LoggingService
 import ch.widmedia.swimmeter.Database.AppDatabase
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.features.settings.SettingsActivity
 import ch.widmedia.swimmeter.models.BeaconSaved
 import ch.widmedia.swimmeter.models.LoggingRequest

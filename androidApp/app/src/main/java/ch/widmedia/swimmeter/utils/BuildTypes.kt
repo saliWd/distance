@@ -1,6 +1,6 @@
 package ch.widmedia.swimmeter.utils
 
-import com.bridou_n.beaconscanner.BuildConfig
+import ch.widmedia.swimmeter.BuildConfig
 
 object BuildTypes {
 

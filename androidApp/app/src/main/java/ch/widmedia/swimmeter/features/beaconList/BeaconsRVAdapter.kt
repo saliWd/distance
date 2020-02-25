@@ -11,7 +11,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bridou_n.beaconscanner.R
+import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.models.BeaconSaved
 import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_ALTBEACON
 import ch.widmedia.swimmeter.models.BeaconSaved.Companion.TYPE_EDDYSTONE_UID
