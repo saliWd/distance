@@ -36,7 +36,7 @@
 1. app stuff
    1. install my own app
    1. remove any warnings on the beacon scanner app (maybe related to: use the most current version of all the plugins)
-   1. improve: logo (512x512), 2 screenshots (mobile), 'feature graphic' (1024x500)
+   1. improve: logo (512x512), 2 screenshots (mobile), 'feature graphic' (1024x500). Different graphics tool
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
