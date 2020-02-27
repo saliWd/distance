@@ -34,7 +34,8 @@
 ## TODO
 
 1. app stuff
-   1. remove any warnings on the beacon scanner app (maybe related to: use the most current version of all the plugins)
+   1. use the most current version of all the plugins. NOK: rxrelay/rxjava/logging/converter-gson
+   1. remove any warnings on the beacon scanner app
    1. install my own app (app review is pending...)
    1. implement some functionality
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
