@@ -1,0 +1,8 @@
+# Google play services
+google-services.json
+
+# Release APKs
+*.apk
+release
+
+/build
