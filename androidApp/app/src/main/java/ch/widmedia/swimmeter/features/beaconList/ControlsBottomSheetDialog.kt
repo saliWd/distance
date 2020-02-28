@@ -109,7 +109,7 @@ class ControlsBottomSheetDialog : RoundedBottomSheetDialog() {
                             dismissAllowingStateLoss()
                             (activity as? BeaconListActivity)?.showGenericError(ctx.getString(R.string.the_informations_has_been_copied)) ?:
                             (activity as? AppCompatActivity)?.showSnackBar(ctx.getString(R.string.the_informations_has_been_copied))
-                        }, { err ->
+                        }, { _ ->
 
                         })
                 )
