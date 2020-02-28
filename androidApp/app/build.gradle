@@ -86,7 +86,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
     // ALT Beacon library
-    implementation 'org.altbeacon:android-beacon-library:2.12.1'
+    implementation 'org.altbeacon:android-beacon-library:2.13.1'
 
     // Tap target view, discovery feature
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
