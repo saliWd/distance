@@ -34,9 +34,6 @@
 ## TODO
 
 1. app stuff
-   1. use the most current version of all the plugins. 4 NOK remaining: logging/converter-gson/retrofit/adapter-rxjava
-   1. remove any warnings on the beacon scanner app
-   1. install my own app (app review is pending...). Go for the engineering version.
    1. implement some functionality
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
@@ -62,6 +59,9 @@
 ## Done
 
 1. app stuff: start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. remove any warnings on the beacon scanner app (one remaining, guess I can ignore it)
+   1. install my own app (app review is pending...)
+   1. use the most current version of all the plugins. 4 NOK are still remaining: logging/converter-gson/retrofit/adapter-rxjava. Most probably will leave it at this.
    1. (can still improve more): logo (512x512), 2 screenshots (mobile), 'feature graphic' (1024x500). Different graphics tool than visio
    1. publish the stuff: quite a pita
    1. remove firebase stuff
