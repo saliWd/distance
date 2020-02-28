@@ -34,9 +34,9 @@
 ## TODO
 
 1. app stuff
-   1. use the most current version of all the plugins. 6 NOK remaining: rxrelay/rxjava/logging/converter-gson/retrofit(minApi24)/adapter-rxjava(minApi24)
+   1. use the most current version of all the plugins. 5 NOK remaining: rxjava/logging/converter-gson/retrofit(minApi24)/adapter-rxjava(minApi24)
    1. remove any warnings on the beacon scanner app
-   1. install my own app (app review is pending...)
+   1. install my own app (app review is pending...). Go for the engineering version.
    1. implement some functionality
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
