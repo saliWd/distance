@@ -148,7 +148,7 @@ class SettingsActivity : AppCompatActivity() {
                     }
                     .positiveButton {
                         // From here the input should be valid
-                        var newEndpoint = it.getInputField()?.text?.toString() ?: return@positiveButton
+                        var newEndpoint = it.getInputField().text?.toString() ?: return@positiveButton
 
                         if (newEndpoint.isNotEmpty()) {
                             // If we just entered the IP address or 'example.com' for example
