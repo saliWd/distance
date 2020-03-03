@@ -35,6 +35,7 @@
 
 1. app stuff
    1. implement some functionality
+   1. googlePlay: description in DE (auto-translated otherwise)
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
@@ -59,6 +60,7 @@
 ## Done
 
 1. app stuff: start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. icon/icon-foreground (192-432/144-324/96-216/72-162/48-108). GooglePlay logo: 512
    1. remove any warnings on the beacon scanner app (one remaining, guess I can ignore it)
    1. install my own app (app review is pending...)
    1. use the most current version of all the plugins. 4 NOK are still remaining: logging/converter-gson/retrofit/adapter-rxjava. Most probably will leave it at this.
