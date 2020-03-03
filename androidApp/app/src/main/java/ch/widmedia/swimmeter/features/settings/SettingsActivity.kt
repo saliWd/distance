@@ -19,7 +19,6 @@ import ch.widmedia.swimmeter.R
 import ch.widmedia.swimmeter.features.blockedList.BlockedActivity
 import ch.widmedia.swimmeter.utils.PreferencesHelper
 import ch.widmedia.swimmeter.utils.extensionFunctions.component
-//import com.bridou_n.beaconscanner.utils.extensionFunctions.log
 import ch.widmedia.swimmeter.utils.extensionFunctions.setHomeIcon
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_settings.*

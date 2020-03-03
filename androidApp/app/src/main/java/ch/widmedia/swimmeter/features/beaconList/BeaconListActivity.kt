@@ -268,7 +268,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 		}
 		
 		try {
-			beaconManager?.startRangingBeaconsInRegion(Region("com.bridou_n.beaconscanner", null, null, null))
+			beaconManager?.startRangingBeaconsInRegion(Region("ch.widmedia.swimmeter", null, null, null))
 		} catch (e: RemoteException) {
 			e.printStackTrace()
 		}
