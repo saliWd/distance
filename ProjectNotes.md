@@ -2,9 +2,7 @@
 
 1. This file: on github project, user: saliWd. Project name: SwimMeter (alternative: WellenLänge)
 
-## working
-
-### nRF52840 Dongle
+## nRF52840 Dongle
 
 (newer to older)
 
@@ -21,21 +19,36 @@
    * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
    * did not do any board adaptions
 
-### nRF52 DK
+## nRF52 DK
 
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
 1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
 
-### EBSLCNZWW TY
+## EBSLCNZWW TY
 
 1. debugger connection with J-link edu ok
 
+## SwimMeter App
+
+1. Graphics stuff:
+   1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
+   1. colors: blue is 0x2314C2, yellow is 0xE5B72A
+   1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
+
+## Webpage
+
+[https://widmedia.ch/swimmeter](https://widmedia.ch/swimmeter) is the main page. /swim and /SwimMeter are forwarding to it.
+
 ## TODO
 
+1. website
+   1. implement json endpoint (like webhook.site) and display the stuff
 1. app stuff
    1. implement some functionality
-   1. googlePlay: description in DE (auto-translated otherwise)
+   1. tablet screenshot
+   1. test translate stuff, second language (de)
+   1. data privacy text
 1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
    1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
    1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
@@ -50,7 +63,6 @@
    1. for(ever) loop idle_state_handle(): call event handler and pwr management. Makes sense.
       1. app_sched_execute(): processes the event queue one after the other while not empty
       1. nrf_pwr_mgmt_run(): waiting for an event from the softdevice. Does some power management stuff like sleep, runs cpu usage monitors.
-1. upgrade to segger 4.50 on home
 1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm). --> changing APP_CFG_DEFAULT_RADIO_TX_POWER value does not help. Try with the app, on a more recent android.
 1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
 1. trial in pool, acquire some rssi data. As a first trial, just pack everything into my swimming bag. Next step: waterproof setup
@@ -60,13 +72,13 @@
 ## Done
 
 1. app stuff: start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. googlePlay: description in DE (auto-translated otherwise)
    1. icon/icon-foreground (192-432/144-324/96-216/72-162/48-108). GooglePlay logo: 512
    1. remove any warnings on the beacon scanner app (one remaining, guess I can ignore it)
    1. install my own app (app review is pending...)
    1. use the most current version of all the plugins. 4 NOK are still remaining: logging/converter-gson/retrofit/adapter-rxjava. Most probably will leave it at this.
    1. (can still improve more): logo (512x512), 2 screenshots (mobile), 'feature graphic' (1024x500). Different graphics tool than visio
    1. publish the stuff: quite a pita
-   1. remove firebase stuff
    1. Now: sync ok, gradle build ok, run ok on mobile (and on simulator but bluetooth is difficult) with the various workarounds depicted in the word document (check again whether all of them are necessary). Can change some strings, show up in App. So, hello world is done...
    1. Do a clean setup @PC.
 1. will not do: ~~adapt windows beacon display. Should display nothing, if type is not eddystone. Have to change only the output, not the beacon class or whatnot.~~
