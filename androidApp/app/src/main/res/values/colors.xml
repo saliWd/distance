@@ -4,7 +4,7 @@
     <color name="colorPrimaryVariant">#4285F4</color>
     <color name="colorOnPrimary">#FFF</color>
     
-    <color name="colorAppIconBackground">#FEE599</color>
+    <color name="colorAppIconBackground">#E5B72A</color>
 
     <!-- Used for switches, OK / CANCEL buttons on dialogs -->
     <color name="colorSecondary">#4285F4</color>

@@ -180,7 +180,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         open_source.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Bridouille/android-beacon-scanner")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://widmedia.ch/swimmeter/")))
         }
 
         tutorial.setOnClickListener {
