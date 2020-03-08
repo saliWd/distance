@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
-    val EXAMPLE_BASE_URL = "http://www.example.com/"
+    val EXAMPLE_BASE_URL = "https://widmedia.ch/swimmeter/"
     val DEVICE_NAME = "device-name"
 
     @JvmStatic @Provides @Singleton @Named("injectDeviceName")

@@ -124,7 +124,7 @@ class SettingsActivity : AppCompatActivity() {
                     .title(R.string.logging_endpoint)
                     .input(
                             hint = getString(R.string.logging_endpoint),
-                            prefill = prefs.loggingEndpoint ?: "http://example.com/logging",
+                            prefill = prefs.loggingEndpoint ?: "https://widmedia.ch/swimmeter/logging/",
                             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI,
                             waitForPositiveButton = false
                     ) { dialog, input ->
