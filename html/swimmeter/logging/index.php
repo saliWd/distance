@@ -1,98 +1,71 @@
-<?php 
+<?php // declare(strict_types=1);
+// TODO: strict types does not work...
 
-// at v: 
-// Array
-// (
-    // [reader] => s6
-    // [beacons] => Array
-        // (
-            // [0] => Array
-                // (
-                    // [hashcode] => -647315039
-                    // [beacon_type] => eddystone_url
-                    // [manufacturer] => 65194
-                    // [tx_power] => -41
-                    // [rssi] => -59
-                    // [distance] => 5.8271277612308
-                    // [last_seen] => 1583507860652
-                    // [eddystone_url_data] => Array
-                        // (
-                            // [url] => https://www.widmedia.ch
-                        // )
+// this site is called directly from within the app. There is POST variable with a json, containing the beacon data
+// need to extract the correct data and store it into a db
+function logData (object $dbConn, $data): bool {
+  if (empty($data['reader'])) {
+    return errorToFile(1);
+  }
+  
+  if (strcmp(substr($data['reader'], 0, 9), 'widmedia_') !== 0) { // now I "know" the post request is from my app (should be widmedia_<something>, e.g. widmedia_s6)
+    return errorToFile(2);
+  }
+  $deviceName = $data['reader'];
+  foreach ($data['beacons'] as $beacon) {
+    if (strcmp($beacon['beacon_type'], 'eddystone_url') == 0) {      
+      $url = substr($beacon['eddystone_url_data']['url'], 0, 23);
+      if (strcmp($url, 'https://www.widmedia.ch') == 0) { // now we are sure that my app did send my beacon
+        $rssi = $beacon['rssi'];
+        $distance = $beacon['distance'];
+        $lastSeen = $beacon['last_seen'];
+        
+        return storeInDb($dbConn, $deviceName, $rssi, $distance, $lastSeen);        
+      } // if
+    } // if
+  } // foreach
+  return errorToFile(3); // none of the foreach loops did trigger
+}
 
-                    // [n] => 
-                // )
-        // )
-// )
+function errorToFile($errorNum): bool {
+  $fp = fopen('error.log', 'a'); //opens file in append mode.
+  fwrite($fp, 'Error happened: '.$line);
+  fclose($fp);
+  return false;
+}
 
-// at h:
-// Array
-// (
-//     [reader] => s6a
-//     [beacons] => Array
-//         (
-//             [0] => Array
-//                 (
-//                     [hashcode] => -1319653246
-//                     [beacon_type] => eddystone_url
-//                     [manufacturer] => 65194
-//                     [tx_power] => -41
-//                     [rssi] => -70
-//                     [distance] => 18.291520218788
-//                     [last_seen] => 1583699079336
-//                     [eddystone_url_data] => Array
-//                         (
-//                             [url] => https://www.widmedia.ch/swim
-//                         )
-// 
-//                     [telemetry_data] => Array
-//                         (
-//                             [version] => 1
-//                             [battery_milli_volts] => 55193
-//                             [temperature] => 40.765625
-//                             [pdu_count] => 861046502
-//                             [uptime_seconds] => 2666472481
-//                         )
-// 
-//                     [n] => 
-//                 )
-// 
-//         )
-// 
-// )
+function getDbConn () {
+  require_once('../../start/php/dbConn.php'); // this will return the $dbConn variable as 'new mysqli'
+  // NB: this file is not included in the git repository, have to create it yourself (content like: $dbConn = new mysqli("localhost", "DBNAME", "PW", "USER", 3306);)
+  if ($dbConn->connect_error) {
+    die();
+  }
+  $dbConn->set_charset('utf8');
+  return $dbConn;
+}
+
+// DeviceName:widmedia_s6, rssi:-66, distance:11.095192891072, last_seen:1583761614714
+function storeInDb (object $dbConn, $deviceName, $rssi, $distance, $lastSeen): bool {
+  $safeA = mysqli_real_escape_string($dbConn, $deviceName);
+  $safeB = mysqli_real_escape_string($dbConn, $rssi); // this is more precise than the distance
+  $safeC = mysqli_real_escape_string($dbConn, $distance);
+  $safeD = mysqli_real_escape_string($dbConn, $lastSeen); // maybe could be covered with the database timestamp?
+  
+  $result = $dbConn->query('INSERT INTO `swLog` (`deviceName`, `rssi`, `distance`, `lastSeen`) VALUES ("'.$safeA.'", "'.$safeB.'", "'.$safeC.'", "'.$safeD.'")');      
+  if (!$result) { return errorToFile(4); }
+  return $result;
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
-$deviceName = htmlentities(substr($data['reader'], 0, 9));  // should be widmedia_<something>, e.g. widmedia_s6
-
-$dbg_error_msg = ''; // TODO: remove that again
-
-if (strcmp($deviceName, 'widmedia_') == 0) { // now I "know" the post request is from my app
-  foreach ($data['beacons'] as $beacon) {
-    if (strcmp($beacon['beacon_type'], 'eddystone_url') == 0) {
-      // TODO: should check on the url itself, not just on the beacon type
-      fwrite($fp, "DeviceName:\t". $data['reader']."\t");
-      $hashcode = $beacon['hashcode'];
-      $manufacturer = $beacon['manufacturer'];
-      $rssi = $beacon['rssi'];
-      $distance = $beacon['distance'];
-      $last_seen = $beacon['last_seen'];
-  
-      $line = "hashcode:\t".$hashcode."\tmanufacturer:\t".$manufacturer."\trssi:\t".$rssi."\tdistance:\t".$distance."\tlast_seen:\t".$last_seen."\n";
-      $fp = fopen('data.log', 'a');//opens file in append mode.
-      fwrite($fp, $line);
-      fclose($fp);
-    } else {
-      $dbg_error_msg .= 'beacon_type did not match ';
-    }
-  }
-} else {
-  $dbg_error_msg .= 'deviceName did not match ';
+$dbConn = getDbConn();
+if (logData($dbConn, $data)) {
+  // everything ok, data came from app, no need to do anything. Can finish the script  
+} else { // forward to normal page
+  echo '<html><head><meta http-equiv="refresh" content="0; URL=\'logging.php\'" />
+    <title>Weiterleitungsseite</title>
+  </head>
+  <body><a href="logging.php">Weiterleitung zur swimmeter logging website</a></body></html>';
 }
 
-if (strlen($dbg_error_msg) > 5) {
-  echo 'Error: '.$dbg_error_msg;
-  // $fp = fopen('data.log', 'a');//opens file in append mode.
-  // fwrite($fp, $dbg_error_msg);
-  // fclose($fp);
-}
+
 ?>

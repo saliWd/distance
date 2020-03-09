@@ -102,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
                     .title(R.string.device_name)
                     .input(
                             hint = getString(R.string.device_name),
-                            prefill = prefs.loggingDeviceName ?: "Scanner 1",
+                            prefill = prefs.loggingDeviceName ?: "widmedia_",
                             maxLength = 30,
                             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI,
                             waitForPositiveButton = true
