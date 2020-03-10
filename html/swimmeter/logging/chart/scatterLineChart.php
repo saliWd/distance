@@ -1,22 +1,23 @@
 <?php   
-/* CAT:Scatter chart */
+declare(strict_types=1);
 
-/* pChart library inclusions */
-require_once("bootstrap.php");
+spl_autoload_register(function ($class_name) {
+	$filename = str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+	include $filename;
+});
 
 use pChart\pColor;
 use pChart\pDraw;
 use pChart\pScatter;
 
-/* Create the pChart object */
-$myPicture = new pDraw(800,400);
+$myPicture = new pDraw(800,400); // width, height
 
 /* Create the X axis and the binded series */
 $Points_1 = [];
 $Points_xAxis = [];
 for($i=0;$i<=360;$i=$i+10) 
 {
-	$Points_1[] = cos(deg2rad($i))*10;
+	$Points_1[] = cos(deg2rad($i))*8;
 	$Points_xAxis[] = $i;
 }
 $myPicture->myData->addPoints($Points_1,"Probe 1");
