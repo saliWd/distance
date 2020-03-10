@@ -28,7 +28,6 @@ body {
 	margin-top: 15%;
 	margin-right: 20%;  
 	color: #F90;
-	text-align: center;  
 }
 a {
   padding: 2px 4px 1px 1px;
@@ -40,13 +39,37 @@ a:hover {
 </style>
 </head>
 <body>
-<h1 style="font-size: 150%">loggin data</h1>
-<br>
-	<p>Nothing here yet</p>	
-  <?php 
- 
-  // TODO: grab the data from db
+<div class="section categories noBottom">
+  <div class="container">
+  <h3 class="section-heading">Logging Data</h3>
 
-  ?>
-</body>
-</html>
+  <?php // declare(strict_types=1);
+  require_once('functions.php');
+  $dbConn = initialize();
+  if ($result = $dbConn->query('SELECT * FROM `swLog` WHERE 1 ORDER BY `lastSeen` DESC LIMIT 1000')) { // newest on top
+    if ($result->num_rows == 0) { // most probably a new user
+      echo '<div class="row"><div class="twelve columns linktext">nothing in DB</div></div>';
+    } else {
+      $counter = 0;
+      while ($row = $result->fetch_assoc()) {
+        echo '<div class="row">
+                <div class="halbeReihe four columns linktext">'.$row['lastSeen'].'</div>
+                <div class="halbeReihe four columns linktext">'.$row['rssi'].'</div>
+                <div class="halbeReihe four columns linktext">'.$row['deviceName'].'</div>
+              </div>'."\n";        
+      } // while    
+    } // have at least one entry
+    $result->close(); // free result set
+  } // query         
+  ?>  
+  </div>
+  <div class="section noBottom">
+    <div class="container">
+      <div class="row twelve columns"><hr /></div>
+      <div class="row">      
+        <div class="six columns"><a class="button differentColor" href="../index.html">Startseite</a></div>
+        <div class="six columns"><a class="button differentColor" href="logging.php">neu laden</a></div>
+      </div>
+    </div>
+  </div>
+</div></div></body></html>
