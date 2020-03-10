@@ -15,25 +15,28 @@ $HEIGHT = 400;
 
 $myPicture = new pDraw($WIDTH, $HEIGHT);
 
-/* Create the X axis and the binded series */
-$Points_1 = [];
-$Points_xAxis = [];
-for($i=0;$i<=360;$i=$i+10) {
-  if ($i != 30) { // test whether it's really a scatter plot
-    $Points_1[] = cos(deg2rad($i))*8;
-    $Points_xAxis[] = $i;
-  }
-}
-$myPicture->myData->addPoints($Points_1,"Probe 1");
-$myPicture->myData->addPoints($Points_xAxis,"ZeitAchse");
+// example data
+// $rssi = [];
+// $xAxis = [];
+// for($i=0;$i<=360;$i=$i+10) {  
+  // $rssi[] = cos(deg2rad($i))*8;
+  // $xAxis[] = $i;
+// }
 
-$myPicture->myData->setAxisProperties(0, ["Name" => "Index", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
+// some static data from db
+$rssi = [-51,-65,-59,-61,-68,-68,-68,-69,-68];
+$xAxis =[688,788,791,793,794,795,797,799,801]; // attention: those must be distinct, can't have two with same value
 
-$myPicture->myData->setSerieOnAxis("ZeitAchse",1);
-$myPicture->myData->setAxisProperties(1, ["Name" => "Degree", "Identity" => AXIS_Y, "Unit" => "°", "Position" => AXIS_POSITION_RIGHT]);
+$myPicture->myData->addPoints($xAxis,"time");
+$myPicture->myData->addPoints($rssi,"rssi");
+
+$myPicture->myData->setAxisProperties(0, ["Name" => "Index", "Identity" => AXIS_X, "Unit" => "s", "Position" => AXIS_POSITION_BOTTOM]);
+
+$myPicture->myData->setSerieOnAxis("rssi",1);
+$myPicture->myData->setAxisProperties(1, ["Name" => "Degree", "Identity" => AXIS_Y, "Unit" => "dBm", "Position" => AXIS_POSITION_RIGHT]);
 
 /* Create the 1st scatter chart binding */
-$myPicture->myData->setScatterSerie("Probe 1","ZeitAchse",0);
+$myPicture->myData->setScatterSerie("time","rssi",0);
 $myPicture->myData->setScatterSerieProperties(0, ["Description" => "RSSI", "Color" => new pColor(0), "Ticks" => 4]);
 
 /* Draw the background */
