@@ -16,7 +16,7 @@ $Points_1 = [];
 $Points_xAxis = [];
 for($i=0;$i<=360;$i=$i+10) 
 {
-	$Points_1[] = cos(deg2rad($i))*20;
+	$Points_1[] = cos(deg2rad($i))*10;
 	$Points_xAxis[] = $i;
 }
 $myPicture->myData->addPoints($Points_1,"Probe 1");
