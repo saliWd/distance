@@ -26,7 +26,7 @@ function doGraph(array $rssi, array $xAxis, string $title, int $width, int $heig
   $myPicture->myData->addPoints($xAxis,"time");
   $myPicture->myData->addPoints($rssi,"rssi");
   
-  $myPicture->myData->setAxisProperties(0, ["Name" => "Index", "Identity" => AXIS_X, "Unit" => "s", "Position" => AXIS_POSITION_BOTTOM]);
+  $myPicture->myData->setAxisProperties(0, ["Name" => "Index", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
   
   $myPicture->myData->setSerieOnAxis("rssi",1);
   $myPicture->myData->setAxisProperties(1, ["Name" => "Degree", "Identity" => AXIS_Y, "Unit" => "dBm", "Position" => AXIS_POSITION_RIGHT]);

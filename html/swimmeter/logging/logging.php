@@ -47,7 +47,8 @@ a:hover {
   require_once('functions.php');
   
   function preprocLastSeen(string $in): string {
-    return substr($in, 5, 8);    
+    // format like: "1583786693759", "1583831788062" where the first digits seem to be a unix timestamp and the last 3 maybe milliseconds?
+    return substr($in, 3, 7); // "158_3786693_759" cut the first 3 (158) and the last 3 digits
   }
   
   $dbConn = initialize();
@@ -64,7 +65,7 @@ a:hover {
       $row = $result->fetch_assoc(); // do it once (there is at least one result)      
       $deviceNameOld = $row['deviceName'];
       $rssi[]   = $row['rssi'];
-      $xAxisOld = $row['lastSeen'];  // ignore some digits (TBD which ones)
+      $xAxisOld = preprocLastSeen($row['lastSeen']);  // ignore some digits (TBD which ones)
       $xAxis[]  = $xAxisOld;
       
       while ($row = $result->fetch_assoc()) {
@@ -74,10 +75,10 @@ a:hover {
         }
         
         // need to ignore non-distinct values on lastSeen
-        if ($row['lastSeen'] != $xAxisOld) {
+        if (preprocLastSeen($row['lastSeen']) != $xAxisOld) {
           $deviceNameOld = $row['deviceName'];
           $rssi[]   = $row['rssi'];
-          $xAxisOld = $row['lastSeen'];
+          $xAxisOld = preprocLastSeen($row['lastSeen']);
           $xAxis[]  = $xAxisOld;
         } // else just skip
       } // while
