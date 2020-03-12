@@ -48,7 +48,7 @@ a:hover {
   $dbConn = initialize();
   if ($result = $dbConn->query('SELECT * FROM `swLog` WHERE 1 ORDER BY `lastSeen` DESC LIMIT 1000')) { // newest on top
     if ($result->num_rows == 0) { // most probably a new user
-      echo '<div class="row"><div class="twelve columns linktext">nothing in DB</div></div>';
+      echo '<div class="row twelve columns linktext">nothing in DB</div>';
     } else {
       $counter = 0;
       while ($row = $result->fetch_assoc()) {
@@ -60,7 +60,18 @@ a:hover {
       } // while    
     } // have at least one entry
     $result->close(); // free result set
-  } // query         
+  } // query 
+
+  
+  require_once('scatterLineChart.php');
+  // some static data from db
+  $rssi = [-51,-65,-59,-61,-68,-68,-68,-69,-50];
+  $xAxis =[688,788,791,793,794,795,797,799,801]; // attention: those must be distinct, can't have two with same value
+
+  doGraph($rssi, $xAxis);
+
+  echo '<div class="row twelve columns"><img src="graph.png" width="800" height="400" alt="rssi vs. time plot"></div>';  
+  
   ?>  
   </div>
   <div class="section noBottom">
