@@ -52,8 +52,17 @@ a:hover {
   }
   
   $dbConn = initialize();
+  
+  $doSafe = safeIntFromExt ('GET', 'do', 1);
+  if ($doSafe == 1) { // delete all data
+    // $result = $dbConn->query('DELETE FROM `swLog` WHERE 1')
+    echo '<div class="row twelve columns linktext">TODO: did delete all data</div>';
+  }
+  
+  
+  
   if ($result = $dbConn->query('SELECT `lastSeen`, `rssi`, `deviceName` FROM `swLog` WHERE 1 ORDER BY `lastSeen` LIMIT 1000')) { // newest at bottom
-    if ($result->num_rows == 0) { // most probably a new user
+    if ($result->num_rows == 0) { // db is empty
       echo '<div class="row twelve columns linktext">nothing in DB</div>';
     } else {
       $WIDTH = 800;
@@ -94,8 +103,9 @@ a:hover {
     <div class="container">
       <div class="row twelve columns"><hr /></div>
       <div class="row">      
-        <div class="six columns"><a class="button differentColor" href="../index.html">Startseite</a></div>
-        <div class="six columns"><a class="button differentColor" href="logging.php">neu laden</a></div>
+        <div class="four columns"><a class="button differentColor" href="../index.html">Startseite</a></div>
+        <div class="four columns"><a class="button differentColor" href="logging.php?do=1">Daten löschen</a></div>
+        <div class="four columns"><a class="button differentColor" href="logging.php">neu laden</a></div>
       </div>
     </div>
   </div>
