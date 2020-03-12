@@ -46,7 +46,7 @@ a:hover {
   <?php // declare(strict_types=1);
   require_once('functions.php');
   $dbConn = initialize();
-  if ($result = $dbConn->query('SELECT * FROM `swLog` WHERE 1 ORDER BY `lastSeen` DESC LIMIT 1000')) { // newest on top
+  if ($result = $dbConn->query('SELECT * FROM `swLog` WHERE 1 ORDER BY `lastSeen` LIMIT 1000')) { // newest at bottom
     if ($result->num_rows == 0) { // most probably a new user
       echo '<div class="row twelve columns linktext">nothing in DB</div>';
     } else {
@@ -63,8 +63,7 @@ a:hover {
   } // query 
 
   
-  require_once('scatterLineChart.php');
-  // some static data from db
+  // some static data from db. TODO: use the live data
   $rssi = [-51,-65,-59,-61,-68,-68,-68,-69,-50];
   $xAxis =[688,788,791,793,794,795,797,799,801]; // attention: those must be distinct, can't have two with same value
 
