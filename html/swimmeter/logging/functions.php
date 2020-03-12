@@ -26,14 +26,14 @@ function doGraph(array $rssi, array $xAxis, string $title, int $width, int $heig
   $myPicture->myData->addPoints($xAxis,"time");
   $myPicture->myData->addPoints($rssi,"rssi");
   
-  $myPicture->myData->setAxisProperties(0, ["Name" => "Index", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
+  $myPicture->myData->setAxisProperties(0, ["Name" => "Time", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
   
   $myPicture->myData->setSerieOnAxis("rssi",1);
-  $myPicture->myData->setAxisProperties(1, ["Name" => "Degree", "Identity" => AXIS_Y, "Unit" => "dBm", "Position" => AXIS_POSITION_RIGHT]);
+  $myPicture->myData->setAxisProperties(1, ["Name" => "RSSI", "Identity" => AXIS_Y, "Unit" => "dBm", "Position" => AXIS_POSITION_RIGHT]);
   
   /* Create the 1st scatter chart binding */
   $myPicture->myData->setScatterSerie("time","rssi",0);
-  $myPicture->myData->setScatterSerieProperties(0, ["Description" => "RSSI", "Color" => new pColor(0), "Ticks" => 4]);
+  $myPicture->myData->setScatterSerieProperties(0, ["Description" => "RSSI", "Color" => new pColor(0)]);
   
   /* Draw the background */
   $myPicture->drawFilledRectangle(0,0,$width,$height,["Color"=>new pColor(170,183,87), "Dash"=>TRUE, "DashColor"=>new pColor(190,203,107)]);
@@ -54,8 +54,8 @@ function doGraph(array $rssi, array $xAxis, string $title, int $width, int $heig
   $myScatter = new pScatter($myPicture); // Create the Scatter chart object
   $myScatter->drawScatterScale(); // Draw the scale
   $myPicture->setShadow(TRUE,["X"=>1,"Y"=>1,"Color"=>new pColor(0,0,0,10)]); // Turn on shadow computing
-  $myScatter->drawScatterLineChart(); // Draw a scatter plot chart
-  $myScatter->drawScatterLegend(280,380,["Mode"=>LEGEND_HORIZONTAL,"Style"=>LEGEND_NOBORDER]); // Draw the legend
+  $myScatter->drawScatterPlotChart(); // Draw a scatter plot chart
+  $myScatter->drawScatterLegend(80,80,["Mode"=>LEGEND_HORIZONTAL,"Style"=>LEGEND_NOBORDER]); // Draw the legend
   $myPicture->autoOutput($title.'.png'); // compression etc. at default values
 }
 
