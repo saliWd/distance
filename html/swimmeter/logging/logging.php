@@ -78,21 +78,19 @@ a:hover {
       // TODO: could be converted into a do_while?
       
       $row = $result->fetch_assoc(); // do it once (there is at least one result)            
-      $rssi[]   = $row['rssi'];
-      $xAxisOld = preprocLastSeen($row['lastSeen'], $lastSeenMin);  // ignore some digits
-      $xAxis[]  = $xAxisOld;
+      $rssi[]  = $row['rssi'];
+      $xAxis[] = preprocLastSeen($row['lastSeen'], $lastSeenMin);  // ignore some digits      
       
       while ($row = $result->fetch_assoc()) {
         $xAxisNew = preprocLastSeen($row['lastSeen'], $lastSeenMin);
-        if ($xAxisNew != $xAxisOld) { // need to ignore non-distinct values on lastSeen
+        if ($xAxisNew != end($xAxis)) { // need to ignore non-distinct values on lastSeen
           $rssi[]   = $row['rssi'];
           $xAxis[]  = $xAxisNew;
-          $xAxisOld = $xAxisNew;          
         } // else just skip
       } // while
       
       $rowHeightY = floor(($extrema['MAX(`rssi`)'] - $extrema['MIN(`rssi`)'])/$GRID_DIV);
-      $grid = array(0=>array("Min"=>0,"Max"=>$xAxisOld,"Rows"=>$GRID_DIV,"RowHeight"=>(floor($xAxisOld/$GRID_DIV))),1=>array("Min"=>$extrema['MIN(`rssi`)'],"Max"=>$extrema['MAX(`rssi`)'],"Rows"=>$GRID_DIV,"RowHeight"=>$rowHeightY));
+      $grid = array(0=>array("Min"=>0,"Max"=>end($xAxis),"Rows"=>$GRID_DIV,"RowHeight"=>(floor(end($xAxis)/$GRID_DIV))),1=>array("Min"=>$extrema['MIN(`rssi`)'],"Max"=>$extrema['MAX(`rssi`)'],"Rows"=>$GRID_DIV,"RowHeight"=>$rowHeightY));
       doGraph($rssi, $xAxis, $WIDTH, $HEIGHT, $grid);
       echo '<div class="row twelve columns u-max-full-width"><img src="out/graph.png" width="100%" alt="rssi vs. time plot"></div>';  
     } // have at least one entry
