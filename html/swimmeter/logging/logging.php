@@ -83,11 +83,11 @@ a:hover {
       $xAxis[]  = $xAxisOld;
       
       while ($row = $result->fetch_assoc()) {
-        
-        if (preprocLastSeen($row['lastSeen'], $lastSeenMin) != $xAxisOld) { // need to ignore non-distinct values on lastSeen
+        $xAxisNew = preprocLastSeen($row['lastSeen'], $lastSeenMin);
+        if ($xAxisNew != $xAxisOld) { // need to ignore non-distinct values on lastSeen
           $rssi[]   = $row['rssi'];
-          $xAxisOld = preprocLastSeen($row['lastSeen'], $lastSeenMin);
-          $xAxis[]  = $xAxisOld;
+          $xAxis[]  = $xAxisNew;
+          $xAxisOld = $xAxisNew;          
         } // else just skip
       } // while
       
