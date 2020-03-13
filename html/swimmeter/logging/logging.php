@@ -17,17 +17,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
   
 <!-- Favicon -->
-<link rel="icon" type="image/png" sizes="96x96" href="../../start/images/favicon.png">
-<link rel="stylesheet" href="../../start/css/font.css" type="text/css" />
-<link rel="stylesheet" href="../../start/css/normalize.css" type="text/css" />
-<link rel="stylesheet" href="../../start/css/skeleton.css" type="text/css" />
+<link rel="icon" type="image/png" sizes="96x96" href="../images/favicon.png">
+<link rel="stylesheet" href="../css/font.css" type="text/css" />
+<link rel="stylesheet" href="../css/normalize.css" type="text/css" />
+<link rel="stylesheet" href="../css/skeleton.css" type="text/css" />
 <style type="text/css">
 body {
-	background-color: #666;
-	margin-left: 20%;
-	margin-top: 15%;
-	margin-right: 20%;  
-	color: #F90;
+	background-color: #666;	
+	color: #f90;
 }
 a {
   padding: 2px 4px 1px 1px;
@@ -92,7 +89,7 @@ a:hover {
         } // else just skip
       } // while
       doGraph($rssi, $xAxis, $deviceNameOld, $WIDTH, $HEIGHT);
-      echo '<div class="row twelve columns"><img src="'.$deviceNameOld.'.png" width="'.$WIDTH.'" height="'.$HEIGHT.'" alt="rssi vs. time plot"></div>';  
+      echo '<div class="row twelve columns u-max-full-width"><img src="out/graph.png" width="100%" alt="rssi vs. time plot"></div>';  
     } // have at least one entry
     $result->close(); // free result set
   } // query   

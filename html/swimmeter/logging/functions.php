@@ -79,6 +79,6 @@ function doGraph(array $rssi, array $xAxis, string $title, int $width, int $heig
   $myPicture->setShadow(TRUE,["X"=>1,"Y"=>1,"Color"=>new pColor(0,0,0,10)]); // Turn on shadow computing
   $myScatter->drawScatterPlotChart(); // Draw a scatter plot chart
   $myScatter->drawScatterLegend(80,80,["Mode"=>LEGEND_HORIZONTAL,"Style"=>LEGEND_NOBORDER]); // Draw the legend
-  $myPicture->autoOutput($title.'.png'); // compression etc. at default values
+  $myPicture->autoOutput('out/graph.png'); // compression etc. at default values
 }
 
