@@ -62,8 +62,8 @@ a:hover {
     if ($result->num_rows == 0) { // db is empty
       echo '<div class="row twelve columns linktext">nothing in DB</div>';
     } else {
-      $WIDTH = 800;
-      $HEIGHT = 400;
+      $WIDTH = 1200;
+      $HEIGHT = 800;
       $rssi = [];
       $xAxis = [];
       // TODO: could be converted into a do_while?
