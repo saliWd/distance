@@ -43,52 +43,57 @@ a:hover {
   <?php // declare(strict_types=1);
   require_once('functions.php');
   
-  function preprocLastSeen(string $in): string {
-    // format like: "1583786693759", "1583831788062" where the first digits seem to be a unix timestamp and the last 3 maybe milliseconds?
-    return substr($in, 3, 7); // "158_3786693_759" cut the first 3 (158) and the last 3 digits
+  function preprocLastSeen(string $in, int $min): int {
+    return ((int)$in - $min);
+    //return substr($in, 7, 3); // "158_3786693_759" cut the first 3 (158) and the last 3 digits
   }
   
   $dbConn = initialize();
   
   $doSafe = safeIntFromExt ('GET', 'do', 1);
-  if ($doSafe == 1) { // delete all data
-    // $result = $dbConn->query('DELETE FROM `swLog` WHERE 1')
-    echo '<div class="row twelve columns linktext">TODO: did delete all data</div>';
+  if ($doSafe == 1) { // delete all data    
+    if ($dbConn->query('DELETE FROM `swLog` WHERE 1')) {
+      echo '<div class="row twelve columns linktext">did delete all data</div>';
+    } else {
+      echo '<div class="row twelve columns linktext">error, could not delete data</div>';
+    }
   }
   
   
   
-  if ($result = $dbConn->query('SELECT `lastSeen`, `rssi`, `deviceName` FROM `swLog` WHERE 1 ORDER BY `lastSeen` LIMIT 1000')) { // newest at bottom
-    if ($result->num_rows == 0) { // db is empty
-      echo '<div class="row twelve columns linktext">nothing in DB</div>';
+  if ($result = $dbConn->query('SELECT `lastSeen`, `rssi` FROM `swLog` WHERE 1 ORDER BY `lastSeen` LIMIT 1000')) { // newest at bottom
+    if ($result->num_rows < 3) { // db is empty or almost empty
+      echo '<div class="row twelve columns linktext">less than 3 results in DB</div>';
     } else {
+      
+      $resultExtrema = $dbConn->query('SELECT MIN(`lastSeen`), MIN(`rssi`), MAX(`rssi`) FROM `swLog` WHERE 1');
+      $extrema = $resultExtrema->fetch_assoc();
+      $lastSeenMin = (int)$extrema['MIN(`lastSeen`)'];
+      
       $WIDTH = 1200;
       $HEIGHT = 800;
+      $GRID_DIV = 7; // resulting in 'one more' axis labels
       $rssi = [];
       $xAxis = [];
       // TODO: could be converted into a do_while?
       
-      $row = $result->fetch_assoc(); // do it once (there is at least one result)      
-      $deviceNameOld = $row['deviceName'];
+      $row = $result->fetch_assoc(); // do it once (there is at least one result)            
       $rssi[]   = $row['rssi'];
-      $xAxisOld = preprocLastSeen($row['lastSeen']);  // ignore some digits (TBD which ones)
+      $xAxisOld = preprocLastSeen($row['lastSeen'], $lastSeenMin);  // ignore some digits
       $xAxis[]  = $xAxisOld;
       
       while ($row = $result->fetch_assoc()) {
         
-        if ($row['deviceName'] != $deviceNameOld) {
-          // TODO: whenever there is a change in device name, I want a new graph
-        }
-        
-        // need to ignore non-distinct values on lastSeen
-        if (preprocLastSeen($row['lastSeen']) != $xAxisOld) {
-          $deviceNameOld = $row['deviceName'];
+        if (preprocLastSeen($row['lastSeen'], $lastSeenMin) != $xAxisOld) { // need to ignore non-distinct values on lastSeen
           $rssi[]   = $row['rssi'];
-          $xAxisOld = preprocLastSeen($row['lastSeen']);
+          $xAxisOld = preprocLastSeen($row['lastSeen'], $lastSeenMin);
           $xAxis[]  = $xAxisOld;
         } // else just skip
       } // while
-      doGraph($rssi, $xAxis, $deviceNameOld, $WIDTH, $HEIGHT);
+      
+      $rowHeightY = floor(($extrema['MAX(`rssi`)'] - $extrema['MIN(`rssi`)'])/$GRID_DIV);
+      $grid = array(0=>array("Min"=>0,"Max"=>$xAxisOld,"Rows"=>$GRID_DIV,"RowHeight"=>(floor($xAxisOld/$GRID_DIV))),1=>array("Min"=>$extrema['MIN(`rssi`)'],"Max"=>$extrema['MAX(`rssi`)'],"Rows"=>$GRID_DIV,"RowHeight"=>$rowHeightY));
+      doGraph($rssi, $xAxis, $WIDTH, $HEIGHT, $grid);
       echo '<div class="row twelve columns u-max-full-width"><img src="out/graph.png" width="100%" alt="rssi vs. time plot"></div>';  
     } // have at least one entry
     $result->close(); // free result set

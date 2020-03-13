@@ -20,7 +20,7 @@ function logData (object $dbConn, $data): bool {
       if (strcmp($url, 'https://www.widmedia.ch') == 0) { // now we are sure that my app did send my beacon
         $rssi = $beacon['rssi'];
         $distance = $beacon['distance'];
-        $lastSeen = $beacon['last_seen'];
+        $lastSeen = substr($beacon['last_seen'], 0, -3); // ignore the last 3 digits
         
         return storeInDb($dbConn, $deviceName, $rssi, $distance, $lastSeen);        
       } // if

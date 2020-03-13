@@ -43,16 +43,16 @@ use pChart\pColor;
 use pChart\pDraw;
 use pChart\pScatter;
 
-function doGraph(array $rssi, array $xAxis, string $title, int $width, int $height): void {
+function doGraph(array $rssi, array $xAxis, int $width, int $height, array $grid): void {
   $myPicture = new pDraw($width, $height);
 
   $myPicture->myData->addPoints($xAxis,"time");
   $myPicture->myData->addPoints($rssi,"rssi");
   
-  $myPicture->myData->setAxisProperties(0, ["Name" => "Time", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
+  $myPicture->myData->setAxisProperties(0, ["Name" => "Zeit [sec]", "Identity" => AXIS_X, "Position" => AXIS_POSITION_BOTTOM]);
   
   $myPicture->myData->setSerieOnAxis("rssi",1);
-  $myPicture->myData->setAxisProperties(1, ["Name" => "RSSI", "Identity" => AXIS_Y, "Unit" => "dBm", "Position" => AXIS_POSITION_RIGHT]);
+  $myPicture->myData->setAxisProperties(1, ["Name" => "RSSI [dBm]", "Identity" => AXIS_Y, "Position" => AXIS_POSITION_RIGHT]);
   
   /* Create the 1st scatter chart binding */
   $myPicture->myData->setScatterSerie("time","rssi",0);
@@ -69,13 +69,17 @@ function doGraph(array $rssi, array $xAxis, string $title, int $width, int $heig
   $myPicture->setFontProperties(["FontName"=>"Cairo-Regular.ttf"]);
   
   $myPicture->setFontProperties(["FontSize"=>20]); // title is bigger
-  $myPicture->drawText(20,35,$title.': RSSI versus Zeit',["Color"=>new pColor(255)]);
+  $myPicture->drawText(20,32,'RSSI versus Zeit',["Color"=>new pColor(255)]);
   $myPicture->setFontProperties(["FontSize"=>14]); // back to normal size
   
   $myPicture->drawRectangle(0,0,$width-1,$height-1,["Color"=>new pColor(0)]); // Add a border to the picture
-  $myPicture->setGraphArea(50,50,$width-100,$height-150); // Set the graph area
+  $myPicture->setGraphArea(50,50,$width-80,$height-80); // Set the graph area
   $myScatter = new pScatter($myPicture); // Create the Scatter chart object
-  $myScatter->drawScatterScale(); // Draw the scale
+
+  $ScaleSettings = array("Mode"=>SCALE_MODE_MANUAL,"ManualScale"=>$grid);
+  $myScatter->drawScatterScale($ScaleSettings); 
+  
+  
   $myPicture->setShadow(TRUE,["X"=>3,"Y"=>3,"Color"=>new pColor(0,0,0,10)]); // Turn on shadow computing
   $myScatter->drawScatterPlotChart(); // Draw a scatter plot chart  
   $myPicture->autoOutput('out/graph.png'); // compression etc. at default values
