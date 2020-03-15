@@ -24,6 +24,10 @@ copy /Y logo_0048.png ..\androidApp\app\src\main\res\mipmap-mdpi\ic_launcher.png
 :: google play logo
 copy /Y logo_0512.png ..\googlePlay\logo\wave.png
 
+:: favicon for website
+copy /Y logo_0096.png ..\html\swimmeter\images\favicon.png
+
+
 IF %ERRORLEVEL% NEQ 0 (
   ECHO Error - copy returned errorlevel %ERRORLEVEL%
   GOTO :someError 

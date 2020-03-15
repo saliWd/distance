@@ -1,5 +1,7 @@
 <?php // declare(strict_types=1);
-// TODO: strict types does not work...
+  // TODO: strict types does not work...
+  require_once('functions.php');
+  $dbConn = initialize();
 
 // this site is called directly from within the app. There is POST variable with a json, containing the beacon data
 // need to extract the correct data and store it into a db
@@ -18,7 +20,7 @@ function logData (object $dbConn, $data): bool {
       if (strcmp($url, 'https://www.widmedia.ch') == 0) { // now we are sure that my app did send my beacon
         $rssi = $beacon['rssi'];
         $distance = $beacon['distance'];
-        $lastSeen = $beacon['last_seen'];
+        $lastSeen = substr($beacon['last_seen'], 0, -3); // ignore the last 3 digits
         
         return storeInDb($dbConn, $deviceName, $rssi, $distance, $lastSeen);        
       } // if
@@ -34,22 +36,12 @@ function errorToFile($errorNum): bool {
   return false;
 }
 
-function getDbConn () {
-  require_once('../../start/php/dbConn.php'); // this will return the $dbConn variable as 'new mysqli'
-  // NB: this file is not included in the git repository, have to create it yourself (content like: $dbConn = new mysqli("localhost", "DBNAME", "PW", "USER", 3306);)
-  if ($dbConn->connect_error) {
-    die();
-  }
-  $dbConn->set_charset('utf8');
-  return $dbConn;
-}
-
 // DeviceName:widmedia_s6, rssi:-66, distance:11.095192891072, last_seen:1583761614714
 function storeInDb (object $dbConn, $deviceName, $rssi, $distance, $lastSeen): bool {
   $safeA = mysqli_real_escape_string($dbConn, $deviceName);
   $safeB = mysqli_real_escape_string($dbConn, $rssi); // this is more precise than the distance
   $safeC = mysqli_real_escape_string($dbConn, $distance);
-  $safeD = mysqli_real_escape_string($dbConn, $lastSeen); // maybe could be covered with the database timestamp?
+  $safeD = mysqli_real_escape_string($dbConn, $lastSeen); // cut the last 3 digits and it seems like a unix timestamp
   
   $result = $dbConn->query('INSERT INTO `swLog` (`deviceName`, `rssi`, `distance`, `lastSeen`) VALUES ("'.$safeA.'", "'.$safeB.'", "'.$safeC.'", "'.$safeD.'")');      
   if (!$result) { return errorToFile(4); }
@@ -57,7 +49,6 @@ function storeInDb (object $dbConn, $deviceName, $rssi, $distance, $lastSeen): b
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$dbConn = getDbConn();
 if (logData($dbConn, $data)) {
   // everything ok, data came from app, no need to do anything. Can finish the script  
 } else { // forward to normal page

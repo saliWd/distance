@@ -38,7 +38,9 @@
 
 ## Webpage
 
-[https://widmedia.ch/swimmeter](https://widmedia.ch/swimmeter) is the main page. /swim and /SwimMeter are forwarding to it.
+* [https://widmedia.ch/swimmeter](https://widmedia.ch/swimmeter) is the main page. /swim and /SwimMeter are forwarding to it.
+* logging display is on [swimmeter/logging/](https://widmedia.ch/swimmeter/logging/)
+* RSSI-vs.-Time graph tool is extracted from pChart2.0-for-PHP7
 
 ## TODO
 
