@@ -1,7 +1,7 @@
 <resources>
     <string name="settings">Einstellungen</string>
     <string name="enable">Aktivieren</string>
-    <string name="enable_permission_from_settings">Please enable location permission from settings to use the bluetooth</string>
+    <string name="enable_permission_from_settings">Bitte Standorterkennung zulassen (Einstellungen) um Bluetooth zu verwenden</string>
     <string name="bluetooth_disabled">Bluetooth ausgeschaltet</string>
     <string name="turning_bluetooth_off">Bluetooth wird ausgeschaltet …</string>
     <string name="bluetooth_enabled">Bluetooth eingeschaltet</string>
@@ -13,7 +13,7 @@
     <string name="metters_abbreviation">m</string>
 
     <string name="eddystone_uid">Eddystone-UID</string>
-    <string name="eddystone_url">V1-Eddystone-URL</string>
+    <string name="eddystone_url">Eddystone-URL</string>
     <string name="clear">Löschen</string>
     <string name="no_scanned_beacons_yet">Noch keine Beacons gefunden!</string>
     <string name="empty_state_content">Anscheinend noch nichts gefunden!</string>
@@ -76,14 +76,14 @@
     <string name="humidity_title">Feuchtigkeit</string>
 
     <string name="remove_from_the_list">von Liste löschen</string>
-    <string name="copy_infos_to_clipboard">In Zwischenablage kopieren</string>
-    <string name="add_to_the_blocked_list">Zur Blockliste hinzufügen</string>
+    <string name="copy_infos_to_clipboard">in Zwischenablage kopieren</string>
+    <string name="add_to_the_blocked_list">zur Blockliste hinzufügen</string>
     <string name="the_informations_has_been_copied">Wurde in Zwischenablage kopiert!</string>
-    <string name="blacklist">Blacklist</string>
+    <string name="blacklist">Blockierte Beacons</string>
     <string name="see_the_blocked_beacons">Blockierte Beacons anschauen</string>
     <string name="no_blocked_beacons">Noch keine blockierten Beacons!</string>
     <string name="unblock">Blockierung aufheben</string>
     <string name="open_source">Open source</string>
     <string name="open_source_descr">Diese App ist open source! Willst du mehr Details sehen oder die App an deine Bedürfnisse anpassen?</string>
-    <string name="prevent_sleep_descr">Während dem Scanning wird dein Gerät nicht in den Schlafzustand versetzt werden</string>
+    <string name="prevent_sleep_descr">Während dem Scanning wird dein Gerät nicht in den Schlafzustand versetzt</string>
 </resources>
