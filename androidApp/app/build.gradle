@@ -10,8 +10,8 @@ android {
         applicationId 'ch.widmedia.swimmeter'
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 33
-        versionName "0.3.3"
+        versionCode 34
+        versionName "0.3.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -82,7 +82,7 @@ dependencies {
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
 
     // Constraint Layout
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
 
     // Flexbox layout
     implementation 'com.google.android:flexbox:1.1.0'
