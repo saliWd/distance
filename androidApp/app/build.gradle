@@ -29,7 +29,7 @@ android {
 }
 
 ext {
-    roomVersion = '2.2.4'
+    roomVersion = '2.2.5'
 }
 
 dependencies {
