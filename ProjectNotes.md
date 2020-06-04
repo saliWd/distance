@@ -120,7 +120,7 @@ Nordicsemi devkit: CHF 68 at [Farnell](https://ch.farnell.com/nordic-semiconduct
 ### Taiyo Yuden adaptions
 
 example code about the 32 kHz crystal osc: page 27 in [NZWW data report](https://www.yuden.co.jp/wireless_module/document/datareport2/en/TY_BLE_EYSLSNZWW_DataReport_V1_0_20190227E.pdf)
-From FQA: _each BLE module has an internal 32MHz crystal. Please note, Nordic's nRF51DK (evaluation board) and nRF51 sample applications included in SDK are designed to run on a 16MHz clock. Since TAIYO YUDEN modules run on a 32MHz clock, Nordic's nRF51 sample applications will need some modification in order for it to work on TAIYO YUDEN modules._
+_From FQA: each BLE module has an internal 32MHz crystal. Please note, Nordic's nRF51DK (evaluation board) and nRF51 sample applications included in SDK are designed to run on a 16MHz clock. Since TAIYO YUDEN modules run on a 32MHz clock, Nordic's nRF51 sample applications will need some modification in order for it to work on TAIYO YUDEN modules._
 
 _To fix this issue, we need to write the value 0xFFFFFF00 to the UICR (User Information Configuration Register) at address 0x10001008. Please note that the UICR is erased whenever you download a SoftDevice._
 
