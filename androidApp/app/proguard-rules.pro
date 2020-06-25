@@ -36,11 +36,6 @@
 -keep public class com.google.android.gms.* { public *; }
 -dontwarn com.google.android.gms.**
 
-# Crashlytics
--keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
--keep public class * extends java.lang.Exception
-
 -keep class com.google.android.gms.measurement.** { *; }
 -dontwarn com.google.android.gms.measurement.**
 
