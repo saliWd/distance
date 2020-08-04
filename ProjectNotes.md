@@ -1,6 +1,6 @@
 # Project documentation
 
-1. This file: on github project, user: saliWd. Project name: SwimMeter (alternative: WellenLänge)
+* Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
 ## nRF52840 Dongle
 
@@ -44,36 +44,42 @@
 
 ## TODO
 
+1. app
+   1. logging to file/ram, then send the whole array of logdata as JSON object (instead of single logs)
+   1. reduce imports (don't understand most of it)
+   1. data privacy text
+1. website
+   1. (maybe) improve logging graph display
+1. beacon
+   1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
+      1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
+      1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
+      1. button_init(): init and enable buttons are activated.
+      1. scheduler_init(): allocates a buffer, related to SCHED_MAX_EVENT_DATA_SIZE / SCHED_QUEUE_SIZE. Not fully clear which different tasks are scheduled.
+      1. power_management_init(): unclear (apart from the self-explanatory function name)
+      1. ble_stack_init(): sets up number of connections, what roles (peripheral or whatnot), does register a handler for BLE events.
+      1. TODO. gap_params_init(): will set up all the necessary GAP (Generic Access Profile) parameters of the device and sets the permissions and appearance. Probably the part to adapt, e.g. sets the device name (SwimCounter). Uses values defined in es_app_config.h.
+      1. gatt_init(): GATT = generic attribute profile, specifies the structure in which profile data is exchanged. Seems like it's not intended to be configurable.
+      1. conn_params_init(): update delays and update counts are configured here.
+      1. TODO. nrf_ble_es_init(on_es_evt): argument is the function handler (or address of the function defined in the same file). Sets up security stuff and lot more, es_event here seems like 'big' events, like connectable_started, connectable_stopped.
+      1. for(ever) loop idle_state_handle(): call event handler and pwr management. Makes sense.
+         1. app_sched_execute(): processes the event queue one after the other while not empty
+         1. nrf_pwr_mgmt_run(): waiting for an event from the softdevice. Does some power management stuff like sleep, runs cpu usage monitors.
+   1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm). --> changing APP_CFG_DEFAULT_RADIO_TX_POWER value does not help. Try with the app, on a more recent android.
+   1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
+1. filed trial: waterproof setup
+1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )
+   need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
+
+## Done
+
 1. website
    1. implement json endpoint (like webhook.site) and display the stuff
 1. app stuff
    1. implement some functionality
    1. tablet screenshot
    1. test translate stuff, second language (de)
-   1. data privacy text
-1. adapt / understand eddystone example more -> adapt to taiyo yuden, have board definition there
-   1. timers_init(): sets up RTC and IRQ priorities. Doesn't seem like much application specific
-   1. leds_init(): bsp_init (bsp = board support package?), does buttons and LEDs stuff, depending on board specifics. app_button_init / app_button_enable / app_timer_create. So, init, enable idn timer buttons and some LED.
-   1. button_init(): init and enable buttons are activated.
-   1. scheduler_init(): allocates a buffer, related to SCHED_MAX_EVENT_DATA_SIZE / SCHED_QUEUE_SIZE. Not fully clear which different tasks are scheduled.
-   1. power_management_init(): unclear (apart from the self-explanatory function name)
-   1. ble_stack_init(): sets up number of connections, what roles (peripheral or whatnot), does register a handler for BLE events.
-   1. TODO. gap_params_init(): will set up all the necessary GAP (Generic Access Profile) parameters of the device and sets the permissions and appearance. Probably the part to adapt, e.g. sets the device name (SwimCounter). Uses values defined in es_app_config.h.
-   1. gatt_init(): GATT = generic attribute profile, specifies the structure in which profile data is exchanged. Seems like it's not intended to be configurable.
-   1. conn_params_init(): update delays and update counts are configured here.
-   1. TODO. nrf_ble_es_init(on_es_evt): argument is the function handler (or address of the function defined in the same file). Sets up security stuff and lot more, es_event here seems like 'big' events, like connectable_started, connectable_stopped.
-   1. for(ever) loop idle_state_handle(): call event handler and pwr management. Makes sense.
-      1. app_sched_execute(): processes the event queue one after the other while not empty
-      1. nrf_pwr_mgmt_run(): waiting for an event from the softdevice. Does some power management stuff like sleep, runs cpu usage monitors.
-1. distance 'calibration' (change the value at 0m): measure the power at 1m, add 41 dBm to this value. The value is a signed 8 bit integer (0x12 is interpreted as +18dBm, 0xEE is interpreted as -18dBm). --> changing APP_CFG_DEFAULT_RADIO_TX_POWER value does not help. Try with the app, on a more recent android.
-1. nRF beacon for Eddystone does not work on the S6 (Error 22). Did work once though, on the Huawei maybe?
-1. trial in pool, acquire some rssi data. As a first trial, just pack everything into my swimming bag. Next step: waterproof setup
-1. get the taiyo yuden running (see [adaptions](#Taiyo-Yuden-adaptions) )
-   need the s112? Maybe nRF5SDK16\ble_app_beacon\pca10056e\s112\ses or nRF5SDK**15**\nrf52-ble-tutorial-advertising\pca10040e\s112\ses
-
-## Done
-
-1. app stuff: start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (or maybe this one: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
+   1. start with [beacon scanner](https://github.com/Bridouille/android-beacon-scanner) (previous alternative: [github BLE library](https://github.com/alt236/Bluetooth-LE-Library---Android) ).
    1. googlePlay: description in DE (auto-translated otherwise)
    1. icon/icon-foreground (192-432/144-324/96-216/72-162/48-108). GooglePlay logo: 512
    1. remove any warnings on the beacon scanner app (one remaining, guess I can ignore it)
@@ -87,6 +93,7 @@
    * +Better setup / -Will not be used in the end / +Will learn about BLE etc. / +Better setup compared to Android studio (which cannot run on simulator, for bluetooth access I guess)
 1. documentation. The github md file?
 1. not doing it, working with other examples: ~~port the ble-tutorial-advertising to SDK16. Understand the code of this example~~
+1. field trial: acquire some rssi data. As a first trial, just pack everything into my swimming bag.
 1. [nRF command line tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download#infotabs)
 1. laptop: segger license (hooked to bluetooth connection, not ideal)
 1. Mobile (Galaxy S6) apparently only has bluetooth 4.1. should be enough though to receive any beacon variety
