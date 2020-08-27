@@ -1,6 +1,5 @@
 <resources>
     <string name="settings">Einstellungen</string>
-    <string name="app_name">Swim Meter</string>
     <string name="enable">Aktivieren</string>
     <string name="enable_permission_from_settings">Bitte Standorterkennung zulassen (Einstellungen) um Bluetooth zu verwenden</string>
     <string name="bluetooth_disabled">Bluetooth ausgeschaltet</string>
@@ -12,7 +11,6 @@
     <string name="altbeacon">ALTbeacon</string>
     <string name="ibeacon">iBeacon</string>
     <string name="metters_abbreviation">m</string>
-
     <string name="eddystone_uid">Eddystone-UID</string>
     <string name="eddystone_url">Eddystone-URL</string>
     <string name="clear">Löschen</string>

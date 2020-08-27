@@ -104,7 +104,7 @@ class ControlsBottomSheetDialog : RoundedBottomSheetDialog() {
                         .subscribe({
                             val clipboard = ctx.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                             val clip = ClipData.newPlainText("Beacon infos", it.toJson())
-                            clipboard.primaryClip = clip
+                            clipboard.setPrimaryClip(clip)
 
                             dismissAllowingStateLoss()
                             (activity as? BeaconListActivity)?.showGenericError(ctx.getString(R.string.the_informations_has_been_copied)) ?:

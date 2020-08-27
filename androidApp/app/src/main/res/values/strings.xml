@@ -1,6 +1,5 @@
 <resources>
     <string name="settings">Settings</string>
-    <string name="app_name">Swim Meter</string>
     <string name="enable">Enable</string>
     <string name="enable_permission_from_settings">Please enable location permission from settings to use the bluetooth</string>
     <string name="bluetooth_disabled">Bluetooth disabled</string>
