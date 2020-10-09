@@ -85,8 +85,8 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:input:3.1.1'
 
     // Firebase Analytics & Crash reporting
-    implementation 'com.google.firebase:firebase-core:17.4.2'
-    implementation "com.google.firebase:firebase-crash:16.2.1"
+    //implementation 'com.google.firebase:firebase-core:17.4.2'
+    //implementation "com.google.firebase:firebase-crash:16.2.1"
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'

@@ -300,6 +300,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	
 	fun logToWebhookIfNeeded() {
 		if (prefs.isLoggingEnabled && prefs.loggingEndpoint != null &&
+				// need to replace the line below with an activity from a 'do logging now' button
 			++numberOfScansSinceLog >= prefs.getLoggingFrequency()) {
 			
 			numberOfScansSinceLog = 0

@@ -46,7 +46,7 @@
 
 1. app
    1. logging to file/ram, then send the whole array of logdata as JSON object (instead of single logs)
-   1. reduce imports (don't understand most of it)
+   1. reduce imports (don't understand most of it). Crashlytics is part of firebase. Get rid of that.
    1. data privacy text
 1. website
    1. (maybe) improve logging graph display
