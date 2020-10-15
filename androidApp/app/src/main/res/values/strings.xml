@@ -85,5 +85,4 @@
     <string name="open_source">Open source</string>
     <string name="open_source_descr">This app is open source! Want to see how it works under the hood or customize it to fits your needs?</string>
     <string name="prevent_sleep_descr">While scanning, the device won\'t be put in sleep mode</string>
-    <string name="app_name">SwimMeter</string>
 </resources>
