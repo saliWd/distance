@@ -363,7 +363,7 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 	private fun showLoggingError() = Snackbar.make(root_view, getString(R.string.logging_error_please_check), Snackbar.LENGTH_LONG).show()
 	
 	private fun showScanningState(state: Boolean) {
-		toolbar.title = getString(if (state) R.string.scanning_for_beacons else R.string.app_name)
+		toolbar.title = getString(if (state) R.string.scanning_for_beacons else R.string.applicationName)
 		progress_1.visibility = if (state) View.VISIBLE else View.GONE
 		progress_2.visibility = if (state) View.VISIBLE else View.GONE
 		
