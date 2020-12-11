@@ -6,17 +6,16 @@ class Form(QDialog):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         self.setWindowTitle("Player Control")
-        # Create widgets
-        # self.edit = QLineEdit("Write my name here..")
-        self.buttonNext = QPushButton("Next song")
-        # self.buttonNext.direction = "next" # does not help
+        
+        # Create two buttons
+        self.buttonNext = QPushButton("Next song") # self.buttonNext.direction = "next" # does not help
         self.buttonPrev = QPushButton("Previous song")        
         
         # Create layout and add widgets
         layout = QVBoxLayout()
-        # layout.addWidget(self.edit)
         layout.addWidget(self.buttonNext)
         layout.addWidget(self.buttonPrev)
+
         # Set dialog layout
         self.setLayout(layout)
         
@@ -24,10 +23,6 @@ class Form(QDialog):
         self.buttonNext.clicked.connect(self.cmdGotoNext)
         self.buttonPrev.clicked.connect(self.cmdGotoPrev)
         
-    # Greets the user
-    # def greetings(self):
-    #   print ("Hello {}".format(self.edit.text()))    
-
     def cmdGotoPrev(self): # self is required as an argument      
       printDirection("previous")
         
@@ -37,7 +32,6 @@ class Form(QDialog):
 # global
 def printDirection(direction):
   print ("skipping to " + direction + " song ")    
-      
 
 if __name__ == '__main__':
     # Create the Qt Application
