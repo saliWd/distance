@@ -9,9 +9,8 @@ class Form(QDialog):
         # Create widgets
         # self.edit = QLineEdit("Write my name here..")
         self.buttonNext = QPushButton("Next song")
-        self.buttonNext.direction = "next"
-        self.buttonPrev = QPushButton("Previous song")
-        self.buttonPrev.direction = "previous"
+        # self.buttonNext.direction = "next" # does not help
+        self.buttonPrev = QPushButton("Previous song")        
         
         # Create layout and add widgets
         layout = QVBoxLayout()
@@ -22,20 +21,23 @@ class Form(QDialog):
         self.setLayout(layout)
         
         # Add button connection
-        self.buttonNext.clicked.connect(self.cmdGoto)
-        self.buttonPrev.clicked.connect(self.cmdGotoLast)
+        self.buttonNext.clicked.connect(self.cmdGotoNext)
+        self.buttonPrev.clicked.connect(self.cmdGotoPrev)
         
     # Greets the user
     # def greetings(self):
     #   print ("Hello {}".format(self.edit.text()))    
 
-    def cmdGotoLast(self): # self is required as an argument
-      print ("skipping to previous song ")    
+    def cmdGotoPrev(self): # self is required as an argument      
+      printDirection("previous")
         
-    def cmdGoto(self):
-      print ("skipping to " + self.buttonNext.direction + " song ") # does not help that much as I need to specify the buttonNext   
-    
+    def cmdGotoNext(self):
+      printDirection("next")
 
+# global
+def printDirection(direction):
+  print ("skipping to " + direction + " song ")    
+      
 
 if __name__ == '__main__':
     # Create the Qt Application
