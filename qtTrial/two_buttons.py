@@ -1,16 +1,16 @@
 import sys
-from PySide6.QtWidgets import (QLineEdit, QPushButton, QApplication, QVBoxLayout, QDialog)
-    
+from PySide6.QtWidgets import (QPushButton, QApplication, QVBoxLayout, QDialog)
+
 class Form(QDialog):
 
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         self.setWindowTitle("Player Control")
-        
+
         # Create two buttons
-        self.buttonNext = QPushButton("Next song") # self.buttonNext.direction = "next" # does not help
+        self.buttonNext = QPushButton("Next song")
         self.buttonPrev = QPushButton("Previous song")        
-        
+
         # Create layout and add widgets
         layout = QVBoxLayout()
         layout.addWidget(self.buttonNext)
@@ -18,11 +18,12 @@ class Form(QDialog):
 
         # Set dialog layout
         self.setLayout(layout)
-        
+
         # Add button connection
         self.buttonNext.clicked.connect(self.cmdGotoNext)
         self.buttonPrev.clicked.connect(self.cmdGotoPrev)
-        
+
+
     def cmdGotoPrev(self): # self is required as an argument      
       printDirection("previous")
         
