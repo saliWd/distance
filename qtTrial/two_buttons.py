@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (QPushButton, QApplication, QVBoxLayout, QDialog)
 class Form(QDialog):
     "defines the buttons and the layouts and stuff"
     def __init__(self, parent=None):
-        super(Form, self).__init__(parent)
+        super().__init__(parent)
         self.setWindowTitle("Player Control")
 
         # Create two buttons
@@ -21,11 +21,12 @@ class Form(QDialog):
         self.setLayout(layout)
 
         # Add button connection
+        # pylint: disable=no-member
         self.button_next.clicked.connect(self.cmd_goto_next)
         self.button_prev.clicked.connect(self.cmd_goto_prev)
 
 
-    def cmd_goto_prev(self): # self is required as an argument
+    def cmd_goto_prev(self): # self is required as an argument. Not working with it though
         "actions when the previous button is pressed"
         print_direction("previous")
 
