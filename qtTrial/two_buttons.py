@@ -26,19 +26,23 @@ class Form(QDialog):
         self.button_prev.clicked.connect(self.cmd_goto_prev)
 
 
-    def cmd_goto_prev(self): # self is required as an argument. Not working with it though
+    @classmethod
+    def cmd_goto_prev(cls):
         "actions when the previous button is pressed"
-        print_direction("previous")
+        cls.print_direction("previous")
 
 
-    def cmd_goto_next(self):
+    @classmethod
+    def cmd_goto_next(cls):
         "actions when the next button is pressed"
-        print_direction("next")
+        cls.print_direction("next")
 
-# global
-def print_direction(direction):
-    "outputs on the console"
-    print ("skipping to " + direction + " song ")
+
+    @classmethod
+    def print_direction(cls, direction):
+        "outputs on the console"
+        print ("skipping to " + direction + " song ")
+
 
 if __name__ == '__main__':
     # Create the Qt Application
