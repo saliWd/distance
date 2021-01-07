@@ -1,16 +1,13 @@
 "A gui for a music player using QT on python."
 import sys
-from PySide6.QtWidgets import (QPushButton, QApplication, QVBoxLayout, QDialog)
-
-# pip install pyside6
-# Does not work on raspberry os though... (neither does the older 'pyside2')
-# pyside2 should work, requires python 3.5+
+from PyQt5.QtWidgets import (QPushButton, QApplication, QLabel, QVBoxLayout, QDialog)
+# pip install pyqt5
 
 class Form(QDialog):
     "defines the buttons and the layouts and stuff"
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Player Control")
+        self.setWindowTitle("Player Control") # TODO: doesn't work on pyqt5
 
         # Create two buttons
         self.button_next = QPushButton("Next song")
@@ -50,7 +47,7 @@ class Form(QDialog):
 
 if __name__ == '__main__':
     # Create the Qt Application
-    app = QApplication(sys.argv)
+    app = QApplication(sys.argv)    
     # Create and show the form
     form = Form()
     form.show()
