@@ -1,13 +1,22 @@
 "A gui for a music player using QT on python."
 import sys
-from PyQt5.QtWidgets import (QPushButton, QApplication, QLabel, QVBoxLayout, QDialog)
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import (QPushButton, QApplication, QVBoxLayout, QDialog)
 # pip install pyqt5
+# or on rasp:
+# sudo apt-get update
+# sudo apt-get install qt5-default pyqt5-dev pyqt5-dev-tools
+#
+# pylint issue: "python.linting.pylintArgs": [
+#    "--extension-pkg-whitelist=PyQt5"
+#],
 
 class Form(QDialog):
     "defines the buttons and the layouts and stuff"
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Player Control") # TODO: doesn't work on pyqt5
+        self.setWindowTitle('Player')
+        self.setMinimumWidth(150) # in px. To make sure the title is displayed
 
         # Create two buttons
         self.button_next = QPushButton("Next song")
@@ -47,7 +56,7 @@ class Form(QDialog):
 
 if __name__ == '__main__':
     # Create the Qt Application
-    app = QApplication(sys.argv)    
+    app = QApplication(sys.argv)
     # Create and show the form
     form = Form()
     form.show()
