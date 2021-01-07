@@ -1,7 +1,7 @@
 "A gui for a music player using QT on python."
 import sys
-from PyQt5.QtGui import *
 from PyQt5.QtWidgets import (QPushButton, QApplication, QVBoxLayout, QDialog)
+from PyQt5.QtCore import (Qt)
 # pip install pyqt5
 # or on rasp:
 # sudo apt-get update
@@ -16,7 +16,9 @@ class Form(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Player')
-        self.setMinimumWidth(150) # in px. To make sure the title is displayed
+        self.setMinimumWidth(180) # in px. To make sure the title is displayed
+        window_flags = Qt.WindowSystemMenuHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint
+        self.setWindowFlags(window_flags) # remove the help-question mark button on the window
 
         # Create two buttons
         self.button_next = QPushButton("Next song")
