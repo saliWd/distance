@@ -9,6 +9,11 @@ See [heise article](https://www.heise.de/tests/Ausprobiert-Pimoroni-Picodisplay-
 ## Toolchain
 
 1. [Pimorini MicroPython Firmware](https://github.com/pimoroni/pimoroni-pico/releases)
-1. [Thonny](https://thonny.org/) or [Arduino](https://www.arduino.cc/en/software)? Supports apparently Pico as well. Trying Arduin 2beta for the moment.
-1. Demofile
+1. [Thonny](https://thonny.org/) (Arduino 2beta does not yet support it. Or I didn't find it)
+1. Demofiles, see in PicoFolder
+   * to run it automatically, just name it main.py. Done.
 1. ...next step, Tetris on it: [TomsHardware](https://www.tomshardware.com/news/pico-tetris-display-pack-demo)
+
+## HW
+
+1. Solder pin heads onto the board...
