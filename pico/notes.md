@@ -13,6 +13,7 @@ See [heise article](https://www.heise.de/tests/Ausprobiert-Pimoroni-Picodisplay-
 1. Demofiles, see in PicoFolder
    * to run it automatically, just name it main.py. Done.
 1. ...next step, Tetris on it: [TomsHardware](https://www.tomshardware.com/news/pico-tetris-display-pack-demo)
+   * rather this one: [tetris micropython](https://github.com/nahog/pico-tetris)
 
 ## HW
 

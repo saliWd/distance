@@ -39,11 +39,11 @@ while True:
         display.set_pen(0, 0, 255)
         
     # heck lets also set the LED to match
-    display.set_led(0, 255, 0)
+    display.set_led(0, 100, 0)
     if temperature > 20:
-        display.set_led(255, 0, 0)
+        display.set_led(100, 0, 0)
     if temperature < 13:
-        display.set_led(0, 0, 255)
+        display.set_led(0, 0, 100)
      
     # draws the reading as a tall, thin rectangle
     display.rectangle(i, height - (temperature * 4), 5, height)
