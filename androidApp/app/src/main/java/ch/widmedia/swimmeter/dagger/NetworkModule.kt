@@ -32,7 +32,7 @@ object NetworkModule {
             val req = chain.request()
 
             val newReq = req.newBuilder()
-                    .method(req.method(), req.body())
+                    .method(req.method, req.body)
 
             if (prefs.loggingDeviceName != null) {
                 newReq.header(DEVICE_NAME, "${prefs.loggingDeviceName}")
