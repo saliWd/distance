@@ -14,7 +14,10 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import ch.widmedia.swimmeter.AppSingleton
+import ch.widmedia.swimmeter.R
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -63,7 +66,8 @@ fun ActionBar?.setHomeIcon(@DrawableRes drawableRes: Int, @ColorRes iconColor: I
 
     drawable?.let {
         val newDrawable = it.mutate()
-        newDrawable.setColorFilter(ContextCompat.getColor(this.themedContext, iconColor), PorterDuff.Mode.SRC_IN)
+        // newDrawable.setColorFilter(ContextCompat.getColor(this.themedContext, iconColor), PorterDuff.Mode.SRC_IN)
+        newDrawable.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(iconColor, BlendModeCompat.SRC_ATOP)
         setHomeAsUpIndicator(newDrawable)
     }
 }

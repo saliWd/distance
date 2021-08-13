@@ -3,7 +3,6 @@ package ch.widmedia.swimmeter.features.beaconList
 import android.Manifest
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
@@ -17,6 +16,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.room.EmptyResultSetException
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.afollestad.materialdialogs.MaterialDialog
@@ -248,7 +249,8 @@ class BeaconListActivity : AppCompatActivity(), BeaconConsumer {
 		
 		val icon = AppCompatResources.getDrawable(this, if (!isEnabled) R.drawable.ic_round_bluetooth_24px else R.drawable.ic_round_bluetooth_disabled_24px)
 			?.mutate()
-		icon?.setColorFilter(ContextCompat.getColor(this, R.color.colorOnBackground), PorterDuff.Mode.SRC_IN)
+		//icon?.setColorFilter(ContextCompat.getColor(this, R.color.colorOnBackground), PorterDuff.Mode.SRC_IN)
+		icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(R.color.colorOnBackground, BlendModeCompat.SRC_ATOP)
 		
 		menu?.findItem(R.id.action_bluetooth)?.icon = icon
 		
