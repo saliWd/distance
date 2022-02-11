@@ -8,6 +8,8 @@
    1. Does not find anything. Also the bridou beaconscanner is broken. Most probably issue with new Android version / rights management / whatever...
    1. Either search for a solution or
    1. **use different app for framework**
+      1. dinkarkumardk/BLEScanner [how to but no app](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
+      1. looks worse: Tuyji/bluetooth-tracker-master
    1. start fresh on my own
 
 1. Graphics stuff:
