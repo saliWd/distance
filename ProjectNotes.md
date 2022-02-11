@@ -2,6 +2,19 @@
 
 * Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
+## SwimMeter App
+
+1. App doesn't work anymore.
+   1. Does not find anything. Also the bridou beaconscanner is broken. Most probably issue with new Android version / rights management / whatever...
+   1. Either search for a solution or
+   1. **use different app for framework**
+   1. start fresh on my own
+
+1. Graphics stuff:
+   1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
+   1. colors: blue is 0x2314C2, yellow is 0xE5B72A
+   1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
+
 ## nRF52840 Dongle
 
 (newer to older)
@@ -28,13 +41,6 @@
 ## EBSLCNZWW TY
 
 1. debugger connection with J-link edu ok
-
-## SwimMeter App
-
-1. Graphics stuff:
-   1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
-   1. colors: blue is 0x2314C2, yellow is 0xE5B72A
-   1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
 
 ## Webpage
 
