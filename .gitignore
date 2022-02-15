@@ -1,4 +1,8 @@
 nonPublic/private_key.pepk
 nonPublic/google-services.json
 nonPublic/SwimMeterKeyStore.jks
-nRFcode/*
+nRFcode/
+zz__example_BLEScanner-master/
+zz__old_androidApp/
+zz__example_BLEScanner-master.zip
+zz__old_androidApp.zip

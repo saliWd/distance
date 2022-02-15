@@ -1,8 +1,0 @@
-# Google play services
-google-services.json
-
-# Release APKs
-*.apk
-debug/
-
-/build
