@@ -53,7 +53,7 @@ class ScannerFragment : Fragment() {
 
     companion object {
         private const val REQUEST_ENABLE_BT = 1
-        private const val PERMISSION_REQUEST_COARSE_LOCATION = 1
+        private const val PERMISSION_REQUEST_FINE_LOCATION = 1
     }
 
     private fun initViews(view: View) {
@@ -124,18 +124,22 @@ class ScannerFragment : Fragment() {
 
     private fun checkForLocationPermission() {
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
-        if (activity!!.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle("This app needs location access")
-            builder.setMessage("Please grant location access so this app can detect  peripherals.")
-            builder.setPositiveButton(android.R.string.ok, null)
-            builder.setOnDismissListener {
-                requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                    PERMISSION_REQUEST_COARSE_LOCATION
-                )
+        if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    val builder = AlertDialog.Builder(activity)
+                    builder.setTitle("This app needs location access")
+                    builder.setMessage("Please grant location access so this app can detect peripherals.")
+                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.setOnDismissListener {
+                        requestPermissions(
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            PERMISSION_REQUEST_FINE_LOCATION
+                        )
+                    }
+                    builder.show()
+                }
             }
-            builder.show()
         }
     }
 
@@ -144,7 +148,7 @@ class ScannerFragment : Fragment() {
         permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
-            PERMISSION_REQUEST_COARSE_LOCATION -> {
+            PERMISSION_REQUEST_FINE_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     println("coarse location permission granted")
                 } else {
@@ -211,7 +215,7 @@ class ScannerFragment : Fragment() {
                     beacon.uuid = iBeaconUUID
                     beacon.major = major
                     beacon.minor = minor
-                    Log.e("DINKAR", "iBeaconUUID:$iBeaconUUID major:$major minor:$minor")
+                    Log.e("WIDMEDIA", "iBeaconUUID:$iBeaconUUID major:$major minor:$minor")
                 }
             }
             beaconSet.add(beacon)
