@@ -5,8 +5,9 @@
 ## SwimMeter App
 
 1. New app
-   1. based on dinkarkumardk/BLEScanner [how to but no app](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
-   1. has an issue when items list is bigger than screen -> start in filtered mode?
+   1. based on dinkarkumardk/BLEScanner [how to](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
+   1. has an issue with ???, sometimes crashes (when lots of new items appear?).
+   1. guess I fixed the issue with permissions on newer APIs
 
 1. Graphics stuff:
    1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)

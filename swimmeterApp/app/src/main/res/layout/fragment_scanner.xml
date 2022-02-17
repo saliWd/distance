@@ -21,8 +21,9 @@
             android:background="@color/colorPrimary"
             android:clickable="true"
             android:focusable="true"
-            android:text="Start Scanning"
-            android:textColor="@color/white" />
+            android:text="@string/start_scanning"
+            android:textColor="@color/white"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/stopButton"
@@ -33,21 +34,24 @@
             android:background="@color/colorPrimary"
             android:clickable="true"
             android:focusable="true"
-            android:text="Stop Scanning"
+            android:text="@string/stop_scanning"
             android:textColor="@color/white"
-            android:visibility="gone" />
+            android:visibility="gone"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"
+        android:contentDescription="@string/spinner"
+        android:minHeight="48dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:background="@color/white" />

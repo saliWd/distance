@@ -9,6 +9,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/temp/wid_git/distance/swimmeterApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.196" />
+        <entry key="..\:/temp/wid_git/distance/swimmeterApp/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
+        <entry key="..\:/temp/wid_git/distance/swimmeterApp/app/src/main/res/layout/fragment_scanner.xml" value="0.18802083333333333" />
+        <entry key="..\:/temp/wid_git/distance/swimmeterApp/app/src/main/res/layout/scan_result_items.xml" value="0.18802083333333333" />
         <entry key="..\:/temp/wid_git/distance/swimmeterApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.196" />
       </map>
     </option>
