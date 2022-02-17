@@ -4,13 +4,9 @@
 
 ## SwimMeter App
 
-1. App doesn't work anymore.
-   1. Does not find anything. Also the bridou beaconscanner is broken. Most probably issue with new Android version / rights management / whatever...
-   1. Either search for a solution or
-   1. **use different app for framework**
-      1. dinkarkumardk/BLEScanner [how to but no app](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
-      1. looks worse: Tuyji/bluetooth-tracker-master
-   1. start fresh on my own
+1. New app
+   1. based on dinkarkumardk/BLEScanner [how to but no app](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
+   1. has an issue when items list is bigger than screen -> start in filtered mode?
 
 1. Graphics stuff:
    1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
