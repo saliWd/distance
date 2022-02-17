@@ -1,6 +1,7 @@
 package ch.widmedia.swimmeter
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -21,6 +22,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -123,13 +125,13 @@ class ScannerFragment : Fragment() {
     }
 
     private fun checkForLocationPermission() {
-        // Make sure we have access coarse location enabled, if not, prompt the user to enable it
+        // Make sure we have access location enabled, if not, prompt the user to enable it
         if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                 if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     val builder = AlertDialog.Builder(activity)
-                    builder.setTitle("This app needs location access")
-                    builder.setMessage("Please grant location access so this app can detect peripherals.")
+                    builder.setTitle(getString(R.string.needs_loc_access))
+                    builder.setMessage(getString(R.string.please_grant_loc_access))
                     builder.setPositiveButton(android.R.string.ok, null)
                     builder.setOnDismissListener {
                         requestPermissions(
@@ -153,8 +155,8 @@ class ScannerFragment : Fragment() {
                     println("coarse location permission granted")
                 } else {
                     val builder = AlertDialog.Builder(activity)
-                    builder.setTitle("Functionality limited")
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover BLE beacons")
+                    builder.setTitle(getString(R.string.functionality_limited))
+                    builder.setMessage(getString(R.string.no_loc_access))
                     builder.setPositiveButton(android.R.string.ok, null)
                     builder.setOnDismissListener { }
                     builder.show()

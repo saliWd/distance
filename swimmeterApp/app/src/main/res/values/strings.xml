@@ -16,4 +16,9 @@
         <item>Eddystone</item>
         <item>iBeacon</item>
     </string-array>
+    <string name="beacon_image">beacon image</string>
+    <string name="functionality_limited">Functionality limited</string>
+    <string name="no_loc_access">Since location access has not been granted, this app will not be able to discover BLE beacons</string>
+    <string name="needs_loc_access">This app needs location access</string>
+    <string name="please_grant_loc_access">Please grant location access so this app can detect peripherals.</string>
 </resources>

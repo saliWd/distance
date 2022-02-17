@@ -6,7 +6,7 @@
 
 1. New app
    1. based on dinkarkumardk/BLEScanner [how to](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
-   1. has an issue with ???, sometimes crashes (when lots of new items appear?).
+   1. has an issue with ???, sometimes crashes (when lots of new items appear?). -> currently not appearing anymore
    1. guess I fixed the issue with permissions on newer APIs
 
 1. Graphics stuff:
