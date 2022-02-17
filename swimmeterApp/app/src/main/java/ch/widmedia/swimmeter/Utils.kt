@@ -2,7 +2,7 @@ package ch.widmedia.swimmeter
 
 object Utils {
     val ALL = "all"
-    val EDDYSTONE = "addystone"
+    val EDDYSTONE = "eddystone"
     val IBEACON = "iBeacon"
     private val HEX = "0123456789ABCDEF".toCharArray()
     fun toHexString(bytes: ByteArray): String {
