@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -28,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import kotlin.collections.HashSet
+import android.content.Context as Context1
 
 class ScannerFragment : Fragment() {
     private lateinit var startButton: Button
@@ -114,7 +114,7 @@ class ScannerFragment : Fragment() {
     }
 
     private fun setUpBluetoothManager() {
-        btManager = activity?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        btManager = activity?.getSystemService(Context1.BLUETOOTH_SERVICE) as BluetoothManager
         btAdapter = btManager!!.adapter
         btScanner = btAdapter?.bluetoothLeScanner
         if (btAdapter != null && !btAdapter!!.isEnabled) {
