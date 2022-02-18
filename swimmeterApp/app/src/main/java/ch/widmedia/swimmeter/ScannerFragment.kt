@@ -128,19 +128,17 @@ class ScannerFragment : Fragment() {
         // Make sure we have access location enabled, if not, prompt the user to enable it
         if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    val builder = AlertDialog.Builder(activity)
-                    builder.setTitle(getString(R.string.needs_loc_access))
-                    builder.setMessage(getString(R.string.please_grant_loc_access))
-                    builder.setPositiveButton(android.R.string.ok, null)
-                    builder.setOnDismissListener {
-                        requestPermissions(
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            PERMISSION_REQUEST_FINE_LOCATION
-                        )
-                    }
-                    builder.show()
+                val builder = AlertDialog.Builder(activity)
+                builder.setTitle(getString(R.string.needs_loc_access))
+                builder.setMessage(getString(R.string.please_grant_loc_access))
+                builder.setPositiveButton(android.R.string.ok, null)
+                builder.setOnDismissListener {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        PERMISSION_REQUEST_FINE_LOCATION
+                    )
                 }
+                builder.show()
             }
         }
     }
