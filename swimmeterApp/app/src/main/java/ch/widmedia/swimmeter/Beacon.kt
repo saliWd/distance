@@ -2,13 +2,13 @@ package ch.widmedia.swimmeter
 
 
 class Beacon(mac: String?) {
-    enum class beaconType {
-        iBeacon, eddystoneUID, any
+    enum class BeaconType {
+        Ibeacon, EddystoneUID, Any
     }
 
     val macAddress = mac
     var manufacturer: String? = null
-    var type: beaconType = beaconType.any
+    var type: BeaconType = BeaconType.Any
     var uuid: String? = null
     var major: Int? = null
     var minor: Int? = null

@@ -1,7 +1,6 @@
 package ch.widmedia.swimmeter
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -21,7 +20,6 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -186,7 +184,7 @@ class ScannerFragment : Fragment() {
                             eddystoneUUID.toCharArray()
                                 .sliceArray(20 until eddystoneUUID.toCharArray().size)
                         )
-                        beacon.type = Beacon.beaconType.eddystoneUID
+                        beacon.type = Beacon.BeaconType.EddystoneUID
                         beacon.namespace = namespace
                         beacon.instance = instance
 
@@ -211,7 +209,7 @@ class ScannerFragment : Fragment() {
                             )
                         ), 16
                     )
-                    beacon.type = Beacon.beaconType.iBeacon
+                    beacon.type = Beacon.BeaconType.Ibeacon
                     beacon.uuid = iBeaconUUID
                     beacon.major = major
                     beacon.minor = minor

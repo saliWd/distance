@@ -3,7 +3,7 @@ package ch.widmedia.swimmeter
 object Utils {
     val ALL = "all"
     val EDDYSTONE = "eddystone"
-    val IBEACON = "iBeacon"
+    val IBEACON = "Ibeacon"
     private val HEX = "0123456789ABCDEF".toCharArray()
     fun toHexString(bytes: ByteArray): String {
         if (bytes.isEmpty()) {
@@ -27,16 +27,16 @@ object Utils {
         return true
     }
 
-    fun getBeaconFilterFromString(optionSelected: String): Beacon.beaconType {
+    fun getBeaconFilterFromString(optionSelected: String): Beacon.BeaconType {
         return when (optionSelected) {
             IBEACON -> {
-                Beacon.beaconType.iBeacon
+                Beacon.BeaconType.Ibeacon
             }
             EDDYSTONE -> {
-                Beacon.beaconType.eddystoneUID
+                Beacon.BeaconType.EddystoneUID
             }
             else -> {
-                Beacon.beaconType.any
+                Beacon.BeaconType.Any
             }
         }
     }
