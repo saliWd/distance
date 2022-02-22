@@ -126,6 +126,10 @@ class ScannerFragment : Fragment() {
 
     private fun checkForLocationPermission() {
         // Make sure we have access location enabled, if not, prompt the user to enable it
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle(getString(R.string.needs_loc_access))
+        builder.setMessage(getString(R.string.fine_loc_access))
+        builder.setPositiveButton(android.R.string.ok, null)
 
         val locationPermissionRequest = requireActivity().registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -134,26 +138,17 @@ class ScannerFragment : Fragment() {
                 permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                     // Precise location access granted.
                 }
-                // TODO: same for coarse or fine
                 permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                    val builder = AlertDialog.Builder(activity)
-                    builder.setTitle(getString(R.string.needs_loc_access))
-                    builder.setMessage(getString(R.string.please_grant_loc_access))
-                    builder.setPositiveButton(android.R.string.ok, null)
                     builder.show()
                 }
                 else -> {
-                    val builder = AlertDialog.Builder(activity)
-                    builder.setTitle(getString(R.string.needs_loc_access))
-                    builder.setMessage(getString(R.string.please_grant_loc_access))
-                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.setMessage(getString(R.string.please_grant_loc_access)) //override
                     builder.show()
                 }
             }
         }.apply {
-            // Before you perform the actual permission request, check whether your app
-            // already has the permissions, and whether your app needs to show a permission
-            // rationale dialog. For more details, see Request permissions.
+            // Before you perform the actual permission request, check whether your app already has the permissions,
+            // and whether your app needs to show a permission rationale dialog
             launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION))
