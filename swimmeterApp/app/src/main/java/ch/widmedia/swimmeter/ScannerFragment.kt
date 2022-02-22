@@ -21,6 +21,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -126,20 +127,37 @@ class ScannerFragment : Fragment() {
 
     private fun checkForLocationPermission() {
         // Make sure we have access location enabled, if not, prompt the user to enable it
-        if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                val builder = AlertDialog.Builder(activity)
-                builder.setTitle(getString(R.string.needs_loc_access))
-                builder.setMessage(getString(R.string.please_grant_loc_access))
-                builder.setPositiveButton(android.R.string.ok, null)
-                builder.setOnDismissListener {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        PERMISSION_REQUEST_FINE_LOCATION
-                    )
+
+        val locationPermissionRequest = requireActivity().registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                    // Precise location access granted.
                 }
-                builder.show()
+                // TODO: same for coarse or fine
+                permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                    val builder = AlertDialog.Builder(activity)
+                    builder.setTitle(getString(R.string.needs_loc_access))
+                    builder.setMessage(getString(R.string.please_grant_loc_access))
+                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.show()
+                }
+                else -> {
+                    val builder = AlertDialog.Builder(activity)
+                    builder.setTitle(getString(R.string.needs_loc_access))
+                    builder.setMessage(getString(R.string.please_grant_loc_access))
+                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.show()
+                }
             }
+        }.apply {
+            // Before you perform the actual permission request, check whether your app
+            // already has the permissions, and whether your app needs to show a permission
+            // rationale dialog. For more details, see Request permissions.
+            launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
         }
     }
 
