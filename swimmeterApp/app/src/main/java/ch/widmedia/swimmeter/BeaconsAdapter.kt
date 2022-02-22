@@ -59,7 +59,7 @@ class BeaconsAdapter(beacons: List<Beacon>) :
                     for (beacon in beaconList) {
                         if (beacon.type == Utils.getBeaconFilterFromString(charString) || Utils.getBeaconFilterFromString(
                                 charString
-                            ) == Beacon.beaconType.any
+                            ) == Beacon.BeaconType.Any
                         ) {
                             filteredList.add(beacon)
                         }
@@ -103,7 +103,7 @@ class BeaconsAdapter(beacons: List<Beacon>) :
                 context.getString(R.string.mac),
                 beacon.macAddress
             )
-            if (beacon.type == Beacon.beaconType.iBeacon) {
+            if (beacon.type == Beacon.BeaconType.Ibeacon) {
                 namespaceUUID?.text = String.format(context.getString(R.string.uuid), beacon.uuid)
                 instanceMajorMinor?.text = String.format(
                     context.getString(R.string.major_minor),
@@ -113,7 +113,7 @@ class BeaconsAdapter(beacons: List<Beacon>) :
                 image?.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ibeacon))
                 instanceMajorMinor?.visibility = View.VISIBLE
                 namespaceUUID?.visibility = View.VISIBLE
-            } else if (beacon.type == Beacon.beaconType.eddystoneUID) {
+            } else if (beacon.type == Beacon.BeaconType.EddystoneUID) {
                 namespaceUUID?.text =
                     String.format(context.getString(R.string.namespace), beacon.namespace)
                 instanceMajorMinor?.text = String.format(
