@@ -21,7 +21,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -131,7 +130,7 @@ class ScannerFragment : Fragment() {
         builder.setMessage(getString(R.string.fine_loc_access))
         builder.setPositiveButton(android.R.string.ok, null)
 
-        val locationPermissionRequest = requireActivity().registerForActivityResult(
+        requireActivity().registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
             when {
@@ -202,7 +201,7 @@ class ScannerFragment : Fragment() {
                         beacon.namespace = namespace
                         beacon.instance = instance
 
-                        Log.e("DINKAR", "Namespace:$namespace Instance:$instance")
+                        Log.e("widmer", "Namespace:$namespace Instance:$instance")
                     }
                 }
                 if (iBeaconManufactureData != null && iBeaconManufactureData.size >= 23) {
@@ -235,7 +234,7 @@ class ScannerFragment : Fragment() {
         }
 
         override fun onScanFailed(errorCode: Int) {
-            Log.e("DINKAR", errorCode.toString())
+            Log.e("widmer", errorCode.toString())
         }
     }
 
