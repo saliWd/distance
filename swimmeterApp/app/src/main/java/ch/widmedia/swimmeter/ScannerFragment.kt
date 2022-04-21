@@ -113,6 +113,7 @@ class ScannerFragment : Fragment() {
     }
 
     private fun setUpBluetoothManager() {
+        checkForLocationPermission()
         btManager = activity?.getSystemService(Context1.BLUETOOTH_SERVICE) as BluetoothManager
         btAdapter = btManager!!.adapter
         btScanner = btAdapter?.bluetoothLeScanner
@@ -120,7 +121,6 @@ class ScannerFragment : Fragment() {
             val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT)
         }
-        checkForLocationPermission()
     }
 
     private fun checkForLocationPermission() {
