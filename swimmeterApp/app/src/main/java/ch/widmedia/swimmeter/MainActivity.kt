@@ -1,6 +1,7 @@
 package ch.widmedia.swimmeter
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.os.Build
 import android.os.Bundle
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var foundDevices: MutableList<BleDevice>
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +65,12 @@ class MainActivity : AppCompatActivity() {
         bleScanManager = BleScanManager(btManager, 5000, scanCallback = BleScanCallback({
             val name = it?.device?.address
             val description = it?.device?.name
-            val macAndName = "$name $description"
+            val type = it?.device?.type // always zero in my setup
+            val macNameType = "$name $description $type"
             if (name.isNullOrBlank()) return@BleScanCallback
 
             // val device = BleDevice(name)
-            val device = BleDevice(macAndName)
+            val device = BleDevice(macNameType)
             if (!foundDevices.contains(device)) {
                 if (DEBUG) {
                     Log.d(
