@@ -62,9 +62,12 @@ class MainActivity : AppCompatActivity() {
         btManager = getSystemService(BluetoothManager::class.java)
         bleScanManager = BleScanManager(btManager, 5000, scanCallback = BleScanCallback({
             val name = it?.device?.address
+            val description = it?.device?.name
+            val macAndName = "$name $description"
             if (name.isNullOrBlank()) return@BleScanCallback
 
-            val device = BleDevice(name)
+            // val device = BleDevice(name)
+            val device = BleDevice(macAndName)
             if (!foundDevices.contains(device)) {
                 if (DEBUG) {
                     Log.d(
@@ -118,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_CONNECT,
         )
     }
 }
