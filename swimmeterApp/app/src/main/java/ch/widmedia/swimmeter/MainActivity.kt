@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bleScanManager: BleScanManager
 
     private lateinit var foundDevices: MutableList<BleDevice>
+    private lateinit var foundUnnamed: MutableList<BleDevice>
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.S)
@@ -55,31 +56,38 @@ class MainActivity : AppCompatActivity() {
 
         // RecyclerView handling
         val rvFoundDevices = findViewById<View>(R.id.rv_found_devices) as RecyclerView
+        val rvFoundUnnamed = findViewById<View>(R.id.rv_found_unnamed) as RecyclerView
         foundDevices = BleDevice.createBleDevicesList()
+        foundUnnamed = BleDevice.createBleDevicesList()
         val adapter = BleDeviceAdapter(foundDevices)
+        val adapterUnnamed = BleDeviceAdapter(foundUnnamed)
         rvFoundDevices.adapter = adapter
+        rvFoundUnnamed.adapter = adapterUnnamed
+
         rvFoundDevices.layoutManager = LinearLayoutManager(this)
+        rvFoundUnnamed.layoutManager = LinearLayoutManager(this)
 
         // BleManager creation
         btManager = getSystemService(BluetoothManager::class.java)
         bleScanManager = BleScanManager(btManager, 5000, scanCallback = BleScanCallback({
-            val name = it?.device?.address
+            val name = it?.device?.address // not really the name, rather the MAC address
             val description = it?.device?.name
             val type = it?.device?.type // always zero in my setup
             val macNameType = "$name $description $type"
             if (name.isNullOrBlank()) return@BleScanCallback
 
-            // val device = BleDevice(name)
             val device = BleDevice(macNameType)
-            if (!foundDevices.contains(device)) {
-                if (DEBUG) {
-                    Log.d(
-                        BleScanCallback::class.java.simpleName,
-                        "${this.javaClass.enclosingMethod?.name} - Found device: $name"
-                    )
+
+            if (description.isNullOrBlank()) {
+                if (!foundUnnamed.contains(device)) {
+                    foundUnnamed.add(device)
+                    adapterUnnamed.notifyItemInserted(foundUnnamed.size - 1)
                 }
-                foundDevices.add(device)
-                adapter.notifyItemInserted(foundDevices.size - 1)
+            } else {
+                if (!foundDevices.contains(device)) {
+                    foundDevices.add(device)
+                    adapter.notifyItemInserted(foundDevices.size - 1)
+                }
             }
         }))
 
@@ -89,6 +97,10 @@ class MainActivity : AppCompatActivity() {
             foundDevices.size.let {
                 foundDevices.clear()
                 adapter.notifyItemRangeRemoved(0, it)
+            }
+            foundUnnamed.size.let {
+                foundUnnamed.clear()
+                adapterUnnamed.notifyItemRangeRemoved(0, it)
             }
         }
         bleScanManager.afterScanActions.add { btnStartScan.isEnabled = true }
