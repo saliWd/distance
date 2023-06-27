@@ -33,9 +33,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_found_devices"
-        android:layout_width="412dp"
+        android:layout_width="match_parent"
         android:layout_height="193dp"
         android:layout_marginTop="32dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/rv_found_unnamed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -45,9 +46,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_found_unnamed"
-        android:layout_width="412dp"
+        android:layout_width="match_parent"
         android:layout_height="255dp"
         android:layout_marginTop="32dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/rv_found_unnamed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
