@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ble_permission_rationale">Diese App benötigt Zugriff auf Bluetooth und Ortung um nach BLE Geräten zu suchen</string>
+    <string name="btn_start_scan_text">Scan starten</string>
+    <string name="tw_scan_results_title">Scanresultate</string>
+    <string name="ble_permissions_denied_message">Nicht alle Berechtigungen wurden erteilt. Bitte korrigieren und erneut versuchen</string>
+</resources>
