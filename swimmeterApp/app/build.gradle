@@ -30,6 +30,9 @@ android {
         jvmTarget = '1.8'
     }
     namespace 'ch.widmedia.swimmeter'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {
