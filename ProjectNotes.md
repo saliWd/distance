@@ -4,17 +4,20 @@
 
 ## SwimMeter App
 
-1. New app
-   1. maybe rather use this one: [simple ble scanner][https://github.com/lorenzofelletti/SimpleBleScanner]
-
-   1. based on dinkarkumardk/BLEScanner [how to](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
-   1. has an issue with ???, sometimes crashes (when lots of new items appear?). -> currently not appearing anymore
-   1. guess I fixed the issue with permissions on newer APIs
-
-1. Graphics stuff:
+1. based on: [simple ble scanner][https://github.com/lorenzofelletti/SimpleBleScanner]
+1. graphics stuff:
    1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
    1. colors: blue is 0x2314C2, yellow is 0xE5B72A
    1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
+
+## Bluetooth-Beacon
+1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
+   * CR2032-Knopfzellen; Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
+   * Eddystone: Beacon URLs + Akkuspannung senden
+   * Sendeleistung von 0 bis 6 dBm (1 bis 4 Milliwatt), Sendeintervall zwischen 30 und 1000 ms
+   * ESP32, Firmware OpenMQTTGateway
+   * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
+   1. app to configure them: 
 
 ## nRF52840 Dongle
 
