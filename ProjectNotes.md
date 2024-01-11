@@ -12,12 +12,23 @@
 
 ## Bluetooth-Beacon
 1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
-   * CR2032-Knopfzellen; Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
+   * CR2032-Knopfzelle / Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
    * Eddystone: Beacon URLs + Akkuspannung senden
    * Sendeleistung von 0 bis 6 dBm (1 bis 4 Milliwatt), Sendeintervall zwischen 30 und 1000 ms
    * ESP32, Firmware OpenMQTTGateway
    * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
-   1. app to configure them: 
+   1. app to configure is working
+      * default password is AA14061112
+      * config: 
+         * switch to eddystone mode
+         * URL advertise on
+         * URL_Name: widmedia
+         * URL_Prefix: select https://www.   ("https://" only does not work correctly)
+         * URL_Content: widmedia.ch/
+         * URL_Subfix: TODO, cannot be empty... currently set to org
+         ![eddystone settings](eddyStoneSettings.png)
+
+
 
 ## nRF52840 Dongle
 
