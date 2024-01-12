@@ -3,18 +3,42 @@
 * Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
 ## SwimMeter App
+based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
+1. implemented features
+   1. searches for eddystone BT beacons and unnamed BT devices. displayed seperately
+   1. BT search works according to android guidelines (asks for location permission etc.)
+1. features to be implemented
+   1. select a specific beacon (the one that's named correctly, correct major ID or similar): need to change the list-item to something clickable which then opens another view
+   1. in this new view: display and 
+   1. start/stop/reset the logging of SSI values (signal strength). Need to do logging (=bt connection) for longer times
+1. Notes (graphics stuff)
+   * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
+   * colors: blue is 0x2314C2, yellow is 0xE5B72A
+   * GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
 
-1. New app
-   1. maybe rather use this one: [simple ble scanner][https://github.com/lorenzofelletti/SimpleBleScanner]
 
-   1. based on dinkarkumardk/BLEScanner [how to](https://medium.com/geekculture/android-ble-scanner-to-scan-for-ibeacon-and-eddystone-96a0c0610d3d)
-   1. has an issue with ???, sometimes crashes (when lots of new items appear?). -> currently not appearing anymore
-   1. guess I fixed the issue with permissions on newer APIs
+## Bluetooth-Beacon
+1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
+   * CR2032-Knopfzelle / Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
+   * Eddystone: Beacon URLs + Akkuspannung senden
+   * Sendeleistung von 0 bis 6 dBm (1 bis 4 Milliwatt), Sendeintervall zwischen 30 und 1000 ms
+   * ESP32, Firmware OpenMQTTGateway
+   * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
+   1. app to configure is working
+      * default password is AA14061112
+      * config: 
+         * switch to eddystone mode
+         * URL advertise on
+         * URL_Name: widmedia
+         * URL_Prefix: select https://www. ("https://" only does not work correctly)
+         * URL_Content: widmedia.ch/
+         * URL_Subfix: TODO, cannot be empty... currently set to org
+         ![eddystone settings](eddyStoneSettings.png)
+      * TODO: maybe swith to beacon mode? May be suited better?
 
-1. Graphics stuff:
-   1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
-   1. colors: blue is 0x2314C2, yellow is 0xE5B72A
-   1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
+
+## TODO
+
 
 ## nRF52840 Dongle
 
