@@ -3,12 +3,19 @@
 * Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
 ## SwimMeter App
+based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
+1. implemented features
+   1. searches for eddystone BT beacons and unnamed BT devices. displayed seperately
+   1. BT search works according to android guidelines (asks for location permission etc.)
+1. features to be implemented
+   1. select a specific beacon (the one that's named correctly, correct major ID or similar): need to change the list-item to something clickable which then opens another view
+   1. in this new view: display and 
+   1. start/stop/reset the logging of SSI values (signal strength). Need to do logging (=bt connection) for longer times
+1. Notes (graphics stuff)
+   * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
+   * colors: blue is 0x2314C2, yellow is 0xE5B72A
+   * GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
 
-1. based on: [simple ble scanner][https://github.com/lorenzofelletti/SimpleBleScanner]
-1. graphics stuff:
-   1. icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
-   1. colors: blue is 0x2314C2, yellow is 0xE5B72A
-   1. GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
 
 ## Bluetooth-Beacon
 1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
@@ -23,11 +30,14 @@
          * switch to eddystone mode
          * URL advertise on
          * URL_Name: widmedia
-         * URL_Prefix: select https://www.   ("https://" only does not work correctly)
+         * URL_Prefix: select https://www. ("https://" only does not work correctly)
          * URL_Content: widmedia.ch/
          * URL_Subfix: TODO, cannot be empty... currently set to org
          ![eddystone settings](eddyStoneSettings.png)
+      * TODO: maybe swith to beacon mode? May be suited better?
 
+
+## TODO
 
 
 ## nRF52840 Dongle
