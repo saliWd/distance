@@ -4,6 +4,8 @@
 
 ## SwimMeter App
 based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
+do I need to use the altbeacon IP? implementation on https://github.com/davidgyoung/android-beacon-library-reference-kotlin/blob/master/app/src/main/java/org/altbeacon/beaconreference/MainActivity.kt
+Seems to have very useful features, like distance calculation with moving average etc. -> TODO: go for it.
 1. implemented features
    1. searches for eddystone BT beacons and unnamed BT devices. displayed seperately
    1. BT search works according to android guidelines (asks for location permission etc.)
@@ -26,7 +28,12 @@ based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScann
    * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
    1. app to configure is working
       * default password is AA14061112
-      * config: 
+      * config tx: 500 ms, txpower 4
+      * config: beacon mode
+         * name: widmedia.ch
+         * factory settings for uuid/major/minor/MAC: fda50...47825/10011/19641/E6:D9:29:7B:33:F1 ![Alt text](beaconSettings_id0.png)
+         * results in type 2 in the app, MAC address is correct, name is displayed
+      * old-config:
          * switch to eddystone mode
          * URL advertise on
          * URL_Name: widmedia

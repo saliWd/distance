@@ -72,11 +72,19 @@ class MainActivity : AppCompatActivity() {
         bleScanManager = BleScanManager(btManager, 5000, scanCallback = BleScanCallback({
             val name = it?.device?.address // not really the name, rather the MAC address
             val description = it?.device?.name
-            val type = it?.device?.type // always zero in my setup
-            val macNameType = "$name $description $type"
+            val type = it?.device?.type // 2 = beacon
+            val uuids = it?.device?.uuids // TODO: this is null somehow...
+            // val rssi = it?.device?.rssi // does not exist. How to get it?
+            val macNameType = "$name $description $type $uuids"
             if (name.isNullOrBlank()) return@BleScanCallback
 
             val device = BleDevice(macNameType)
+
+            /* something like that...
+            if (description == "widmedia.ch") {
+               connectedDevice = it?.device?.connectGatt(it?.device?, true, BluetoothGattCallback())
+            }
+            */
 
             if (description.isNullOrBlank()) {
                 if (!foundUnnamed.contains(device)) {
