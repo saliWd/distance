@@ -15,7 +15,7 @@ import java.util.ArrayList
  */
 class BeaconRangingSmoother {
     private var beacons: ArrayList<Beacon> = ArrayList<Beacon>()
-    private var smoothingWindowMillis: Long = 10000
+    private var smoothingWindowMillis: Long = 5000
     var visibleBeacons: List<Beacon> = ArrayList<Beacon>() // when fixing this warning, the list just grows...
         get() {
             val visible = ArrayList<Beacon>()
