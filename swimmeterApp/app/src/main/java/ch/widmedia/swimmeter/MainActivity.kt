@@ -3,7 +3,6 @@ package ch.widmedia.swimmeter
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -112,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun rangingButtonTapped(view: View) {
+    fun rangingButtonTapped() {
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.size == 0) {
             beaconManager.startRangingBeacons(beaconReferenceApplication.region)
@@ -127,9 +126,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun monitoringButtonTapped(view: View) {
-        var dialogTitle = ""
-        var dialogMessage = ""
+    fun monitoringButtonTapped() {
+        var dialogTitle: String
+        var dialogMessage: String
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.monitoredRegions.size == 0) {
             beaconManager.startMonitoring(beaconReferenceApplication.region)
