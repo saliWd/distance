@@ -105,10 +105,12 @@ class MainActivity : AppCompatActivity() {
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
-            beaconCountTextView.text = "Ranging enabled: ${beacons.count()} beacon(s) detected"
+            beaconCountTextView.text =
+                getString(R.string.ranging_enabled_beacon_s_detected, beacons.count())
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 beacons
                     .sortedBy { it.distance }
+                    // bluetoothName: widmedia
                     .map { "${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m\nname: ${it.bluetoothName}" }.toTypedArray())
         }
     }
@@ -129,8 +131,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun monitoringButtonTapped(view: View) { // warning is wrong, this is required
-        var dialogTitle: String
-        var dialogMessage: String
+        val dialogTitle: String
+        val dialogMessage: String
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.monitoredRegions.isEmpty()) {
             beaconManager.startMonitoring(beaconReferenceApplication.region)
