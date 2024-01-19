@@ -10,7 +10,7 @@ import org.altbeacon.beacon.*
 
 class SwimMeter: Application() {
     // the region definition is a wildcard that matches all beacons regardless of identifiers.
-    // if you only want to detect beacons with a specific UUID, change the id1 paremeter to
+    // if you only want to detect beacons with a specific UUID, change the id1 parameter to
     // a UUID like Identifier.parse("2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6")
     var region = Region("all-beacons", null, null, null)
 
@@ -50,7 +50,7 @@ class SwimMeter: Application() {
             parser)
 
         // enabling debugging will send lots of verbose debug information from the library to Logcat
-        // this is useful for troubleshooting problmes
+        // this is useful for troubleshooting problems
         // BeaconManager.setDebug(true)
 
 
@@ -70,14 +70,14 @@ class SwimMeter: Application() {
         // which will be limited to scan jobs scheduled every ~15 minutes on Android 8+
         // If you want more frequent scanning (requires a foreground service on Android 8+),
         // configure that here.
-        // If you want to continuously range beacons in the background more often than every 15 mintues,
+        // If you want to continuously range beacons in the background more often than every 15 minutes,
         // you can use the library's built-in foreground service to unlock this behavior on Android
         // 8+.   the method below shows how you set that up.
         try {
             setupForegroundService()
         }
         catch (e: SecurityException) {
-            // On Android TIRAMUSU + this security exception will happen
+            // On Android TIRAMISU + this security exception will happen
             // if location permission has not been granted when we start
             // a foreground service.  In this case, wait to set this up
             // until after that permission is granted
@@ -93,7 +93,7 @@ class SwimMeter: Application() {
         // beaconManager.setIntentScanningStrategyEnabled(true)
 
         // The code below will start "monitoring" for beacons matching the region definition at the top of this file
-        beaconManager.startMonitoring(region)
+        beaconManager.startMonitoring(region) // TODO: maybe change here, uncomment this line?
         beaconManager.startRangingBeacons(region)
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)
@@ -112,16 +112,16 @@ class SwimMeter: Application() {
         val pendingIntent = PendingIntent.getActivity(
                 this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
         )
-        builder.setContentIntent(pendingIntent);
+        builder.setContentIntent(pendingIntent)
         val channel =  NotificationChannel("beacon-ref-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
         channel.setDescription("My Notification Channel Description")
         val notificationManager =  getSystemService(
                 Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel);
-        builder.setChannelId(channel.getId());
+        notificationManager.createNotificationChannel(channel)
+        builder.setChannelId(channel.getId())
         Log.d(TAG, "Calling enableForegroundServiceScanning")
-        BeaconManager.getInstanceForApplication(this).enableForegroundServiceScanning(builder.build(), 456);
+        BeaconManager.getInstanceForApplication(this).enableForegroundServiceScanning(builder.build(), 456)
         Log.d(TAG, "Back from  enableForegroundServiceScanning")
     }
 
@@ -165,8 +165,8 @@ class SwimMeter: Application() {
         channel.setDescription("My Notification Channel Description")
         val notificationManager =  getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel);
-        builder.setChannelId(channel.getId());
+        notificationManager.createNotificationChannel(channel)
+        builder.setChannelId(channel.getId())
         notificationManager.notify(1, builder.build())
     }
 

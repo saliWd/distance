@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 beacons
                     .sortedBy { it.distance }
-                    .map { "${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m" }.toTypedArray())
+                    .map { "${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m\nname: ${it.bluetoothName}" }.toTypedArray())
         }
     }
 
@@ -137,7 +137,6 @@ class MainActivity : AppCompatActivity() {
             dialogTitle = "Beacon monitoring started."
             dialogMessage = "You will see a dialog if a beacon is detected, and another if beacons then stop being detected."
             monitoringButton.text = getString(R.string.stop_monitoring)
-
         }
         else {
             beaconManager.stopMonitoring(beaconReferenceApplication.region)

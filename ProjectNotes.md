@@ -3,9 +3,8 @@
 * Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
 ## SwimMeter App
-originally based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
-switching/using part of [altbeacon](https://github.com/davidgyoung/android-beacon-library-reference-kotlin)
-Seems to have very useful features, like distance calculation with moving average etc. -> go for it
+originally based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner), now using [altbeacon](https://github.com/davidgyoung/android-beacon-library)
+
 
 1. implemented features
    1. searches for eddystone BT beacons and unnamed BT devices. displayed seperately
