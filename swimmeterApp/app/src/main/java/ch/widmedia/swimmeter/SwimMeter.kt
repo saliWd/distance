@@ -93,7 +93,7 @@ class SwimMeter: Application() {
         // beaconManager.setIntentScanningStrategyEnabled(true)
 
         // The code below will start "monitoring" for beacons matching the region definition at the top of this file
-        beaconManager.startMonitoring(region) // TODO: maybe change here, uncomment this line?
+        // beaconManager.startMonitoring(region) // disabled by default
         beaconManager.startRangingBeacons(region)
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)

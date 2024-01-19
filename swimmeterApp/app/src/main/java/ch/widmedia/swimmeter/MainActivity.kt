@@ -111,11 +111,11 @@ class MainActivity : AppCompatActivity() {
                 beacons
                     .sortedBy { it.distance }
                     // bluetoothName: widmedia
-                    .map { "${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m\nname: ${it.bluetoothName}" }.toTypedArray())
+                    .map { "name: ${it.bluetoothName}\nid1: ${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m" }.toTypedArray())
         }
     }
 
-    fun rangingButtonTapped(view: View) { // warning is wrong, this is required
+    fun rangingButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.isEmpty()) {
             beaconManager.startRangingBeacons(beaconReferenceApplication.region)
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun monitoringButtonTapped(view: View) { // warning is wrong, this is required
+    fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
         val dialogTitle: String
         val dialogMessage: String
         val beaconManager = BeaconManager.getInstanceForApplication(this)
