@@ -105,10 +105,11 @@ class MainActivity : AppCompatActivity() {
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
+            val visibleBeacons = BeaconRangingSmoother.shared.add(beacons).visibleBeacons
             beaconCountTextView.text =
                 getString(R.string.ranging_enabled_beacon_s_detected, beacons.count())
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
-                beacons
+                visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 10 seconds)
                     .sortedBy { it.distance }
                     // bluetoothName: widmedia
                     .map { "name: ${it.bluetoothName}\nid1: ${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m" }.toTypedArray())

@@ -5,7 +5,7 @@ import java.util.ArrayList
 
 /*
  * This class is used to smooth out the beacon ranging data to prevent periodic dropouts.  By
- * default, it will retain beacons in the list if detected in the past 10 secconds, but you can
+ * default, it will retain beacons in the list if detected in the past 10 seconds, but you can
  * adjust this with the smoothingWindowMillis property.
  *
  * To use this class, simply add it to your project and call a line like below wherever you get
@@ -15,10 +15,10 @@ import java.util.ArrayList
  */
 class BeaconRangingSmoother {
     private var beacons: ArrayList<Beacon> = ArrayList<Beacon>()
-    var smoothingWindowMillis: Long = 10000
-    var visibleBeacons: List<Beacon> = ArrayList<Beacon>()
+    private var smoothingWindowMillis: Long = 10000
+    var visibleBeacons: List<Beacon> = ArrayList<Beacon>() // when fixing this warning, the list just grows...
         get() {
-            var visible = ArrayList<Beacon>()
+            val visible = ArrayList<Beacon>()
             for (beacon in beacons) {
                 if (System.currentTimeMillis() - beacon.lastCycleDetectionTimestamp < smoothingWindowMillis) {
                     visible.add(beacon)
@@ -34,7 +34,6 @@ class BeaconRangingSmoother {
         return this
     }
     companion object {
-        val TAG = "BeaconRangingSmoother"
         val shared = BeaconRangingSmoother()
     }
 }
