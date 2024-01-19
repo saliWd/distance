@@ -13,6 +13,7 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
 import android.content.Intent
+import android.view.View
 import ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity
 
 class MainActivity : AppCompatActivity() {
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun rangingButtonTapped() {
+    fun rangingButtonTapped(view: View) { // warning is wrong, this is required
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.size == 0) {
             beaconManager.startRangingBeacons(beaconReferenceApplication.region)
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun monitoringButtonTapped() {
+    fun monitoringButtonTapped(view: View) { // warning is wrong, this is required
         var dialogTitle: String
         var dialogMessage: String
         val beaconManager = BeaconManager.getInstanceForApplication(this)
