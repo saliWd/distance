@@ -150,7 +150,7 @@ class SwimMeter: Application() {
 
     private fun sendNotification() {
         val builder = NotificationCompat.Builder(this, "beacon-ref-notification-id")
-            .setContentTitle("Beacon Reference Application")
+            .setContentTitle("SwimMeter")
             .setContentText("A beacon is nearby.")
             .setSmallIcon(R.drawable.ic_launcher_background)
         val stackBuilder = TaskStackBuilder.create(this)
