@@ -46,7 +46,7 @@ class SwimMeter: Application() {
         val parser = BeaconParser().
         setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")
         parser.setHardwareAssistManufacturerCodes(arrayOf(0x004c).toIntArray())
-        beaconManager.getBeaconParsers().add(
+        beaconManager.beaconParsers.add(
             parser)
 
         // enabling debugging will send lots of verbose debug information from the library to Logcat
@@ -104,7 +104,7 @@ class SwimMeter: Application() {
 
     }
 
-    fun setupForegroundService() {
+    private fun setupForegroundService() {
         val builder = Notification.Builder(this, "BeaconReferenceApp")
         builder.setSmallIcon(R.drawable.ic_launcher_background)
         builder.setContentTitle("Scanning for Beacons")
@@ -115,27 +115,27 @@ class SwimMeter: Application() {
         builder.setContentIntent(pendingIntent)
         val channel =  NotificationChannel("beacon-ref-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
-        channel.setDescription("My Notification Channel Description")
+        channel.description = "My Notification Channel Description"
         val notificationManager =  getSystemService(
                 Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-        builder.setChannelId(channel.getId())
+        builder.setChannelId(channel.id)
         Log.d(TAG, "Calling enableForegroundServiceScanning")
         BeaconManager.getInstanceForApplication(this).enableForegroundServiceScanning(builder.build(), 456)
         Log.d(TAG, "Back from  enableForegroundServiceScanning")
     }
 
-    val centralMonitoringObserver = Observer<Int> { state ->
+    private val centralMonitoringObserver = Observer<Int> { state ->
         if (state == MonitorNotifier.OUTSIDE) {
-            Log.d(TAG, "outside beacon region: "+region)
+            Log.d(TAG, "outside beacon region: $region")
         }
         else {
-            Log.d(TAG, "inside beacon region: "+region)
+            Log.d(TAG, "inside beacon region: $region")
             sendNotification()
         }
     }
 
-    val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
+    private val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
         val rangeAgeMillis = System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp ?: 0)
         if (rangeAgeMillis < 10000) {
             Log.d(MainActivity.TAG, "Ranged: ${beacons.count()} beacons")
@@ -162,16 +162,16 @@ class SwimMeter: Application() {
         builder.setContentIntent(resultPendingIntent)
         val channel =  NotificationChannel("beacon-ref-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
-        channel.setDescription("My Notification Channel Description")
+        channel.description = "My Notification Channel Description"
         val notificationManager =  getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-        builder.setChannelId(channel.getId())
+        builder.setChannelId(channel.id)
         notificationManager.notify(1, builder.build())
     }
 
     companion object {
-        val TAG = "BeaconReference"
+        const val TAG = "BeaconReference"
     }
 
 }
