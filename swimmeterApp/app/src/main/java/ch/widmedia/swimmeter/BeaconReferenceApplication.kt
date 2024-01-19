@@ -1,4 +1,4 @@
-package ch.widmedia.beaconreference
+package ch.widmedia.swimmeter
 
 import android.app.*
 import android.content.Context

@@ -1,4 +1,4 @@
-package ch.widmedia.beaconreference
+package ch.widmedia.swimmeter
 
 import org.altbeacon.beacon.Beacon
 import java.util.ArrayList
