@@ -2,11 +2,8 @@ nonPublic/private_key.pepk
 nonPublic/google-services.json
 nonPublic/SwimMeterKeyStore.jks
 nonPublic/
-nRFcode/
-zz__example_BLEScanner-master/
-zz__old_androidApp/
-zz__example_BLEScanner-master.zip
-zz__old_androidApp.zip
+zz__old_swimmeterApp/
+zz__old_swimmeterApp.zip
 swimmeterApp/app/debug/app-debug.aab
 app/bleStarterApp/ble-starter-android/
 swimmeterApp/.idea/deploymentTargetDropDown.xml
