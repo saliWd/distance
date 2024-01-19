@@ -21,13 +21,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var beaconCountTextView: TextView
     lateinit var monitoringButton: Button
     lateinit var rangingButton: Button
-    lateinit var beaconReferenceApplication: BeaconReferenceApplication
+    lateinit var beaconReferenceApplication: SwimMeter
     var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        beaconReferenceApplication = application as BeaconReferenceApplication
+        beaconReferenceApplication = application as SwimMeter
 
         // Set up a Live Data observer for beacon data
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(beaconReferenceApplication.region)
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             // to use a foreground service, we will not have been able to start scanning until
             // after permissions are graned.  So we will do so here.
             if (BeaconManager.getInstanceForApplication(this).monitoredRegions.size == 0) {
-                (application as BeaconReferenceApplication).setupBeaconScanning()
+                (application as SwimMeter).setupBeaconScanning()
             }
         }
     }

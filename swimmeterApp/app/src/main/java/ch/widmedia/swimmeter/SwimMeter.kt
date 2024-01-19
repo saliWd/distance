@@ -8,7 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.*
 
-class BeaconReferenceApplication: Application() {
+class SwimMeter: Application() {
     // the region definition is a wildcard that matches all beacons regardless of identifiers.
     // if you only want to detect beacons with a specific UUID, change the id1 paremeter to
     // a UUID like Identifier.parse("2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6")
