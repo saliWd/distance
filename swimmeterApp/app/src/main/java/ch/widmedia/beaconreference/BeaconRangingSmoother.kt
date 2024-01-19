@@ -1,4 +1,4 @@
-package org.altbeacon.beaconreference
+package ch.widmedia.beaconreference
 
 import org.altbeacon.beacon.Beacon
 import java.util.ArrayList

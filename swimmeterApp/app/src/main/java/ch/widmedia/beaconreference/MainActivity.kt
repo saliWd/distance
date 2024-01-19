@@ -1,4 +1,4 @@
-package org.altbeacon.beaconreference
+package ch.widmedia.beaconreference
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -14,7 +14,7 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
 import android.content.Intent
-import org.altbeacon.beacon.permissions.BeaconScanPermissionsActivity
+import ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity
 
 class MainActivity : AppCompatActivity() {
     lateinit var beaconListView: ListView

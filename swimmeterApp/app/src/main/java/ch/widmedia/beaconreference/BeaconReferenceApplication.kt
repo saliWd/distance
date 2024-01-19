@@ -1,4 +1,4 @@
-package org.altbeacon.beaconreference
+package ch.widmedia.beaconreference
 
 import android.app.*
 import android.content.Context
@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.*
-import org.altbeacon.bluetooth.BluetoothMedic
 
 class BeaconReferenceApplication: Application() {
     // the region definition is a wildcard that matches all beacons regardless of identifiers.
