@@ -17,12 +17,12 @@ import android.view.View
 import ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity
 
 class MainActivity : AppCompatActivity() {
-    lateinit var beaconListView: ListView
-    lateinit var beaconCountTextView: TextView
-    lateinit var monitoringButton: Button
-    lateinit var rangingButton: Button
-    lateinit var beaconReferenceApplication: SwimMeter
-    var alertDialog: AlertDialog? = null
+    private lateinit var beaconListView: ListView
+    private lateinit var beaconCountTextView: TextView
+    private lateinit var monitoringButton: Button
+    private lateinit var rangingButton: Button
+    private lateinit var beaconReferenceApplication: SwimMeter
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +67,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         else {
-            // All permissions are granted now.  In the case where we are configured
+            // All permissions are granted now. In the case where we are configured
             // to use a foreground service, we will not have been able to start scanning until
-            // after permissions are graned.  So we will do so here.
-            if (BeaconManager.getInstanceForApplication(this).monitoredRegions.size == 0) {
+            // after permissions are granted. So we will do so here.
+            if (BeaconManager.getInstanceForApplication(this).monitoredRegions.isEmpty()) {
                 (application as SwimMeter).setupBeaconScanning()
             }
         }
     }
 
-    val monitoringObserver = Observer<Int> { state ->
+    private val monitoringObserver = Observer<Int> { state ->
         var dialogTitle = "Beacons detected"
         var dialogMessage = "didEnterRegionEvent has fired"
         var stateString = "inside"
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
 
     val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
-        if (BeaconManager.getInstanceForApplication(this).rangedRegions.size > 0) {
+        if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
             beaconCountTextView.text = "Ranging enabled: ${beacons.count()} beacon(s) detected"
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 beacons
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
     fun rangingButtonTapped(view: View) { // warning is wrong, this is required
         val beaconManager = BeaconManager.getInstanceForApplication(this)
-        if (beaconManager.rangedRegions.size == 0) {
+        if (beaconManager.rangedRegions.isEmpty()) {
             beaconManager.startRangingBeacons(beaconReferenceApplication.region)
             rangingButton.text = "Stop Ranging"
             beaconCountTextView.text = "Ranging enabled -- awaiting first callback"
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         var dialogTitle: String
         var dialogMessage: String
         val beaconManager = BeaconManager.getInstanceForApplication(this)
-        if (beaconManager.monitoredRegions.size == 0) {
+        if (beaconManager.monitoredRegions.isEmpty()) {
             beaconManager.startMonitoring(beaconReferenceApplication.region)
             dialogTitle = "Beacon monitoring started."
             dialogMessage = "You will see a dialog if a beacon is detected, and another if beacons then stop being detected."
