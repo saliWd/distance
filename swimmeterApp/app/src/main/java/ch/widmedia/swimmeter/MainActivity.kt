@@ -112,7 +112,12 @@ class MainActivity : AppCompatActivity() {
                 visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 10 seconds)
                     .sortedBy { it.distance }
                     // bluetoothName: widmedia
-                    .map { "name: ${it.bluetoothName}\nid1: ${it.id1}\nid2: ${it.id2} id3:  rssi: ${it.rssi}\nest. distance: ${it.distance} m" }.toTypedArray())
+                    // id1: UUID
+                    // id2: major
+                    // id3: minor
+                    // rssi: rssi
+                    // distance: moving average (I think)
+                    .map { "name: ${it.bluetoothName}\nid1: ${it.id1}\nid2: ${it.id2} id3: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
         }
     }
 
