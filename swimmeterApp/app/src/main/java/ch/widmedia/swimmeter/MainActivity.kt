@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity() {
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
+            // TODO: this just writes the current state. Need instead to append every new entry...
             fileOutputStream.write(visibleBeacons
                 .sortedBy { it.distance }
                 .map{"${it.bluetoothName}, ${it.id1}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n"}.toString().toByteArray())
