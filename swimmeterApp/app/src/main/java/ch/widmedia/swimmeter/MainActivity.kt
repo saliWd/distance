@@ -1,6 +1,7 @@
 package ch.widmedia.swimmeter
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -15,6 +16,8 @@ import org.altbeacon.beacon.MonitorNotifier
 import android.content.Intent
 import android.view.View
 import ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity
+import java.io.*
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var beaconListView: ListView
@@ -104,6 +107,25 @@ class MainActivity : AppCompatActivity() {
 
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
+        // file write trial
+        val file = "entries.csv"
+        val data = "hello file world"
+        val fileOutputStream:FileOutputStream
+        try {
+            fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
+            fileOutputStream.write(data.toByteArray())
+            fileOutputStream.close()
+        } catch (e: FileNotFoundException){
+            e.printStackTrace()
+        }catch (e: NumberFormatException){
+            e.printStackTrace()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        // end of file write trial
+
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
             val visibleBeacons = BeaconRangingSmoother.shared.add(beacons).visibleBeacons
             beaconCountTextView.text =
@@ -111,13 +133,9 @@ class MainActivity : AppCompatActivity() {
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 10 seconds)
                     .sortedBy { it.distance }
-                    // bluetoothName: widmedia
-                    // id1: UUID
-                    // id2: major
-                    // id3: minor
-                    // rssi: rssi
+                    // bluetoothName: widmedia                    
                     // distance: moving average (I think)
-                    .map { "name: ${it.bluetoothName}\nid1: ${it.id1}\nid2: ${it.id2} id3: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
+                    .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
         }
     }
 
