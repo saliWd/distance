@@ -109,12 +109,15 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
         // file write trial
         val file = "entries.csv"
-        val data = "hello file world"
-        val fileOutputStream:FileOutputStream
+        val data = "Name, UUID, Major-Minor, RSSI, Distance\n"
+        val fileOutputStream:FileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
+        fileOutputStream.write(data.toByteArray())
+        // fileOutputStream.write("hello 2\n".toByteArray())
+        /*
         try {
             fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
             fileOutputStream.write(data.toByteArray())
-            fileOutputStream.close()
+            // fileOutputStream.close()
         } catch (e: FileNotFoundException){
             e.printStackTrace()
         }catch (e: NumberFormatException){
@@ -124,6 +127,8 @@ class MainActivity : AppCompatActivity() {
         }catch (e: Exception){
             e.printStackTrace()
         }
+*/
+
         // end of file write trial
 
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
@@ -136,6 +141,9 @@ class MainActivity : AppCompatActivity() {
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
+            fileOutputStream.write(visibleBeacons
+                .sortedBy { it.distance }
+                .map{"${it.bluetoothName}, ${it.id1}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n"}.toString().toByteArray())
         }
     }
 
