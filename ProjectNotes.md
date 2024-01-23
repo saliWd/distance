@@ -3,16 +3,15 @@
 * Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
 
 ## SwimMeter App
-originally based on: [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner), now using [altbeacon](https://github.com/davidgyoung/android-beacon-library)
-
+using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and adapted their reference app. Previously have been using [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
 
 1. implemented features
-   1. searches for eddystone BT beacons and unnamed BT devices. displayed seperately
-   1. BT search works according to android guidelines (asks for location permission etc.)
+   1. searches for beacons, lists them (including rssi, moving average distance estimation)
+   1. logs the entries to an internal file, (device explorer, data/ch.widmedia.swimmeter/files)
 1. features to be implemented
-   1. select a specific beacon (the one that's named correctly, correct major ID or similar): need to change the list-item to something clickable which then opens another view
-   1. in this new view: display and 
-   1. start/stop/reset the logging of SSI values (signal strength). Need to do logging (=bt connection) for longer times
+   1. remove background run requirement
+   1. write to an external file instead of internal one
+   1. (later) analyze the distance values
 1. Notes (graphics stuff)
    * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
    * colors: blue is 0x2314C2, yellow is 0xE5B72A

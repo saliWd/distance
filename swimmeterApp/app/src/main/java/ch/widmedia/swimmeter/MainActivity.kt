@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconReferenceApplication: SwimMeter
     private var alertDialog: AlertDialog? = null
 
-    private val file = "entries.csv"
+    private val fileName = "entries.csv"
     private lateinit var fileOutputStream: FileOutputStream
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
 
         // write the header to the output file (without append mode set, so overwriting everything)
         val data = "Name, Major-Minor, RSSI, Distance\n"
-        fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE) // this one does an overwrite
+        fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE) // this one does an overwrite
         fileOutputStream.write(data.toByteArray())
-        fileOutputStream = openFileOutput(file, Context.MODE_APPEND) // it's actually private OR append
+        fileOutputStream = openFileOutput(fileName, Context.MODE_APPEND) // it's actually private OR append
     }
 
     override fun onPause() {
