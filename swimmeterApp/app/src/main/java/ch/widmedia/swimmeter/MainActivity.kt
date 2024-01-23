@@ -27,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconReferenceApplication: SwimMeter
     private var alertDialog: AlertDialog? = null
 
+    private val file = "entries.csv"
+    private lateinit var fileOutputStream: FileOutputStream
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         beaconCountTextView = findViewById(R.id.beaconCount)
         beaconCountTextView.text = getString(R.string.no_beacons_detected)
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
+
+        // write the header to the output file (without append mode set, so overwriting everything)
+        val data = "Name, Major-Minor, RSSI, Distance\n"
+        fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE) // this one does an overwrite
+        fileOutputStream.write(data.toByteArray())
+        fileOutputStream = openFileOutput(file, Context.MODE_APPEND) // it's actually private OR append
     }
 
     override fun onPause() {
@@ -107,44 +116,21 @@ class MainActivity : AppCompatActivity() {
 
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
-        // file write trial
-        val file = "entries.csv"
-        val data = "Name, UUID, Major-Minor, RSSI, Distance\n"
-        val fileOutputStream:FileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
-        fileOutputStream.write(data.toByteArray())
-        // fileOutputStream.write("hello 2\n".toByteArray())
-        /*
-        try {
-            fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
-            fileOutputStream.write(data.toByteArray())
-            // fileOutputStream.close()
-        } catch (e: FileNotFoundException){
-            e.printStackTrace()
-        }catch (e: NumberFormatException){
-            e.printStackTrace()
-        }catch (e: IOException){
-            e.printStackTrace()
-        }catch (e: Exception){
-            e.printStackTrace()
-        }
-*/
-
-        // end of file write trial
 
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
             val visibleBeacons = BeaconRangingSmoother.shared.add(beacons).visibleBeacons
             beaconCountTextView.text =
                 getString(R.string.ranging_enabled_beacon_s_detected, beacons.count())
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
-                visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 10 seconds)
+                visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 5 seconds)
                     .sortedBy { it.distance }
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
-            // TODO: this just writes the current state. Need instead to append every new entry...
-            fileOutputStream.write(visibleBeacons
+            
+            fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
                 .sortedBy { it.distance }
-                .map{"${it.bluetoothName}, ${it.id1}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n"}.toString().toByteArray())
+                .map{"${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n"}.toString().toByteArray())
         }
     }
 
