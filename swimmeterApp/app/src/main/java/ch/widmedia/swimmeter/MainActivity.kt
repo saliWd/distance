@@ -130,8 +130,8 @@ class MainActivity : AppCompatActivity() {
             if (beacons.isNotEmpty()) {
                 fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
                     .sortedBy { it.distance }
-                    .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }
-                    .toString().toByteArray()
+                    .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
+                    .toByteArray()
                 )
             }
         }
