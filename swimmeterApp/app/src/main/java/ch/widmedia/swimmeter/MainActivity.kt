@@ -127,10 +127,13 @@ class MainActivity : AppCompatActivity() {
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
-            
-            fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
-                .sortedBy { it.distance }
-                .map{"${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n"}.toString().toByteArray())
+            if (beacons.isNotEmpty()) {
+                fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
+                    .sortedBy { it.distance }
+                    .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }
+                    .toString().toByteArray()
+                )
+            }
         }
     }
 
