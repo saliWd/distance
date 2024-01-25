@@ -77,7 +77,8 @@ class PermissionsHelper(private val context: Context) {
     fun beaconScanPermissionGroupsNeeded(): List<Array<String>> {
         val permissions = ArrayList<Array<String>>()
         // to save the csv with the logged rssi values (from internal to external destination)
-        // This is somehow not required. Not really clear why
+        // This is somehow not required. Not really clear why? When adding it, it's always declined without showing a toast about enabling it
+        // Maybe TODO?
         // permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
         // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
@@ -162,6 +163,8 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         continueButton.text = continueButtonTitle
         continueButton.isEnabled = false
         continueButton.setOnClickListener {
+            // TODO: this somehow shoves the app (whole app) into the background, user is on the homescreen again. 
+            // App is still running though on the other view (and correctly displaying the beacons)
             this.finish()
         }
         continueButton.layoutParams = params
