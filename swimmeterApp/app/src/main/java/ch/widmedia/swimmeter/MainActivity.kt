@@ -1,7 +1,6 @@
 package ch.widmedia.swimmeter
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -14,8 +13,8 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
 import android.content.Intent
+import android.os.Environment
 import android.view.View
-import ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity
 import java.io.*
 
 
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconReferenceApplication: SwimMeter
     private var alertDialog: AlertDialog? = null
 
-    private val fileName = "entries.csv"
+    private val fileName = Environment.getExternalStorageDirectory().absolutePath +"/"+ Environment.DIRECTORY_DOWNLOADS + "/SwimMeterData.csv"
     private lateinit var fileOutputStream: FileOutputStream
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +49,8 @@ class MainActivity : AppCompatActivity() {
 
         // write the header to the output file (without append mode set, so overwriting everything)
         val data = "Name, Major-Minor, RSSI, Distance\n"
-        fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE) // this one does an overwrite
+        fileOutputStream = FileOutputStream (File(fileName))
         fileOutputStream.write(data.toByteArray())
-        fileOutputStream = openFileOutput(fileName, Context.MODE_APPEND) // it's actually private OR append
     }
 
     override fun onPause() {
@@ -146,6 +144,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    fun storeCsvButtonTapped(srcFile: File) {
+        val to = File(Environment.getExternalStorageDirectory().absolutePath + "/beaconLog.csv")
+        if(to.exists().not()) {
+            to.createNewFile()
+        }
+        srcFile.copyTo(to, true)
+    }
+     */
+
     fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
         val dialogTitle: String
         val dialogMessage: String
@@ -170,7 +178,6 @@ class MainActivity : AppCompatActivity() {
         alertDialog?.dismiss()
         alertDialog = builder.create()
         alertDialog?.show()
-
     }
 
     companion object {

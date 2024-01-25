@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- Below is only needed if you want to read the device name or establish a bluetooth connection
     -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
@@ -23,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ch.widmedia.beacon.permissions.BeaconScanPermissionsActivity"
+        <activity android:name=".BeaconScanPermissionsActivity"
             android:exported="false"/>
     </application>
 
