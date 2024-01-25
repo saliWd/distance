@@ -66,11 +66,9 @@ class SwimMeter: Application() {
     fun setupBeaconScanning() {
         val beaconManager = BeaconManager.getInstanceForApplication(this)
 
-        // By default, the library will scan in the background every 5 minutes on Android 4-7,
-        // which will be limited to scan jobs scheduled every ~15 minutes on Android 8+
         // If you want more frequent scanning (requires a foreground service on Android 8+),
         // configure that here.
-        // If you want to continuously range beacons in the background more often than every 15 minutes,
+        // If you want to continuously range beacons more often than every 15 minutes,
         // you can use the library's built-in foreground service to unlock this behavior on Android
         // 8+.   the method below shows how you set that up.
         try {
@@ -85,9 +83,6 @@ class SwimMeter: Application() {
             return
         }
         //beaconManager.setEnableScheduledScanJobs(false);
-        //beaconManager.setBackgroundBetweenScanPeriod(0);
-        //beaconManager.setBackgroundScanPeriod(1100);
-
         // Ranging callbacks will drop out if no beacons are detected
         // Monitoring callbacks will be delayed by up to 25 minutes on region exit
         // beaconManager.setIntentScanningStrategyEnabled(true)

@@ -63,19 +63,14 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onResume")
         super.onResume()
         // You MUST make sure the following dynamic permissions are granted by the user to detect beacons
-        //
         //    Manifest.permission.BLUETOOTH_SCAN
         //    Manifest.permission.BLUETOOTH_CONNECT
         //    Manifest.permission.ACCESS_FINE_LOCATION
-        //    Manifest.permission.ACCESS_BACKGROUND_LOCATION // only needed to detect in background
-        //
         // The code needed to get these permissions has become increasingly complex, so it is in
         // its own file so as not to clutter this file focussed on how to use the library.
 
-        if (!BeaconScanPermissionsActivity.allPermissionsGranted(this,
-                true)) {
+        if (!BeaconScanPermissionsActivity.allPermissionsGranted(this)) {
             val intent = Intent(this, BeaconScanPermissionsActivity::class.java)
-            intent.putExtra("backgroundAccessRequested", true)
             startActivity(intent)
         }
         else {

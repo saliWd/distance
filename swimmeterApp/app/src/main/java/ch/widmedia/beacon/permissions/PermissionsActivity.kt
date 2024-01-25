@@ -30,11 +30,10 @@ open class PermissionsActivity: AppCompatActivity() {
                 val permissionName = it.key
                 val isGranted = it.value
                 if (isGranted) {
-                    Log.d(TAG, "$permissionName permission granted: $isGranted")
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
+                    Log.d(TAG, "$permissionName permission granted: true")
+                    // Permission is granted. Continue the action or workflow in your app
                 } else {
-                    Log.d(TAG, "$permissionName permission granted: $isGranted")
+                    Log.d(TAG, "$permissionName permission granted: false")
                     // Explain to the user that the feature is unavailable because the
                     // features requires a permission that the user has denied. At the
                     // same time, respect the user's decision. Don't link to system
@@ -49,8 +48,7 @@ open class PermissionsActivity: AppCompatActivity() {
     }
 }
 
-class PermissionsHelper(val context: Context) {
-    // Manifest.permission.ACCESS_BACKGROUND_LOCATION
+class PermissionsHelper(private val context: Context) {
     // Manifest.permission.ACCESS_FINE_LOCATION
     // Manifest.permission.BLUETOOTH_CONNECT
     // Manifest.permission.BLUETOOTH_SCAN
@@ -75,23 +73,15 @@ class PermissionsHelper(val context: Context) {
             true
         )
     }
-    fun beaconScanPermissionGroupsNeeded(backgroundAccessRequested: Boolean = false): List<Array<String>> {
+    fun beaconScanPermissionGroupsNeeded(): List<Array<String>> {
         val permissions = ArrayList<Array<String>>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
-            permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // As of version Q (10) we need FINE_LOCATION and BACKGROUND_LOCATION
-            if (backgroundAccessRequested) {
-                permissions.add(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
-            }
-        }
+        // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
+        permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // As of version S (12) we need FINE_LOCATION, BLUETOOTH_SCAN and BACKGROUND_LOCATION
+            // As of version S (12) we need FINE_LOCATION, BLUETOOTH_SCAN
             // Manifest.permission.BLUETOOTH_CONNECT is not absolutely required to do just scanning,
             // but it is required if you want to access some info from the scans like the device name
-            // and the aditional cost of requsting this access is minimal, so we just request it
+            // and the additional cost of requesting this access is minimal, so we just request it
             permissions.add(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -106,12 +96,12 @@ class PermissionsHelper(val context: Context) {
 
 
 open class BeaconScanPermissionsActivity: PermissionsActivity()  {
-    lateinit var layout: LinearLayout
-    lateinit var permissionGroups: List<Array<String>>
-    lateinit var continueButton: Button
-    var scale: Float = 1.0f
+    private lateinit var layout: LinearLayout
+    private lateinit var permissionGroups: List<Array<String>>
+    private lateinit var continueButton: Button
+    private var scale: Float = 1.0f
         get() {
-            return this.getResources().getDisplayMetrics().density
+            return this.resources.displayMetrics.density
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,13 +112,12 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         layout.gravity = Gravity.CENTER
         layout.setBackgroundColor(Color.WHITE)
         layout.orientation = LinearLayout.VERTICAL
-        val backgroundAccessRequested = intent.getBooleanExtra("backgroundAccessRequested", true)
         val title = intent.getStringExtra("title") ?: "Permissions Needed"
-        val message = intent.getStringExtra("message") ?: "In order to scan for beacons, this app requrires the following permissions from the operating system.  Please tap each button to grant each required permission."
+        val message = intent.getStringExtra("message") ?: "In order to scan for beacons, this app requires the following permissions from the operating system.  Please tap each button to grant each required permission."
         val continueButtonTitle = intent.getStringExtra("continueButtonTitle") ?: "Continue"
         val permissionButtonTitles = intent.getBundleExtra("permissionBundleTitles") ?: getDefaultPermissionTitlesBundle()
 
-        permissionGroups = PermissionsHelper(this).beaconScanPermissionGroupsNeeded(backgroundAccessRequested)
+        permissionGroups = PermissionsHelper(this).beaconScanPermissionGroupsNeeded()
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -138,7 +127,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
 
 
         val titleView = TextView(this)
-        titleView.setGravity(Gravity.CENTER)
+        titleView.gravity = Gravity.CENTER
         titleView.textSize = dp(10).toFloat()
         titleView.text = title
         titleView.layoutParams = params
@@ -146,7 +135,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         layout.addView(titleView)
         val messageView = TextView(this)
         messageView.text = message
-        messageView.setGravity(Gravity.CENTER)
+        messageView.gravity = Gravity.CENTER
         messageView.textSize = dp(5).toFloat()
         messageView.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         messageView.layoutParams = params
@@ -176,12 +165,12 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         setContentView(layout)
     }
 
-    fun dp(value: Int): Int {
+    private fun dp(value: Int): Int {
         return (value * scale + 0.5f).toInt()
     }
 
-    val buttonClickListener = View.OnClickListener { button ->
-        val permissionsGroup = permissionGroups.get(button.id)
+    private val buttonClickListener = View.OnClickListener { button ->
+        val permissionsGroup = permissionGroups[button.id]
         promptForPermissions(permissionsGroup)
     }
 
@@ -189,14 +178,13 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
     fun getDefaultPermissionTitlesBundle(): Bundle {
         val bundle = Bundle()
         bundle.putString(Manifest.permission.ACCESS_FINE_LOCATION, "Location")
-        bundle.putString(Manifest.permission.ACCESS_BACKGROUND_LOCATION, "Background Location")
         bundle.putString(Manifest.permission.BLUETOOTH_SCAN, "Bluetooth")
         bundle.putString(Manifest.permission.POST_NOTIFICATIONS, "Notifications")
         return bundle
     }
 
 
-    fun allPermissionGroupsGranted(): Boolean {
+    private fun allPermissionGroupsGranted(): Boolean {
         for (permissionsGroup in permissionGroups) {
             if (!allPermissionsGranted(permissionsGroup)) {
                 return false
@@ -205,7 +193,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         return true
     }
 
-    fun setButtonColors() {
+    private fun setButtonColors() {
         var index = 0
         for (permissionsGroup in this.permissionGroups) {
             val button = findViewById<Button>(index)
@@ -226,14 +214,11 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         }
     }
 
-    fun promptForPermissions(permissionsGroup: Array<String>) {
+    private fun promptForPermissions(permissionsGroup: Array<String>) {
         if (!allPermissionsGranted(permissionsGroup)) {
             val firstPermission = permissionsGroup.first()
 
-            var showRationale = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                showRationale = shouldShowRequestPermissionRationale(firstPermission)
-            }
+            val showRationale: Boolean = shouldShowRequestPermissionRationale(firstPermission)
             if (showRationale ||  PermissionsHelper(this).isFirstTimeAskingPermission(firstPermission)) {
                 PermissionsHelper(this).setFirstTimeAskingPermission(firstPermission, false)
                 requestPermissionsLauncher.launch(permissionsGroup)
@@ -247,7 +232,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
             }
         }
     }
-    fun allPermissionsGranted(permissionsGroup: Array<String>): Boolean {
+    private fun allPermissionsGranted(permissionsGroup: Array<String>): Boolean {
         val permissionsHelper = PermissionsHelper(this)
         for (permission in permissionsGroup) {
             if (!permissionsHelper.isPermissionGranted(permission)) {
@@ -258,10 +243,9 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
     }
 
     companion object {
-        const val TAG = "BeaconScanPermissionActivity"
-        fun allPermissionsGranted(context: Context, backgroundAccessRequested: Boolean): Boolean {
+        fun allPermissionsGranted(context: Context): Boolean {
             val permissionsHelper = PermissionsHelper(context)
-            val permissionsGroups = permissionsHelper.beaconScanPermissionGroupsNeeded(backgroundAccessRequested)
+            val permissionsGroups = permissionsHelper.beaconScanPermissionGroupsNeeded()
             for (permissionsGroup in permissionsGroups) {
                 for (permission in permissionsGroup) {
                     if (!permissionsHelper.isPermissionGranted(permission)) {
