@@ -56,7 +56,7 @@ class PermissionsHelper(private val context: Context) {
         return (ContextCompat.checkSelfPermission(context, permissionString) == PackageManager.PERMISSION_GRANTED)
     }
     fun setFirstTimeAskingPermission(permissionString: String, isFirstTime: Boolean) {
-        val sharedPreference = context.getSharedPreferences("org.altbeacon.permisisons",
+        val sharedPreference = context.getSharedPreferences("ch.widmedia.beacon.permissions",
             AppCompatActivity.MODE_PRIVATE
         )
         sharedPreference.edit().putBoolean(permissionString,
@@ -65,7 +65,7 @@ class PermissionsHelper(private val context: Context) {
 
     fun isFirstTimeAskingPermission(permissionString: String): Boolean {
         val sharedPreference = context.getSharedPreferences(
-            "org.altbeacon.permisisons",
+            "ch.widmedia.beacon.permissions",
             AppCompatActivity.MODE_PRIVATE
         )
         return sharedPreference.getBoolean(
