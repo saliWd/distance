@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                 val filePath =
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                         .toString()
-                val outputStream = File(filePath, "data1.csv")
+                val outputStream = File(filePath, "data1.csv") // NB: files are never overwritten, name might be data1(7).csv
                 FileOutputStream(outputStream)
             }
 
