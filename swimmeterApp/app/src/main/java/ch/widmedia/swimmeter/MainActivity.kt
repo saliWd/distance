@@ -1,9 +1,15 @@
 package ch.widmedia.swimmeter
 
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -13,9 +19,6 @@ import androidx.lifecycle.Observer
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
-import android.content.Intent
-// import android.os.Environment
-import android.view.View
 import java.io.*
 
 
@@ -27,7 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconReferenceApplication: SwimMeter
     private var alertDialog: AlertDialog? = null
 
-    // TODO: external write does not work, permission not really granted...
+    // external write does not work, permission is declined on Android 13+
+    // NB: could write anyway but not onto an existing file from a previous installation
     // private val fileName = Environment.getExternalStorageDirectory().absolutePath +"/"+ Environment.DIRECTORY_DOWNLOADS + "/SwimMeterData.csv"
     private val fileName = "SwimMeterData.csv"
     private lateinit var fileOutputStream: FileOutputStream
@@ -58,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             // All permissions are granted now
-            // TODO: external write fileOutputStream = FileOutputStream (File(fileName))
+            // NB: external write would be like that: fileOutputStream = FileOutputStream (File(fileName))
             fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE) // todo: internal
             fileOutputStream.write(data.toByteArray())
             fileOutputStream = openFileOutput(fileName, Context.MODE_APPEND) // todo: internal
@@ -167,22 +171,30 @@ class MainActivity : AppCompatActivity() {
     }
      */
 
+    private fun saveToStorage() {
+        val fileOutStream: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val values = ContentValues()
+            values.put(MediaStore.Downloads.DISPLAY_NAME, "data1.csv")
+            values.put(MediaStore.Downloads.MIME_TYPE, "text/csv")
+            values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+            contentResolver.openOutputStream(uri!!)
+        } else {
+            val filePath =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    .toString()
+            val fileOutStream = File(filePath, "data1.csv")
+            FileOutputStream(fileOutStream)
+        }
+        fileOutStream!!.close()
+    }
+
     fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
-        val dialogTitle: String
-        val dialogMessage: String
-        val beaconManager = BeaconManager.getInstanceForApplication(this)
-        if (beaconManager.monitoredRegions.isEmpty()) {
-            beaconManager.startMonitoring(beaconReferenceApplication.region)
-            dialogTitle = "Beacon monitoring started."
-            dialogMessage = "You will see a dialog if a beacon is detected, and another if beacons then stop being detected."
-            monitoringButton.text = getString(R.string.stop_monitoring)
-        }
-        else {
-            beaconManager.stopMonitoring(beaconReferenceApplication.region)
-            dialogTitle = "Beacon monitoring stopped."
-            dialogMessage = "You will no longer see dialogs when beacons start/stop being detected."
-            monitoringButton.text = getString(R.string.start_monitoring)
-        }
+        saveToStorage()
+        val dialogTitle = "File save"
+        val dialogMessage = "File has been saved to Downloads/data1.csv"
+        monitoringButton.text = "saved"
+
         val builder =
             AlertDialog.Builder(this)
         builder.setTitle(dialogTitle)

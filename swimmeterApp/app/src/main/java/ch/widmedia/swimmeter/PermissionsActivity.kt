@@ -72,13 +72,18 @@ class PermissionsHelper(private val context: Context) {
     }
     fun beaconScanPermissionGroupsNeeded(): List<Array<String>> {
         val permissions = ArrayList<Array<String>>()
-        // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
-        permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
 
         // to save the csv with the logged rssi values (from internal to external destination)
-        // necessary since M = 23, so always required...
-        // TODO permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-        // WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent.
+
+        } else {
+            permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        }
+
+
+        // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
+        permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // As of version S (31, Android 12) we need FINE_LOCATION, BLUETOOTH_SCAN
