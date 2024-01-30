@@ -4,7 +4,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.*
 
@@ -102,7 +101,7 @@ class SwimMeter: Application() {
     private fun setupForegroundService() {
         val builder = Notification.Builder(this, "BeaconReferenceApp")
         builder.setSmallIcon(R.drawable.ic_launcher_background)
-        builder.setContentTitle("Scanning for Beacons")
+        builder.setContentTitle(getString(R.string.notification))
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
                 this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
@@ -126,7 +125,6 @@ class SwimMeter: Application() {
         }
         else {
             Log.d(TAG, "inside beacon region: $region")
-            sendNotification()
         }
     }
 
@@ -141,28 +139,6 @@ class SwimMeter: Application() {
         else {
             Log.d(MainActivity.TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
         }
-    }
-
-    private fun sendNotification() {
-        val builder = NotificationCompat.Builder(this, "beacon-ref-notification-id")
-            .setContentTitle("SwimMeter")
-            .setContentText("A beacon is nearby.")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-        val stackBuilder = TaskStackBuilder.create(this)
-        stackBuilder.addNextIntent(Intent(this, MainActivity::class.java))
-        val resultPendingIntent = stackBuilder.getPendingIntent(
-            0,
-            PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
-        )
-        builder.setContentIntent(resultPendingIntent)
-        val channel =  NotificationChannel("beacon-ref-notification-id",
-            "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
-        channel.description = "My Notification Channel Description"
-        val notificationManager =  getSystemService(
-            Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-        builder.setChannelId(channel.id)
-        notificationManager.notify(1, builder.build())
     }
 
     companion object {

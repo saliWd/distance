@@ -13,4 +13,5 @@
     <string name="speichern">speichern</string>
     <string name="Suche_ausschalten">Suche ausschalten</string>
     <string name="wurde_gespeichert">Die Datei wurde unter Downloads/data1.csv gespeichert</string>
+    <string name="notification">Bluetoothsuche aktiv</string>
 </resources>
