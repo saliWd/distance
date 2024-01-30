@@ -32,7 +32,7 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:onClick="rangingButtonTapped"
-            android:text="@string/Suche_ausschalten" />
+            android:text="@string/suche_ausschalten" />
 
         <Button
             android:id="@+id/monitoringButton"

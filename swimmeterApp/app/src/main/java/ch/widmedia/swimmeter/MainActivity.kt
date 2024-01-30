@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         monitoringButton = findViewById(R.id.monitoringButton)
         beaconListView = findViewById(R.id.beaconList)
         beaconCountTextView = findViewById(R.id.beaconCount)
-        beaconCountTextView.text = getString(R.string.no_beacons_detected)
+        beaconCountTextView.text = getString(R.string.kein_beacon_gefunden)
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
 
         // write the header to the output file (without append mode set, so overwriting everything)
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
             val visibleBeacons = BeaconRangingSmoother.shared.add(beacons).visibleBeacons
             beaconCountTextView.text =
-                getString(R.string.ranging_enabled_beacon_s_detected, beacons.count())
+                getString(R.string.suche_eingeschaltet_beacon_s_gefunden, beacons.count())
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
                 visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 5 seconds)
                     .sortedBy { it.distance }
@@ -126,13 +126,13 @@ class MainActivity : AppCompatActivity() {
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.isEmpty()) {
             beaconManager.startRangingBeacons(beaconReferenceApplication.region)
-            rangingButton.text = getString(R.string.stop_ranging)
-            beaconCountTextView.text = getString(R.string.ranging_enabled_awaiting_first_callback)
+            rangingButton.text = getString(R.string.suche_ausschalten)
+            beaconCountTextView.text = getString(R.string.suche_eingeschaltet_warte)
         }
         else {
             beaconManager.stopRangingBeacons(beaconReferenceApplication.region)
-            rangingButton.text = getString(R.string.start_ranging)
-            beaconCountTextView.text = getString(R.string.ranging_disabled_no_beacons_detected)
+            rangingButton.text = getString(R.string.suche_einschalten)
+            beaconCountTextView.text = getString(R.string.suche_ausgeschaltet)
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
         }
     }
@@ -176,8 +176,7 @@ class MainActivity : AppCompatActivity() {
         saveToStorage(fileOutputStream)
         monitoringButton.text = getText(R.string.speichern)
 
-        val text = getText(R.string.wurde_gespeichert)
-        val toast = Toast.makeText(this, text, Toast.LENGTH_LONG) // in Activity
+        val toast = Toast.makeText(this, getString(R.string.wurde_gespeichert), Toast.LENGTH_LONG) // in Activity
         toast.show()
     }
 
