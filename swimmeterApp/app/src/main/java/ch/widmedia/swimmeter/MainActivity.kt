@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
-import org.altbeacon.beacon.MonitorNotifier
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -48,8 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up a Live Data observer for beacon data
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(beaconReferenceApplication.region)
-        // observer will be called each time the monitored regionState changes (inside vs. outside region)
-        regionViewModel.regionState.observe(this, monitoringObserver)
+
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
         regionViewModel.rangedBeacons.observe(this, rangingObserver)
         rangingButton = findViewById(R.id.rangingButton)
@@ -99,20 +97,6 @@ class MainActivity : AppCompatActivity() {
                 (application as SwimMeter).setupBeaconScanning()
             }
         }
-    }
-
-    private val monitoringObserver = Observer<Int> { state ->
-        var stateString = "inside"
-        if (state == MonitorNotifier.OUTSIDE) {
-            stateString = "outside"
-            beaconCountTextView.text =
-                getString(R.string.outside_of_the_beacon_region_no_beacons_detected)
-            beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
-        }
-        else {
-            beaconCountTextView.text = getString(R.string.inside_the_beacon_region)
-        }
-        Log.d(TAG, "monitoring state changed to : $stateString")
     }
 
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->

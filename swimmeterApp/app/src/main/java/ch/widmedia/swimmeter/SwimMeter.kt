@@ -91,23 +91,22 @@ class SwimMeter: Application() {
         beaconManager.startRangingBeacons(region)
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)
-        // observer will be called each time the monitored regionState changes (inside vs. outside region)
-        regionViewModel.regionState.observeForever( centralMonitoringObserver)
+
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
         regionViewModel.rangedBeacons.observeForever( centralRangingObserver)
 
     }
 
     private fun setupForegroundService() {
-        val builder = Notification.Builder(this, "BeaconReferenceApp")
-        builder.setSmallIcon(R.drawable.ic_launcher_background)
+        val builder = Notification.Builder(this, "SwimMeter")
+        builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
         builder.setContentTitle(getString(R.string.notification))
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
                 this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
         )
         builder.setContentIntent(pendingIntent)
-        val channel =  NotificationChannel("beacon-ref-notification-id",
+        val channel =  NotificationChannel("swimmeter-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
         channel.description = "My Notification Channel Description"
         val notificationManager =  getSystemService(
@@ -117,15 +116,6 @@ class SwimMeter: Application() {
         Log.d(TAG, "Calling enableForegroundServiceScanning")
         BeaconManager.getInstanceForApplication(this).enableForegroundServiceScanning(builder.build(), 456)
         Log.d(TAG, "Back from  enableForegroundServiceScanning")
-    }
-
-    private val centralMonitoringObserver = Observer<Int> { state ->
-        if (state == MonitorNotifier.OUTSIDE) {
-            Log.d(TAG, "outside beacon region: $region")
-        }
-        else {
-            Log.d(TAG, "inside beacon region: $region")
-        }
     }
 
     private val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
@@ -142,7 +132,7 @@ class SwimMeter: Application() {
     }
 
     companion object {
-        const val TAG = "BeaconReference"
+        const val TAG = "SwimMeter"
     }
 
 }
