@@ -19,7 +19,13 @@ import androidx.lifecycle.Observer
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -161,36 +167,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /*
-    fun storeCsvButtonTapped(srcFile: File) {
-        val to = File(Environment.getExternalStorageDirectory().absolutePath + "/beaconLog.csv")
-        if(to.exists().not()) {
-            to.createNewFile()
-        }
-        srcFile.copyTo(to, true)
-    }
-     */
+    private fun saveToStorage(fileOutputStream: FileOutputStream) {
+        fileOutputStream.flush()
+        try {
+            val inputStream: InputStream = openFileInput(fileName)
 
-    private fun saveToStorage() {
-        val fileOutStream: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val values = ContentValues()
-            values.put(MediaStore.Downloads.DISPLAY_NAME, "data1.csv")
-            values.put(MediaStore.Downloads.MIME_TYPE, "text/csv")
-            values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-            val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-            contentResolver.openOutputStream(uri!!)
-        } else {
-            val filePath =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    .toString()
-            val fileOutStream = File(filePath, "data1.csv")
-            FileOutputStream(fileOutStream)
+            val outputStream: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues()
+                values.put(MediaStore.Downloads.DISPLAY_NAME, "data1.csv")
+                values.put(MediaStore.Downloads.MIME_TYPE, "text/csv")
+                values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                contentResolver.openOutputStream(uri!!)
+            } else {
+                val filePath =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        .toString()
+                val outputStream = File(filePath, "data1.csv")
+                FileOutputStream(outputStream)
+            }
+
+            val buf = ByteArray(1024)
+            var len: Int
+            while (inputStream.read(buf).also { len = it } > 0) {
+                outputStream!!.write(buf, 0, len)
+            }
+            inputStream.close()
+            outputStream!!.close()
+        } catch (ex: FileNotFoundException) {
+            ex.printStackTrace()
+        } catch (ex: IOException) {
+            ex.printStackTrace()
         }
-        fileOutStream!!.close()
     }
 
     fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
-        saveToStorage()
+        saveToStorage(fileOutputStream)
         val dialogTitle = "File save"
         val dialogMessage = "File has been saved to Downloads/data1.csv"
         monitoringButton.text = "saved"
