@@ -32,7 +32,7 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:onClick="rangingButtonTapped"
-            android:text="Disable Ranging"></Button>
+            android:text="@string/Suche_ausschalten" />
 
         <Button
             android:id="@+id/monitoringButton"
@@ -40,7 +40,7 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:onClick="monitoringButtonTapped"
-            android:text="Enable Monitoring"></Button>
+            android:text="@string/speichern" />
     </LinearLayout>
 
 </LinearLayout>

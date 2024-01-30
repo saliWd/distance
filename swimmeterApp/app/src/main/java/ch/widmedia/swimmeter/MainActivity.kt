@@ -1,6 +1,6 @@
 package ch.widmedia.swimmeter
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -14,13 +14,13 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
@@ -34,12 +34,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var monitoringButton: Button
     private lateinit var rangingButton: Button
     private lateinit var beaconReferenceApplication: SwimMeter
-    private var alertDialog: AlertDialog? = null
 
     // external write does not work, permission is declined on Android 13+
     // NB: could write anyway but not onto an existing file from a previous installation
     // private val fileName = Environment.getExternalStorageDirectory().absolutePath +"/"+ Environment.DIRECTORY_DOWNLOADS + "/SwimMeterData.csv"
-    private val fileName = "SwimMeterData.csv"
+    private val fileNameInternal = "SwimMeterData.csv"
     private lateinit var fileOutputStream: FileOutputStream
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,10 +67,9 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             // All permissions are granted now
-            // NB: external write would be like that: fileOutputStream = FileOutputStream (File(fileName))
-            fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE) // todo: internal
+            fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_PRIVATE)
             fileOutputStream.write(data.toByteArray())
-            fileOutputStream = openFileOutput(fileName, Context.MODE_APPEND) // todo: internal
+            fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_APPEND)
         }
     }
 
@@ -104,12 +102,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val monitoringObserver = Observer<Int> { state ->
-        var dialogTitle = "Beacons detected"
-        var dialogMessage = "didEnterRegionEvent has fired"
         var stateString = "inside"
         if (state == MonitorNotifier.OUTSIDE) {
-            dialogTitle = "No beacons detected"
-            dialogMessage = "didExitRegionEvent has fired"
             stateString = "outside"
             beaconCountTextView.text =
                 getString(R.string.outside_of_the_beacon_region_no_beacons_detected)
@@ -119,14 +113,6 @@ class MainActivity : AppCompatActivity() {
             beaconCountTextView.text = getString(R.string.inside_the_beacon_region)
         }
         Log.d(TAG, "monitoring state changed to : $stateString")
-        val builder =
-            AlertDialog.Builder(this)
-        builder.setTitle(dialogTitle)
-        builder.setMessage(dialogMessage)
-        builder.setPositiveButton(android.R.string.ok, null)
-        alertDialog?.dismiss()
-        alertDialog = builder.create()
-        alertDialog?.show()
     }
 
     private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
@@ -167,10 +153,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Recycle") // I do close the outputStream
     private fun saveToStorage(fileOutputStream: FileOutputStream) {
         fileOutputStream.flush()
         try {
-            val inputStream: InputStream = openFileInput(fileName)
+            val inputStream: InputStream = openFileInput(fileNameInternal)
 
             val outputStream: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues()
@@ -203,18 +190,11 @@ class MainActivity : AppCompatActivity() {
 
     fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
         saveToStorage(fileOutputStream)
-        val dialogTitle = "File save"
-        val dialogMessage = "File has been saved to Downloads/data1.csv"
-        monitoringButton.text = "saved"
+        monitoringButton.text = getText(R.string.speichern)
 
-        val builder =
-            AlertDialog.Builder(this)
-        builder.setTitle(dialogTitle)
-        builder.setMessage(dialogMessage)
-        builder.setPositiveButton(android.R.string.ok, null)
-        alertDialog?.dismiss()
-        alertDialog = builder.create()
-        alertDialog?.show()
+        val text = getText(R.string.wurde_gespeichert)
+        val toast = Toast.makeText(this, text, Toast.LENGTH_LONG) // in Activity
+        toast.show()
     }
 
     companion object {

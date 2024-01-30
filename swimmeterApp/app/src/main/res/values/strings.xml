@@ -10,4 +10,7 @@
     <string name="stop_monitoring">Stop Monitoring</string>
     <string name="start_monitoring">Start Monitoring</string>
     <string name="ranging_enabled_beacon_s_detected">Ranging enabled: %1$d beacon(s) detected</string>
+    <string name="speichern">speichern</string>
+    <string name="Suche_ausschalten">Suche ausschalten</string>
+    <string name="wurde_gespeichert">Die Datei wurde unter Downloads/data1.csv gespeichert</string>
 </resources>
