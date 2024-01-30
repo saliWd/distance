@@ -1,6 +1,7 @@
 package ch.widmedia.swimmeter
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -13,7 +14,7 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.MonitorNotifier
 import android.content.Intent
-import android.os.Environment
+// import android.os.Environment
 import android.view.View
 import java.io.*
 
@@ -26,7 +27,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconReferenceApplication: SwimMeter
     private var alertDialog: AlertDialog? = null
 
-    private val fileName = Environment.getExternalStorageDirectory().absolutePath +"/"+ Environment.DIRECTORY_DOWNLOADS + "/SwimMeterData.csv"
+    // TODO: external write does not work, permission not really granted...
+    // private val fileName = Environment.getExternalStorageDirectory().absolutePath +"/"+ Environment.DIRECTORY_DOWNLOADS + "/SwimMeterData.csv"
+    private val fileName = "SwimMeterData.csv"
     private lateinit var fileOutputStream: FileOutputStream
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +52,17 @@ class MainActivity : AppCompatActivity() {
 
         // write the header to the output file (without append mode set, so overwriting everything)
         val data = "Name, Major-Minor, RSSI, Distance\n"
-        fileOutputStream = FileOutputStream (File(fileName))
-        fileOutputStream.write(data.toByteArray())
+        if (!BeaconScanPermissionsActivity.allPermissionsGranted(this)) {
+            val intent = Intent(this, BeaconScanPermissionsActivity::class.java)
+            startActivity(intent)
+        }
+        else {
+            // All permissions are granted now
+            // TODO: external write fileOutputStream = FileOutputStream (File(fileName))
+            fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE) // todo: internal
+            fileOutputStream.write(data.toByteArray())
+            fileOutputStream = openFileOutput(fileName, Context.MODE_APPEND) // todo: internal
+        }
     }
 
     override fun onPause() {
@@ -121,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
             if (beacons.isNotEmpty()) {
+
                 fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
                     .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
                     .toByteArray()

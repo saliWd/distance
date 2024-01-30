@@ -60,8 +60,7 @@ class PermissionsHelper(private val context: Context) {
         val sharedPreference = context.getSharedPreferences("ch.widmedia.swimmeter",
             AppCompatActivity.MODE_PRIVATE
         )
-        sharedPreference.edit().putBoolean(permissionString,
-            isFirstTime).apply()
+        sharedPreference.edit().putBoolean(permissionString,isFirstTime).apply()
     }
 
     fun isFirstTimeAskingPermission(permissionString: String): Boolean {
@@ -69,20 +68,18 @@ class PermissionsHelper(private val context: Context) {
             "ch.widmedia.swimmeter",
             AppCompatActivity.MODE_PRIVATE
         )
-        return sharedPreference.getBoolean(
-            permissionString,
-            true
-        )
+        return sharedPreference.getBoolean(permissionString,true)
     }
     fun beaconScanPermissionGroupsNeeded(): List<Array<String>> {
         val permissions = ArrayList<Array<String>>()
-        // to save the csv with the logged rssi values (from internal to external destination)
-        // This is somehow not required. Not really clear why? When adding it, it's always declined without showing a toast about enabling it
-        // Maybe TODO?
-        // permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-
         // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
         permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+
+        // to save the csv with the logged rssi values (from internal to external destination)
+        // necessary since M = 23, so always required...
+        // TODO permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        // WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent.
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // As of version S (31, Android 12) we need FINE_LOCATION, BLUETOOTH_SCAN
             // Manifest.permission.BLUETOOTH_CONNECT is not absolutely required to do just scanning,
@@ -90,13 +87,13 @@ class PermissionsHelper(private val context: Context) {
             // and the additional cost of requesting this access is minimal, so we just request it
             permissions.add(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
         }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // As of version T (33, Android 13) we POST_NOTIFICATIONS permissions if using a foreground service
             permissions.add(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         }
         return permissions
     }
-
 }
 
 
