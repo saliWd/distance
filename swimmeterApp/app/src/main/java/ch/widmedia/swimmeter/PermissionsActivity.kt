@@ -49,7 +49,6 @@ open class PermissionsActivity: AppCompatActivity() {
 }
 
 class PermissionsHelper(private val context: Context) {
-    // Manifest.permission.WRITE_EXTERNAL_STORAGE
     // Manifest.permission.ACCESS_FINE_LOCATION
     // Manifest.permission.BLUETOOTH_CONNECT
     // Manifest.permission.BLUETOOTH_SCAN
@@ -76,11 +75,9 @@ class PermissionsHelper(private val context: Context) {
         // to save the csv with the logged rssi values (from internal to external destination)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent.
-
         } else {
             permissions.add(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         }
-
 
         // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
         permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
@@ -120,9 +117,9 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         layout.gravity = Gravity.CENTER
         layout.setBackgroundColor(Color.WHITE)
         layout.orientation = LinearLayout.VERTICAL
-        val title = intent.getStringExtra("title") ?: "Permissions Needed"
-        val message = intent.getStringExtra("message") ?: "In order to scan for beacons, this app requires the following permissions from the operating system. Please tap each button to grant each required permission."
-        val continueButtonTitle = intent.getStringExtra("continueButtonTitle") ?: "Continue"
+        val title = intent.getStringExtra("title") ?: "Berechtigungen erforderlich"
+        val message = intent.getStringExtra("message") ?: "Um nach dem SwimMeter-Beacon zu suchen, braucht diese App folgende Berechtigungen. Bitte die entsprechenden Buttons antippen, um die Berechtigungen zu erteilen."
+        val continueButtonTitle = intent.getStringExtra("continueButtonTitle") ?: "Weiter"
         val permissionButtonTitles = intent.getBundleExtra("permissionBundleTitles") ?: getDefaultPermissionTitlesBundle()
 
         permissionGroups = PermissionsHelper(this).beaconScanPermissionGroupsNeeded()
@@ -187,7 +184,6 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
     @SuppressLint("InlinedApi")
     fun getDefaultPermissionTitlesBundle(): Bundle {
         val bundle = Bundle()
-        bundle.putString(Manifest.permission.WRITE_EXTERNAL_STORAGE, "Storage")
         bundle.putString(Manifest.permission.ACCESS_FINE_LOCATION, "Location")
         bundle.putString(Manifest.permission.BLUETOOTH_SCAN, "Bluetooth")
         bundle.putString(Manifest.permission.POST_NOTIFICATIONS, "Notifications")
