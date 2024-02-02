@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beaconCountTextView: TextView
     private lateinit var monitoringButton: Button
     private lateinit var rangingButton: Button
-    private lateinit var beaconReferenceApplication: SwimMeter
+    private lateinit var swimMeterApplication: SwimMeter
 
     // external write does not work, permission is declined on Android 13+
     // NB: could write anyway but not onto an existing file from a previous installation
@@ -43,10 +43,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        beaconReferenceApplication = application as SwimMeter
+        swimMeterApplication = application as SwimMeter
 
         // Set up a Live Data observer for beacon data
-        val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(beaconReferenceApplication.region)
+        val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(swimMeterApplication.region)
 
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
         regionViewModel.rangedBeacons.observe(this, rangingObserver)
@@ -125,12 +125,12 @@ class MainActivity : AppCompatActivity() {
     fun rangingButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.isEmpty()) {
-            beaconManager.startRangingBeacons(beaconReferenceApplication.region)
+            beaconManager.startRangingBeacons(swimMeterApplication.region)
             rangingButton.text = getString(R.string.suche_ausschalten)
             beaconCountTextView.text = getString(R.string.suche_eingeschaltet_warte)
         }
         else {
-            beaconManager.stopRangingBeacons(beaconReferenceApplication.region)
+            beaconManager.stopRangingBeacons(swimMeterApplication.region)
             rangingButton.text = getString(R.string.suche_einschalten)
             beaconCountTextView.text = getString(R.string.suche_ausgeschaltet)
             beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
