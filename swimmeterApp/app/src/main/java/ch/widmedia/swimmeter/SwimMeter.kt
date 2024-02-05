@@ -59,8 +59,6 @@ class SwimMeter: Application() {
         // - periodically do a proactive scan or transmission to verify the bluetooth stack is OK
         // BluetoothMedic.getInstance().legacyEnablePowerCycleOnFailures(this) // Android 4-12 only
         // BluetoothMedic.getInstance().enablePeriodicTests(this, BluetoothMedic.SCAN_TEST + BluetoothMedic.TRANSMIT_TEST)
-
-        setupBeaconScanning()
     }
     fun setupBeaconScanning() {
         val beaconManager = BeaconManager.getInstanceForApplication(this)

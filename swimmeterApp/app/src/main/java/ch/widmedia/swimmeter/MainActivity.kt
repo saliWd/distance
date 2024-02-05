@@ -63,12 +63,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, BeaconScanPermissionsActivity::class.java)
             startActivity(intent)
         }
-        else {
-            // All permissions are granted now
-            fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_PRIVATE)
-            fileOutputStream.write(data.toByteArray())
-            fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_APPEND)
-        }
+        // All permissions are granted now
+        fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_PRIVATE)
+        fileOutputStream.write(data.toByteArray())
+        fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_APPEND)
     }
 
     override fun onPause() {
@@ -85,11 +83,7 @@ class MainActivity : AppCompatActivity() {
         // The code needed to get these permissions has become increasingly complex, so it is in
         // its own file so as not to clutter this file focussed on how to use the library.
 
-        if (!BeaconScanPermissionsActivity.allPermissionsGranted(this)) {
-            val intent = Intent(this, BeaconScanPermissionsActivity::class.java)
-            startActivity(intent)
-        }
-        else {
+        if (BeaconScanPermissionsActivity.allPermissionsGranted(this)) {
             // All permissions are granted now. In the case where we are configured
             // to use a foreground service, we will not have been able to start scanning until
             // after permissions are granted. So we will do so here.
