@@ -30,8 +30,7 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
          * name=widmedia.ch
          * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
          * filter for the major number 30569.
-         * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](beaconSettings_id0.png)
-         * 
+         * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](beaconSettings_id1.png)
 
 
 ## TODO
