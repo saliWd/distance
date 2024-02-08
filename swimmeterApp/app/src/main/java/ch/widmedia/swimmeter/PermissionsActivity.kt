@@ -162,9 +162,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
         continueButton.text = continueButtonTitle
         continueButton.isEnabled = false
         continueButton.setOnClickListener {
-            // TODO: this somehow shoves the app (whole app) into the background, user is on the Android home screen again.
-            // App is still running though on the other view (and correctly displaying the beacons)
-            this.finish()
+            this.finish() // closes the current view, reveals the underlying (beacon list) view
         }
         continueButton.layoutParams = params
         layout.addView(continueButton)
