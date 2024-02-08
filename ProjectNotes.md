@@ -7,10 +7,8 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
 
 1. implemented features
    1. searches for beacons, lists them (including rssi, moving average distance estimation)
-   1. logs the entries to an internal file, (device explorer, data/ch.widmedia.swimmeter/files)
+   1. logs the entries to an internal file and exports this to downloads folder
 1. features to be implemented
-   1. remove background run requirement
-   1. write to an external file instead of internal one
    1. (later) analyze the distance values
 1. Notes (graphics stuff)
    * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
@@ -27,20 +25,13 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
    1. app to configure is working
       * default password is AA14061112
-      * config tx: 500 ms, txpower 4
+      * config tx: 500 ms, txpower 6
       * config: beacon mode
-         * name: widmedia.ch
-         * factory settings for uuid/major/minor/MAC: fda50...47825/10011/19641/E6:D9:29:7B:33:F1 ![Alt text](beaconSettings_id0.png)
-         * results in type 2 in the app, MAC address is correct, name is displayed
-      * old-config:
-         * switch to eddystone mode
-         * URL advertise on
-         * URL_Name: widmedia
-         * URL_Prefix: select https://www. ("https://" only does not work correctly)
-         * URL_Content: widmedia.ch/
-         * URL_Subfix: TODO, cannot be empty... currently set to org
-         ![eddystone settings](eddyStoneSettings.png)
-      * TODO: maybe swith to beacon mode? May be suited better?
+         * name=widmedia.ch
+         * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
+         * filter for the major number 30569.
+         * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](beaconSettings_id0.png)
+         * 
 
 
 ## TODO
