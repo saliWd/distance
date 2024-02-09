@@ -7,8 +7,8 @@ import sys
 
 sys.path.append("")
 
-import uasyncio as asyncio
-import aioble
+import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
+import aioble # type: ignore (this is a pylance ignore warning directive)
 
 async def find_beacon():
     # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -32,7 +32,7 @@ async def main():
     try:
         print("Connecting to", device)
         print("connection try name: "+result.name())
-        connection = await device.connect()
+        connection = await device.connect() # does not always work. Works better with ID2 (did not work with ID1. Why?)
     except asyncio.TimeoutError:
         print("Timeout during connection")
         return
@@ -41,7 +41,7 @@ async def main():
         while True:
             print("reached the while-true loop")
             print("Name: "+result.name())
-            print("RSSI: "+str(result.rssi)) # no error but value is always -64... 
+            print("RSSI: "+str(result.rssi)) # no error but value is not updated, stays at a constant value
             await asyncio.sleep_ms(1000)
 
 
