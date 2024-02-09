@@ -11,7 +11,9 @@ class SwimMeter: Application() {
     // the region definition is a wildcard that matches all beacons regardless of identifiers.
     // if you only want to detect beacons with a specific UUID, change the id1 parameter to
     // a UUID like Identifier.parse("2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6")
-    var region = Region("all-beacons", null, null, null)
+    // var region = Region("all-beacons", null, null, null)
+    // only listening to beacons with major=30569
+    var region = Region("all-beacons", null, Identifier.parse("30569"), null)
 
     override fun onCreate() {
         super.onCreate()

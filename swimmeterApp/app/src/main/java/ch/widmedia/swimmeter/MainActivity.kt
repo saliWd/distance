@@ -106,13 +106,11 @@ class MainActivity : AppCompatActivity() {
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
                     .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
-            if (beacons.isNotEmpty()) {
-                if (beacons.map{"${it.id2}"}.contains("30569")) { // do only store my beacons
-                    fileOutputStream.write(beacons // this does not use visibleBeacons, but beacons instead
-                        .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
-                        .toByteArray()
-                    )
-                }
+            if (beacons.isNotEmpty()) { // this does not use visibleBeacons, but beacons instead
+                fileOutputStream.write(beacons
+                    .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
+                    .toByteArray()
+                )
             }
         }
     }
