@@ -32,9 +32,19 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
          * filter for the major number 30569.
          * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](beaconSettings_id1.png)
 
-
-## TODO
-
+## Bluetooth-Receiver
+1. Could use a PicoW -> check receiption
+   * + have them, Micropython works like a jimmmy   
+   * - only internal BT antenna
+   1. [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
+      * aioble-central for observer/scanner: import aioble.central
+      * 
+1. ESP variant
+   1. e.g. [Adafruit ESP32 Feather V2 w.FL Antenna](https://www.adafruit.com/product/5438). Does have external antenna, not too pricey --> 32$ per pc with shipping from US
+   1. e.g. TTGO-ESP32-PSRAM-Antenna-Bluetooth --> check details 
+   1. e.g. Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32 --> check the one I have, does it have a connector?
+   1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
+   1. 
 
 ## nRF52840 Dongle
 
