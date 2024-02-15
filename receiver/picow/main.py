@@ -3,10 +3,7 @@
 # (and then changed a lot)
 ##
 
-import sys
 from time import sleep
-
-sys.path.append("")
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
