@@ -4,6 +4,7 @@
 ##
 
 import sys
+from time import sleep
 
 sys.path.append("")
 
@@ -21,6 +22,10 @@ async def find_beacon():
                     print("did find something but name does not match. Name is: "+result.name())
     return None
 
+def print_infos(device, result):    
+    print("found following match: ", device)
+    print("Name: "+result.name())
+    print("RSSI: "+str(result.rssi))
 
 async def main():
     result = await find_beacon()
@@ -29,21 +34,11 @@ async def main():
         print("beacon not found")
         return
 
-    try:
-        print("Connecting to", device)
-        print("connection try name: "+result.name())
-        print("connection rssi: "+str(result.rssi))
-        connection = await device.connect() # does not always work
-    except asyncio.TimeoutError:
-        print("Timeout during connection")
-        return
+    print_infos(device=device, result=result)
 
-    async with connection:
-        while True:
-            print("reached the while-true loop")
-            print("Name: "+result.name())
-            print("RSSI: "+str(result.rssi)) # no error but value is not updated, stays at a constant value
-            await asyncio.sleep_ms(1000)
+    while True:
+        print_infos(device=device, result=result)
+        sleep(0.5)
 
 
 asyncio.run(main())

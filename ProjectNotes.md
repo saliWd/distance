@@ -14,7 +14,9 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
    * colors: blue is 0x2314C2, yellow is 0xE5B72A
    * GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
-
+1.  TODO
+   * get it back into the app store
+   * maybe change behaviour, no automatic scanning at start but rather start it by clicking the button? Drawback: bigger nuisance to test it...
 
 ## Bluetooth-Beacon
 1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
