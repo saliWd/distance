@@ -32,7 +32,8 @@ async def main():
     try:
         print("Connecting to", device)
         print("connection try name: "+result.name())
-        connection = await device.connect() # does not always work. Works better with ID2 (did not work with ID1. Why?)
+        print("connection rssi: "+str(result.rssi))
+        connection = await device.connect() # does not always work
     except asyncio.TimeoutError:
         print("Timeout during connection")
         return
