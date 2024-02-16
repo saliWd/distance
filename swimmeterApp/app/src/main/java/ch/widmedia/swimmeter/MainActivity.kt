@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         monitoringButton = findViewById(R.id.monitoringButton)
         beaconListView = findViewById(R.id.beaconList)
         beaconCountTextView = findViewById(R.id.beaconCount)
-        beaconCountTextView.text = getString(R.string.kein_beacon_gefunden)
+        beaconCountTextView.text = getString(R.string.suche_ausgeschaltet)
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
 
         // write the header to the output file (without append mode set, so overwriting everything)
