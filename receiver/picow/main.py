@@ -40,12 +40,12 @@ async def main():
     while loopvar < LOOP_MAX:
         loopvar = loopvar + 1
         result = await find_beacon(debug_info=False)
-        device = result.device
-        if not device:
-            print("beacon not found")
-            return
-        timeStamp = ticks_diff(ticks_ms(), startTime)
-        print_infos(loopvar=loopvar, timeStamp=timeStamp, device=device, result=result, filehandle=filehandle)
+        if result:
+            device = result.device
+            timeStamp = ticks_diff(ticks_ms(), startTime)
+            print_infos(loopvar=loopvar, timeStamp=timeStamp, device=device, result=result, filehandle=filehandle)
+        else: # it's not a error, just beacon out of range
+            print("Loopvar %d: no beacon found" % loopvar)
         sleep(0.5)
  
     filehandle.close()
