@@ -48,6 +48,12 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
    1. 
 
+## Display
+1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution just buy, everybody does it themselves.
+1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
+
+-> split flap would be much sexier
+
 ## nRF52840 Dongle
 
 (newer to older)

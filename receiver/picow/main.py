@@ -3,10 +3,13 @@
 # (and then changed a lot)
 ##
 
-from time import sleep
+from time import sleep, ticks_ms, ticks_diff
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
+
+LOOP_MAX = 500
+startTime = ticks_ms()
 
 async def find_beacon(debug_info):
     # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -19,31 +22,30 @@ async def find_beacon(debug_info):
                     if debug_info: print("did find something but name does not match. Name is: "+result.name())
     return None
 
-def print_infos(loopvar, device, result, filehandle, write_to_file):
+def print_infos(loopvar, timeStamp, device, result, filehandle):
     name = result.name()[0:11]
     addr = "%s" % device # need to get string representation first...
     addr = addr[20:37]
-    txt_csv = "%d, %s, %s, %d\n" % (loopvar, name, addr, result.rssi)
+    txt_csv = "%d, %d, %s, %s, %d\n" % (loopvar, timeStamp, name, addr, result.rssi)
     print (txt_csv, end ="") # need the newline for the csv write. No additional new line here
-
-    if write_to_file:
-        filehandle.write(txt_csv)
+    filehandle.write(txt_csv)
 
 async def main():
-    filehandle = open('data.csv', 'w')
-    filehandle.write('id, name, address, rssi\n')
+    filehandle = open('data.csv', 'a') # append
+    filehandle.write('id, time_ms, name, address, rssi\n')
 
     loopvar = 0
 
     # while True:
-    while loopvar < 5:
+    while loopvar < LOOP_MAX:
         loopvar = loopvar + 1
         result = await find_beacon(debug_info=False)
         device = result.device
         if not device:
             print("beacon not found")
             return
-        print_infos(loopvar=loopvar, device=device, result=result, filehandle=filehandle, write_to_file=True)
+        timeStamp = ticks_diff(ticks_ms(), startTime)
+        print_infos(loopvar=loopvar, timeStamp=timeStamp, device=device, result=result, filehandle=filehandle)
         sleep(0.5)
  
     filehandle.close()
