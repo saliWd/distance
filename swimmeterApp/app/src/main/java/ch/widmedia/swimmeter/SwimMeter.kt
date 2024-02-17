@@ -32,7 +32,7 @@ class SwimMeter: Application() {
             parser)
     }
     fun setupBeaconScanning() {
-        val beaconManager = BeaconManager.getInstanceForApplication(this)
+        BeaconManager.getInstanceForApplication(this)
 
         // If you want more frequent scanning (requires a foreground service on Android 8+),
         // configure that here.
