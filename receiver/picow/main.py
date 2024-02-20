@@ -25,11 +25,8 @@ async def find_beacon(debug_info):
                     if debug_info: print("did find something but name does not match. Name is: "+result.name())
     return None
 
-def print_infos(loopvar, timeStamp, device, result, filehandle):
-    name = result.name()[0:11]
-    addr = "%s" % device # need to get string representation first...
-    addr = addr[20:37]
-    txt_csv = "%d, %d, %s, %s, %d\n" % (loopvar, timeStamp, name, addr, result.rssi)
+def print_infos(loopvar, timeStamp, name, addr, rssi, filehandle):    
+    txt_csv = "%d, %d, %s, %s, %d\n" % (loopvar, timeStamp, name, addr, rssi)
     print (txt_csv, end ="") # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
@@ -38,8 +35,7 @@ def moving_average(newValue):
     average_arr.append(newValue)
     if len(average_arr) > 5:
         average_arr.pop(0) # remove the oldest entry    
-    average = sum(average_arr) / len(average_arr)    
-    return average
+    return (sum(average_arr) / len(average_arr)) # this results in an integer value   
 
 # main program
 async def main():
@@ -54,11 +50,20 @@ async def main():
         result = await find_beacon(debug_info=False)
         if result:
             device = result.device
-            timeStamp = ticks_diff(ticks_ms(), startTime)
-            print_infos(loopvar=loopvar, timeStamp=timeStamp, device=device, result=result, filehandle=filehandle)
-            print("moving average:%d" % moving_average(result.rssi))
+            name = result.name()[0:11]
+            addr = "%s" % device # need to get string representation first...
+            addr = addr[20:37] # only take the MAC part
+            rssi = result.rssi
+            timeStamp = ticks_diff(ticks_ms(), startTime)            
         else: # it's not a error, just beacon out of range
             print("Loopvar %d: no beacon found" % loopvar)
+            name = 'widmedia.ch'
+            addr = 'xx:xx:xx:xx:xx'
+            rssi = -120 # this value is important. What value do I give to out-of-range beacons
+            # timestamp is not updated. Correct behavior?
+
+        print_infos(loopvar=loopvar, timeStamp=timeStamp, name=name, addr=addr, rssi=rssi, filehandle=filehandle)
+        print("moving average:%d" % moving_average(rssi))
         sleep(0.5)
  
     filehandle.close()
