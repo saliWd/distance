@@ -1,7 +1,9 @@
 ##
-# example taken from https://github.com/micropython/micropython-lib/blob/master/micropython/bluetooth/aioble/examples/temp_client.py 
-# (and then changed a lot)
+# using aioble library (https://github.com/micropython/micropython-lib/blob/master/micropython/bluetooth/aioble)
 ##
+# external libraries: do once (or tools -> manage packages -> install (uasyncio is already part of micropython))
+# import mip
+# mip.install("aioble")
 
 from time import sleep, ticks_ms, ticks_diff
 
@@ -54,7 +56,6 @@ async def main():
     filehandle = open('data.csv')
     print(filehandle.read())
     filehandle.close()
-
 
 
 asyncio.run(main())

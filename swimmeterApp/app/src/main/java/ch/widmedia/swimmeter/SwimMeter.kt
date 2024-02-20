@@ -32,7 +32,7 @@ class SwimMeter: Application() {
             parser)
     }
     fun setupBeaconScanning() {
-        val beaconManager = BeaconManager.getInstanceForApplication(this)
+        BeaconManager.getInstanceForApplication(this)
 
         // If you want more frequent scanning (requires a foreground service on Android 8+),
         // configure that here.
@@ -50,7 +50,7 @@ class SwimMeter: Application() {
             Log.d(TAG, "Not setting up foreground service scanning until location permission granted by user")
             return
         }
-        
+
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
