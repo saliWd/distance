@@ -12,6 +12,7 @@ import aioble # type: ignore (this is a pylance ignore warning directive)
 
 LOOP_MAX = 500
 startTime = ticks_ms()
+average_arr = []
 
 async def find_beacon(debug_info):
     # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -32,6 +33,15 @@ def print_infos(loopvar, timeStamp, device, result, filehandle):
     print (txt_csv, end ="") # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
+# calculate an average of the last 5 measurements
+def moving_average(newValue):    
+    average_arr.append(newValue)
+    if len(average_arr) > 5:
+        average_arr.pop(0) # remove the oldest entry    
+    average = sum(average_arr) / len(average_arr)    
+    return average
+
+# main program
 async def main():
     filehandle = open('data.csv', 'a') # append
     filehandle.write('id, time_ms, name, address, rssi\n')
@@ -46,6 +56,7 @@ async def main():
             device = result.device
             timeStamp = ticks_diff(ticks_ms(), startTime)
             print_infos(loopvar=loopvar, timeStamp=timeStamp, device=device, result=result, filehandle=filehandle)
+            print("moving average:%d" % moving_average(result.rssi))
         else: # it's not a error, just beacon out of range
             print("Loopvar %d: no beacon found" % loopvar)
         sleep(0.5)
