@@ -11,7 +11,7 @@ from machine import Pin #type: ignore
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
 
-LOOP_MAX = 50
+LOOP_MAX = 500
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 RSSI_INVALID = 0
 NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
@@ -121,7 +121,7 @@ async def main():
 
     
     while loopCnt < LOOP_MAX: # while True:
-        meas = DEFAULT_MEAS
+        meas = DEFAULT_MEAS.copy()
 
         loopCnt += 1
         meas['loopCnt'] = loopCnt
