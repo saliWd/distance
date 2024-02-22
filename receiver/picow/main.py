@@ -18,8 +18,15 @@ NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
 NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
 SLEEP_TIME = 0.2
+
+# global variables
 rssiVals = []
 ledOnboard = Pin("LED", Pin.OUT)
+stages = { # keeps track of the seconds spent in each stage
+  'oor': 0,  # out of range
+  'incr': 0, # signal strength increasing
+  'decr': 0  # signal srength decreasing
+}
 
 async def find_beacon():
     # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -30,26 +37,24 @@ async def find_beacon():
                     return result                
     return None
 
-def print_infos(filehandle, loopvar, timeDiff, name, addr, rssi, movAverageFast, movAverageSlow):
-    txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (loopvar, timeDiff, name, addr, rssi, movAverageFast, movAverageSlow)
+def print_infos(filehandle, meas):
+    txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (meas['loopvar'], meas['timeDiff'], meas['name'], meas['addr'], meas['rssi'], meas['rssiAveFast'], meas['rssiAveSlow'])
     print (txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
 # calculate an average of the last 5 and 25 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
-def moving_average(rssi):
-    rssiVals.append(rssi)
-    movAverageFast = RSSI_INVALID
-    movAverageSlow = RSSI_INVALID
+def moving_average(meas):
+    meas['rssiAveFast'] = RSSI_INVALID
+    meas['rssiAveSlow'] = RSSI_INVALID
+    rssiVals.append(meas['rssi'])
     length = len(rssiVals)
     if length >= NUM_OF_RSSIS_FAST:
-        movAverageFast = sum(rssiVals[length-NUM_OF_RSSIS_FAST:length]) / NUM_OF_RSSIS_FAST # this results in an integer value
+        meas['rssiAveFast'] = sum(rssiVals[length-NUM_OF_RSSIS_FAST:length]) / NUM_OF_RSSIS_FAST # this results in an integer value
     if length > NUM_OF_RSSIS_SLOW:
         rssiVals.pop(0)
-        movAverageSlow = sum(rssiVals) / (length-1) # -1 because of the pop before
-    
-    
-    return (movAverageFast, movAverageSlow) 
+        meas['rssiAveSlow'] = sum(rssiVals) / (length-1) # -1 because of the pop before
+    return meas
 
 ####
 # lane counting conditions which have to be fullfilled:
@@ -60,11 +65,10 @@ def moving_average(rssi):
 ##
 
 # counts the seconds in each stage (per lane)
-def categorize():
-  # out of range. Means the moving average is equal to the out-of-range value
-  stage_oor = 0 # out of range state
-  stage_decr = 0 # signal strength goes down
-  stage_incr = 0 # signal strength goes up
+def categorize(meas):
+    if meas['rssiAveFast'] == RSSI_OOR:
+        stages["oor"] += meas['timeDiff']
+
 
   # laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
 
@@ -93,36 +97,41 @@ async def main():
     filehandle.write(txt_csv)
 
     loopvar = 0
-    timeDiff = 100
     lastTime = ticks_ms()
     ledOnboard.on()
-
+    
     while loopvar < LOOP_MAX: # while True:
-        loopvar = loopvar + 1
+        meas = {
+            'loopvar': 0,                # a counter
+            'timeDiff': 0,               # in milliseconds
+            'name': 'widmedia.ch',       # string
+            'addr': 'xx:xx:xx:xx:xx:xx', # string
+            'rssi': RSSI_OOR,            # in dBm
+            'rssiAveFast': 0,            # in dBm
+            'rssiAveSlow': 0             # in dBm
+        }
+
+        loopvar += 1
+        meas['loopvar'] = loopvar
         result = await find_beacon()
         if result:
             device = result.device
-            name = result.name()[0:11]
+            meas['name'] = result.name()[0:11]
             addr = "%s" % device # need to get string representation first
-            addr = addr[20:37] # only take the MAC part
-            rssi = result.rssi
-        else: # it's not a error, just beacon out of range
-            name = 'widmedia.ch'
-            addr = 'xx:xx:xx:xx:xx:xx'
-            rssi = RSSI_OOR 
+            meas['addr'] = addr[20:37] # only take the MAC part
+            meas['rssi'] = result.rssi
+        # else: it's not a error, just beacon out of range
 
-        timeDiff = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
+        meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         lastTime = ticks_ms()
                 
-        (movAverageFast, movAverageSlow) = moving_average(rssi) # average value of 0 means it's not yet valid
-        print_infos(filehandle=filehandle, loopvar=loopvar, timeDiff=timeDiff, 
-                    name=name, addr=addr, rssi=rssi, movAverageFast=movAverageFast, movAverageSlow=movAverageSlow)
+        meas = moving_average(meas) # average value of 0 means it's not yet valid
+        print_infos(filehandle=filehandle, meas=meas)
         
         ledOnboard.toggle()
         sleep(SLEEP_TIME)
  
     filehandle.close()
-
     print("\n********\n* done *\n********")    
 
 asyncio.run(main())
