@@ -17,19 +17,17 @@ RSSI_INVALID = 0
 NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
 NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
-SLEEP_TIME = 0.2 
+SLEEP_TIME = 0.2
 rssiVals = []
 ledOnboard = Pin("LED", Pin.OUT)
 
-async def find_beacon(debug_info):
+async def find_beacon():
     # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
     async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
         async for result in scanner:
             if(result.name()): # most are empty...
                 if result.name()[0:11] == "widmedia.ch":
-                    return result
-                else:
-                    if debug_info: print("did find something but name does not match. Name is: "+result.name())
+                    return result                
     return None
 
 def print_infos(filehandle, loopvar, timeDiff, name, addr, rssi, movAverageFast, movAverageSlow):
@@ -101,7 +99,7 @@ async def main():
 
     while loopvar < LOOP_MAX: # while True:
         loopvar = loopvar + 1
-        result = await find_beacon(debug_info=False)
+        result = await find_beacon()
         if result:
             device = result.device
             name = result.name()[0:11]
@@ -113,7 +111,7 @@ async def main():
             addr = 'xx:xx:xx:xx:xx:xx'
             rssi = RSSI_OOR 
 
-        timeDiff = ticks_diff(ticks_ms(), lastTime) # update the timeDiff whether a beacon has been found or not
+        timeDiff = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         lastTime = ticks_ms()
                 
         (movAverageFast, movAverageSlow) = moving_average(rssi) # average value of 0 means it's not yet valid
