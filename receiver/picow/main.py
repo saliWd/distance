@@ -6,6 +6,7 @@
 # mip.install("aioble")
 
 from time import sleep, ticks_ms, ticks_diff
+from machine import Pin #type: ignore
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
@@ -15,6 +16,7 @@ RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
 NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
 rssiVals = []
+ledOnboard = Pin("LED", Pin.OUT)
 
 async def find_beacon(debug_info):
     # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -90,6 +92,7 @@ async def main():
     loopvar = 0
     timeDiff = 100
     lastTime = ticks_ms()
+    ledOnboard.on()
 
     # while True:
     while loopvar < LOOP_MAX:
