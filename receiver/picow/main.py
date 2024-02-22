@@ -13,14 +13,17 @@ import aioble # type: ignore (this is a pylance ignore warning directive)
 
 LOOP_MAX = 50
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
+RSSI_INVALID = 0
 NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
 NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
+# 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
+SLEEP_TIME = 0.2 
 rssiVals = []
 ledOnboard = Pin("LED", Pin.OUT)
 
 async def find_beacon(debug_info):
-    # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
-    async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner:
+    # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
+    async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
         async for result in scanner:
             if(result.name()): # most are empty...
                 if result.name()[0:11] == "widmedia.ch":
@@ -31,15 +34,15 @@ async def find_beacon(debug_info):
 
 def print_infos(filehandle, loopvar, timeDiff, name, addr, rssi, movAverageFast, movAverageSlow):
     txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (loopvar, timeDiff, name, addr, rssi, movAverageFast, movAverageSlow)
-    print (txt_csv, end ="") # need the newline for the csv write. No additional new line here
+    print (txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
 # calculate an average of the last 5 and 25 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
 def moving_average(rssi):
     rssiVals.append(rssi)
-    movAverageFast = 0
-    movAverageSlow = 0
+    movAverageFast = RSSI_INVALID
+    movAverageSlow = RSSI_INVALID
     length = len(rssiVals)
     if length >= NUM_OF_RSSIS_FAST:
         movAverageFast = sum(rssiVals[length-NUM_OF_RSSIS_FAST:length]) / NUM_OF_RSSIS_FAST # this results in an integer value
@@ -87,15 +90,16 @@ def categorize():
 # main program
 async def main():
     filehandle = open('data.csv', 'a') # append
-    filehandle.write('id, time_ms, name, address, rssi, average_fast, average_slow\n')
+    txt_csv = "id, time_ms, name, address, rssi, average_fast, average_slow\n"
+    print (txt_csv, end ='')
+    filehandle.write(txt_csv)
 
     loopvar = 0
     timeDiff = 100
     lastTime = ticks_ms()
     ledOnboard.on()
 
-    # while True:
-    while loopvar < LOOP_MAX:
+    while loopvar < LOOP_MAX: # while True:
         loopvar = loopvar + 1
         result = await find_beacon(debug_info=False)
         if result:
@@ -105,26 +109,22 @@ async def main():
             addr = addr[20:37] # only take the MAC part
             rssi = result.rssi
         else: # it's not a error, just beacon out of range
-            print("Loopvar %d: no beacon found" % loopvar)
             name = 'widmedia.ch'
             addr = 'xx:xx:xx:xx:xx:xx'
             rssi = RSSI_OOR 
 
         timeDiff = ticks_diff(ticks_ms(), lastTime) # update the timeDiff whether a beacon has been found or not
         lastTime = ticks_ms()
-        
-        (movAverageFast, movAverageSlow) = moving_average(rssi) # value of 0 means it's not yet valid
-
+                
+        (movAverageFast, movAverageSlow) = moving_average(rssi) # average value of 0 means it's not yet valid
         print_infos(filehandle=filehandle, loopvar=loopvar, timeDiff=timeDiff, 
                     name=name, addr=addr, rssi=rssi, movAverageFast=movAverageFast, movAverageSlow=movAverageSlow)
-        sleep(0.5)
+        
+        ledOnboard.toggle()
+        sleep(SLEEP_TIME)
  
     filehandle.close()
 
-    print("outputting the file contents\n")
-    filehandle = open('data.csv')
-    print(filehandle.read())
-    filehandle.close()
-
+    print("\n********\n* done *\n********")    
 
 asyncio.run(main())
