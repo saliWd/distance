@@ -19,14 +19,16 @@ NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
 SLEEP_TIME = 0.2
 
-# global variables
-rssiVals = []
-ledOnboard = Pin("LED", Pin.OUT)
-stages = { # keeps track of the seconds spent in each stage
-  'oor': 0,  # out of range
-  'incr': 0, # signal strength increasing
-  'decr': 0  # signal srength decreasing
+DEFAULT_MEAS = {
+    'loopCnt': 0,                # a counter
+    'timeDiff': 0,               # in milliseconds
+    'name': 'widmedia.ch',       # string
+    'addr': 'xx:xx:xx:xx:xx:xx', # string
+    'rssi': RSSI_OOR,            # in dBm
+    'rssiAveFast': 0,            # in dBm
+    'rssiAveSlow': 0             # in dBm
 }
+
 
 async def find_beacon():
     # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -38,13 +40,13 @@ async def find_beacon():
     return None
 
 def print_infos(filehandle, meas):
-    txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (meas['loopvar'], meas['timeDiff'], meas['name'], meas['addr'], meas['rssi'], meas['rssiAveFast'], meas['rssiAveSlow'])
+    txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], meas['name'], meas['addr'], meas['rssi'], meas['rssiAveFast'], meas['rssiAveSlow'])
     print (txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
 # calculate an average of the last 5 and 25 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
-def moving_average(meas):
+def moving_average(rssiVals, meas):
     meas['rssiAveFast'] = RSSI_INVALID
     meas['rssiAveSlow'] = RSSI_INVALID
     rssiVals.append(meas['rssi'])
@@ -54,7 +56,7 @@ def moving_average(meas):
     if length > NUM_OF_RSSIS_SLOW:
         rssiVals.pop(0)
         meas['rssiAveSlow'] = sum(rssiVals) / (length-1) # -1 because of the pop before
-    return meas
+    return (rssiVals, meas)
 
 ####
 # lane counting conditions which have to be fullfilled:
@@ -65,28 +67,24 @@ def moving_average(meas):
 ##
 
 # counts the seconds in each stage (per lane)
-def categorize(meas):
+def categorize(stages, loopCnt, meas, oldMeas):
+    if (loopCnt % 5) > 0: # don't do this every time
+       return (stages, oldMeas)
+        
+    print("doing categorization, comparing %d and %d" % (meas['rssiAveFast'], oldMeas['rssiAveFast']))
+
+    DELTA = 0 # TODO: meaningful delta value
     if meas['rssiAveFast'] == RSSI_OOR:
-        stages["oor"] += meas['timeDiff']
+        stages["oor"] += meas['timeDiff'] # TODO: timeDiff is between single measurements, need the timediff between two categorize runs
+    elif meas['rssiAveFast'] > (oldMeas['rssiAveFast'] + DELTA): # TODO: decide whether to use fast or slow averaging
+        stages['incr'] += meas['timeDiff']
+    elif meas['rssiAveFast'] < (oldMeas['rssiAveFast'] - DELTA):
+        stages['decr'] += meas['timeDiff']    
+    # else just return
+    return (stages, meas.copy())
 
+# laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
 
-  # laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
-
-#   if is_oor():
-#       stage_oor += 3 # TODO
-#   if is_decr():
-#       stage_decr += 3    
-
-#   return  
-
-# def is_oor():
-#     if (moving_average() == RSSI_OOR) and (len(rssiVals) >= NUM_OF_RSSIS_FAST): # need to have a full array to make a decision
-#         return True
-#     return False
-
-# def is_decr(): # TODO
-#     # need a slower moving average mechanism
-#     return False
 
 
 # main program
@@ -96,23 +94,25 @@ async def main():
     print (txt_csv, end ='')
     filehandle.write(txt_csv)
 
-    loopvar = 0
+    loopCnt = 0
     lastTime = ticks_ms()
+    ledOnboard = Pin("LED", Pin.OUT)
     ledOnboard.on()
-    
-    while loopvar < LOOP_MAX: # while True:
-        meas = {
-            'loopvar': 0,                # a counter
-            'timeDiff': 0,               # in milliseconds
-            'name': 'widmedia.ch',       # string
-            'addr': 'xx:xx:xx:xx:xx:xx', # string
-            'rssi': RSSI_OOR,            # in dBm
-            'rssiAveFast': 0,            # in dBm
-            'rssiAveSlow': 0             # in dBm
-        }
 
-        loopvar += 1
-        meas['loopvar'] = loopvar
+    rssiVals = []
+    meas    = DEFAULT_MEAS.copy()
+    oldMeas = DEFAULT_MEAS.copy()
+    stages = { # keeps track of the milliseconds spent in each stage
+        'oor': 0,  # out of range
+        'incr': 0, # signal strength increasing
+        'decr': 0  # signal srength decreasing
+    }
+    
+    while loopCnt < LOOP_MAX: # while True:
+        meas = DEFAULT_MEAS
+
+        loopCnt += 1
+        meas['loopCnt'] = loopCnt
         result = await find_beacon()
         if result:
             device = result.device
@@ -125,13 +125,15 @@ async def main():
         meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         lastTime = ticks_ms()
                 
-        meas = moving_average(meas) # average value of 0 means it's not yet valid
+        (rssiVals, meas) = moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
         print_infos(filehandle=filehandle, meas=meas)
         
         ledOnboard.toggle()
+        (stages, oldMeas) = categorize(stages=stages, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
         sleep(SLEEP_TIME)
  
     filehandle.close()
-    print("\n********\n* done *\n********")    
+    print("\n********\n* done *\n********")
+    print(stages)
 
 asyncio.run(main())
