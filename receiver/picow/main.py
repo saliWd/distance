@@ -66,25 +66,33 @@ def moving_average(rssiVals, meas):
 # c: at least 10 seconds. Need time measurements, periods of non-detection
 ##
 
-# counts the seconds in each stage (per lane)
-def categorize(stages, loopCnt, meas, oldMeas):
+# laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
+def checkCriterias(laneCriterias, loopCnt, meas, oldMeas):
     if (loopCnt % 5) > 0: # don't do this every time
-       return (stages, oldMeas)
+       return (laneCriterias, oldMeas)
         
     print("doing categorization, comparing %d and %d" % (meas['rssiAveFast'], oldMeas['rssiAveFast']))
 
-    DELTA = 0 # TODO: meaningful delta value
-    if meas['rssiAveFast'] == RSSI_OOR:
-        stages["oor"] += meas['timeDiff'] # TODO: timeDiff is between single measurements, need the timediff between two categorize runs
+    DELTA = 0 # FIXME: meaningful delta value
+    if meas['rssiAveFast'] < (oldMeas['rssiAveFast'] - DELTA): # TODO: decide whether to use fast or slow averaging
+        # no other criterias need to be fulfilled        
+        laneCriterias['didSeeDecr'] = True
+    elif meas['rssiAveFast'] == RSSI_OOR:
+        if laneCriterias['didSeeDecr']:
+            laneCriterias['didSeeOor'] = True
     elif meas['rssiAveFast'] > (oldMeas['rssiAveFast'] + DELTA): # TODO: decide whether to use fast or slow averaging
-        stages['incr'] += meas['timeDiff']
-    elif meas['rssiAveFast'] < (oldMeas['rssiAveFast'] - DELTA):
-        stages['decr'] += meas['timeDiff']    
+        if laneCriterias['didSeeDecr'] and laneCriterias['didSeeOor']:
+            laneCriterias['didSeeIncr'] = True
+
+    if laneCriterias['didSeeDecr'] and laneCriterias['didSeeOor'] and laneCriterias['didSeeIncr']:
+        laneTime = ticks_diff(ticks_ms(), laneCriterias['absTime'])
+        laneCriterias['absTime'] = ticks_ms()
+        laneCriterias['didSeeDecr'] = False
+        laneCriterias['didSeeOor']  = False
+        laneCriterias['didSeeIncr'] = False
+        print("*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
     # else just return
-    return (stages, meas.copy())
-
-# laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
-
+    return (laneCriterias, meas.copy())
 
 
 # main program
@@ -101,12 +109,16 @@ async def main():
 
     rssiVals = []
     meas    = DEFAULT_MEAS.copy()
-    oldMeas = DEFAULT_MEAS.copy()
-    stages = { # keeps track of the milliseconds spent in each stage
-        'oor': 0,  # out of range
-        'incr': 0, # signal strength increasing
-        'decr': 0  # signal srength decreasing
+    oldMeas = DEFAULT_MEAS.copy()    
+
+    laneCriterias = {
+        'absTime':0,
+        'didSeeDecr':False,
+        'didSeeOor':False,
+        'didSeeIncr':False
     }
+    laneCriterias['absTime'] = ticks_ms()
+
     
     while loopCnt < LOOP_MAX: # while True:
         meas = DEFAULT_MEAS
@@ -128,12 +140,12 @@ async def main():
         (rssiVals, meas) = moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
         print_infos(filehandle=filehandle, meas=meas)
         
-        ledOnboard.toggle()
-        (stages, oldMeas) = categorize(stages=stages, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
+        ledOnboard.toggle()        
+        (laneCriterias, oldMeas) = checkCriterias(laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
         sleep(SLEEP_TIME)
  
     filehandle.close()
     print("\n********\n* done *\n********")
-    print(stages)
+    print(laneCriterias)
 
 asyncio.run(main())
