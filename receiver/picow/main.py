@@ -12,10 +12,10 @@ import uasyncio as asyncio # type: ignore (this is a pylance ignore warning dire
 import aioble # type: ignore (this is a pylance ignore warning directive)
 from random import randint
 
-LOOP_MAX = 5000
+LOOP_MAX = 200
 SIMULATE_BEACON = True
-SIMULATE_TIME_SHORT = 0.1 # 0.2 (0.2 is comparable to normal mode)
-SIMULATE_TIME_LONG  = 0.2 # 2.8 (2.8 is comparable to normal mode)
+SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
+SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 NUM_OF_RSSIS = 5 # how many values do I take for the moving average
 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
@@ -27,6 +27,14 @@ DEFAULT_MEAS = {
     'rssi': RSSI_OOR,            # in dBm
     'rssiAve': 0                 # in dBm
 }
+USE_SIM_VALS = True
+SIM_VALS = [ -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
+             -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
+            -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
+             -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
+             -80, -80, -80, -80, -80, -80, -80, -80, -80, -80]
+
+
 
 async def find_beacon():
     # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -34,7 +42,7 @@ async def find_beacon():
         async for result in scanner:
             if(result.name()): # most are empty...
                 if result.name()[0:11] == 'widmedia.ch':
-                    return result                
+                    return result
     return None
 
 def print_infos(filehandle, meas:dict):
@@ -42,8 +50,9 @@ def print_infos(filehandle, meas:dict):
     print (txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
-# calculate an average of the last 5 and 25 measurements
+# calculate an average of the last 5 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
+# could add it several times? 
 def moving_average(rssiVals:list, meas:dict):
     meas['rssiAve'] = 0 # if I can't calculate a meaningful average yet, returning 0    
     rssiVals.append(meas['rssi'])
@@ -62,12 +71,12 @@ def moving_average(rssiVals:list, meas:dict):
 ##
 
 # laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
-def checkCriterias(laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
+def checkCriterias(laneInfos:list, laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
     if (loopCnt % NUM_OF_RSSIS) > 0: # don't do this every time
-        return (laneCriterias, oldMeas)
+        return (laneInfos, laneCriterias, oldMeas)
 
     if oldMeas['rssiAve'] == 0: # at the very beginning, I can't make comparisons because the old average is not yet valid
-        return (laneCriterias, meas.copy())
+        return (laneInfos, laneCriterias, meas.copy())
 
     someThingChanged = False
 
@@ -92,12 +101,13 @@ def checkCriterias(laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
         laneCriterias['didSeeOor']  = False
         laneCriterias['didSeeIncr'] = False
         someThingChanged = True
-        print("*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
+        print("\n\n*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
+        laneInfos.append(laneTime)
     # else just return
     if someThingChanged:
         print("something changed at categorization. Comparing %d and %d" % (meas['rssiAve'], oldMeas['rssiAve']))
         print(laneCriterias)  
-    return (laneCriterias, meas.copy())
+    return (laneInfos, laneCriterias, meas.copy())
 
 
 # main program
@@ -124,6 +134,7 @@ async def main():
     }
     laneCriterias['absTime'] = ticks_ms()
 
+    laneInfos = []
     
     while loopCnt < LOOP_MAX: # while True:
         meas = DEFAULT_MEAS.copy()
@@ -133,12 +144,16 @@ async def main():
 
         if SIMULATE_BEACON:
             sleep(SIMULATE_TIME_SHORT)
-            randNum = randint(0,3) # 4 different values
-            if randNum == 0:
-                sleep(SIMULATE_TIME_LONG) # simulating time out
-            else:
+            if USE_SIM_VALS:
                 meas['addr'] = '01:23:45:67:89:AB'
-                meas['rssi'] = randint(-90,-45)
+                meas['rssi'] = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
+            else:
+                randNum = randint(0,1)
+                if randNum == 0:
+                    sleep(SIMULATE_TIME_LONG) # simulating time out
+                else:
+                    meas['addr'] = '01:23:45:67:89:AB'
+                    meas['rssi'] = randint(-100,-80)
         else:
             result = await find_beacon()
             if result:
@@ -154,11 +169,16 @@ async def main():
         print_infos(filehandle=filehandle, meas=meas)
         
         ledOnboard.toggle()
-        (laneCriterias, oldMeas) = checkCriterias(laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
+        (laneInfos, laneCriterias, oldMeas) = checkCriterias(laneInfos=laneInfos, laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
         sleep(LOOP_SLEEP_TIME)
  
     filehandle.close()
     print("\n********\n* done *\n********")
-    print(laneCriterias)
+    
+    if len(laneInfos) > 0:
+        print('time per lane: ')
+        print(laneInfos)
+    else:
+        print(laneCriterias)
 
 asyncio.run(main())
