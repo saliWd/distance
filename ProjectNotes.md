@@ -44,13 +44,13 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
 
 ## Display
+1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm).
 1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)
    * [distrelec, 7.xV, 57mm, CHF 11.7](https://www.distrelec.ch/de/segment-led-anzeige-sa23-rot-57mm-655nm-45mcd-2v-tht-gemeinsame-anode-kingbright-sa23-12srwa/p/17511900)
    * [mouser, 3.9V, 25.4mm, CHF 4.-](https://www.mouser.ch/ProductDetail/Kingbright/SA10-21SYKWA?qs=FRBiz4Wv1YMB%252Bq%2FAgwsA4A%3D%3D)
    * [mouser, 7.xV, 122 mm, CHF 27.-](https://www.mouser.ch/ProductDetail/Kingbright/SA40-19SURKWA?qs=FRBiz4Wv1YNzfTxT3E0R9g%3D%3D) 
 1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution just buy, everybody does it themselves.
 1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
-1. generic display one like this: https://savageelectronics.com/spi-display-array-board-clock/
 1. other links: 
    * https://www.hackster.io/GRA_AND_AFCH/nixie-display-or-clock-in-14-raspberry-pi-hat-ncs314-79a19b 
 
