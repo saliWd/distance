@@ -10,19 +10,20 @@ from machine import Pin #type: ignore
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
+from random import randint
 
-LOOP_MAX = 500
+LOOP_MAX = 5000
+SIMULATE_BEACON = True
+SIMULATE_TIME_SHORT = 0.1 # 0.2 (0.2 is comparable to normal mode)
+SIMULATE_TIME_LONG  = 0.2 # 2.8 (2.8 is comparable to normal mode)
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
-RSSI_INVALID = 0
 NUM_OF_RSSIS_FAST = 5 # how many values do I take for the fast moving average
 NUM_OF_RSSIS_SLOW = 25 # how many values do I take for the slow moving average
 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
-SLEEP_TIME = 0.2
-
+LOOP_SLEEP_TIME = 0.2
 DEFAULT_MEAS = {
     'loopCnt': 0,                # a counter
-    'timeDiff': 0,               # in milliseconds
-    'name': 'widmedia.ch',       # string
+    'timeDiff': 0,               # in milliseconds    
     'addr': 'xx:xx:xx:xx:xx:xx', # string
     'rssi': RSSI_OOR,            # in dBm
     'rssiAveFast': 0,            # in dBm
@@ -35,20 +36,20 @@ async def find_beacon():
     async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
         async for result in scanner:
             if(result.name()): # most are empty...
-                if result.name()[0:11] == "widmedia.ch":
+                if result.name()[0:11] == 'widmedia.ch':
                     return result                
     return None
 
-def print_infos(filehandle, meas):
-    txt_csv = "%d, %d, %s, %s, %d, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], meas['name'], meas['addr'], meas['rssi'], meas['rssiAveFast'], meas['rssiAveSlow'])
+def print_infos(filehandle, meas:dict):
+    txt_csv = "%d, %d, %s, %d, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAveFast'], meas['rssiAveSlow'])
     print (txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
 # calculate an average of the last 5 and 25 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
-def moving_average(rssiVals, meas):
-    meas['rssiAveFast'] = RSSI_INVALID
-    meas['rssiAveSlow'] = RSSI_INVALID
+def moving_average(rssiVals:list, meas:dict):
+    meas['rssiAveFast'] = 0 # if I can't calculate a meaningful average yet, returning 0
+    meas['rssiAveSlow'] = 0
     rssiVals.append(meas['rssi'])
     length = len(rssiVals)
     if length >= NUM_OF_RSSIS_FAST:
@@ -67,22 +68,28 @@ def moving_average(rssiVals, meas):
 ##
 
 # laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
-def checkCriterias(laneCriterias, loopCnt, meas, oldMeas):
-    if (loopCnt % 5) > 0: # don't do this every time
-       return (laneCriterias, oldMeas)
-        
-    print("doing categorization, comparing %d and %d" % (meas['rssiAveFast'], oldMeas['rssiAveFast']))
+def checkCriterias(laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
+    if (loopCnt % NUM_OF_RSSIS_FAST) > 0: # don't do this every time
+        return (laneCriterias, oldMeas)
 
-    DELTA = 0 # FIXME: meaningful delta value
+    if oldMeas['rssiAveFast'] == 0: # at the very beginning, I can't make comparisons because the old average is not yet valid
+        return (laneCriterias, meas.copy())
+
+    someThingChanged = False
+
+    DELTA = 2 # maybe to do: meaningful delta value
     if meas['rssiAveFast'] < (oldMeas['rssiAveFast'] - DELTA): # TODO: decide whether to use fast or slow averaging
-        # no other criterias need to be fulfilled        
-        laneCriterias['didSeeDecr'] = True
+        if not laneCriterias['didSeeDecr']:
+            laneCriterias['didSeeDecr'] = True
+            someThingChanged = True
     elif meas['rssiAveFast'] == RSSI_OOR:
-        if laneCriterias['didSeeDecr']:
+        if laneCriterias['didSeeDecr'] and not laneCriterias['didSeeOor']:
             laneCriterias['didSeeOor'] = True
+            someThingChanged = True
     elif meas['rssiAveFast'] > (oldMeas['rssiAveFast'] + DELTA): # TODO: decide whether to use fast or slow averaging
-        if laneCriterias['didSeeDecr'] and laneCriterias['didSeeOor']:
+        if laneCriterias['didSeeDecr'] and laneCriterias['didSeeOor'] and not laneCriterias['didSeeIncr']:
             laneCriterias['didSeeIncr'] = True
+            someThingChanged = True
 
     if laneCriterias['didSeeDecr'] and laneCriterias['didSeeOor'] and laneCriterias['didSeeIncr']:
         laneTime = ticks_diff(ticks_ms(), laneCriterias['absTime'])
@@ -90,15 +97,19 @@ def checkCriterias(laneCriterias, loopCnt, meas, oldMeas):
         laneCriterias['didSeeDecr'] = False
         laneCriterias['didSeeOor']  = False
         laneCriterias['didSeeIncr'] = False
+        someThingChanged = True
         print("*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
     # else just return
+    if someThingChanged:
+        print("something changed at categorization. Comparing %d and %d" % (meas['rssiAveFast'], oldMeas['rssiAveFast']))
+        print(laneCriterias)  
     return (laneCriterias, meas.copy())
 
 
 # main program
 async def main():
     filehandle = open('data.csv', 'a') # append
-    txt_csv = "id, time_ms, name, address, rssi, average_fast, average_slow\n"
+    txt_csv = "id, time_ms, address, rssi, average_fast, average_slow\n"
     print (txt_csv, end ='')
     filehandle.write(txt_csv)
 
@@ -125,14 +136,22 @@ async def main():
 
         loopCnt += 1
         meas['loopCnt'] = loopCnt
-        result = await find_beacon()
-        if result:
-            device = result.device
-            meas['name'] = result.name()[0:11]
-            addr = "%s" % device # need to get string representation first
-            meas['addr'] = addr[20:37] # only take the MAC part
-            meas['rssi'] = result.rssi
-        # else: it's not a error, just beacon out of range
+
+        if SIMULATE_BEACON:
+            sleep(SIMULATE_TIME_SHORT)
+            randNum = randint(0,3) # 4 different values
+            if randNum == 0:
+                sleep(SIMULATE_TIME_LONG) # simulating time out
+            else:
+                meas['addr'] = '01:23:45:67:89:AB'
+                meas['rssi'] = randint(-90,-45)
+        else:
+            result = await find_beacon()
+            if result:
+                addr = "%s" % result.device # need to get string representation first
+                meas['addr'] = addr[20:37] # only take the MAC part
+                meas['rssi'] = result.rssi
+            # else: it's not a error, just beacon out of range
 
         meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         lastTime = ticks_ms()
@@ -142,7 +161,7 @@ async def main():
         
         ledOnboard.toggle()        
         (laneCriterias, oldMeas) = checkCriterias(laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
-        sleep(SLEEP_TIME)
+        sleep(LOOP_SLEEP_TIME)
  
     filehandle.close()
     print("\n********\n* done *\n********")
