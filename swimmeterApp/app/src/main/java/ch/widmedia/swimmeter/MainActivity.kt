@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val data = "Name, Major-Minor, RSSI, Distance\n"
         if (!BeaconScanPermissionsActivity.allPermissionsGranted(this)) {
             val intent = Intent(this, BeaconScanPermissionsActivity::class.java)
+            intent.putExtra("backgroundAccessRequested", true)
             startActivity(intent)
         }
         // All permissions are granted now
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         //    Manifest.permission.BLUETOOTH_SCAN
         //    Manifest.permission.BLUETOOTH_CONNECT
         //    Manifest.permission.ACCESS_FINE_LOCATION
+        //    Manifest.permission.ACCESS_BACKGROUND_LOCATION
         // The code needed to get these permissions has become increasingly complex, so it is in
         // its own file so as not to clutter this file focussed on how to use the library.
 

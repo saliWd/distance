@@ -50,6 +50,7 @@ open class PermissionsActivity: AppCompatActivity() {
 
 class PermissionsHelper(private val context: Context) {
     // Manifest.permission.ACCESS_FINE_LOCATION
+    // Manifest.permission.ACCESS_BACKGROUND_LOCATION
     // Manifest.permission.BLUETOOTH_CONNECT
     // Manifest.permission.BLUETOOTH_SCAN
     fun isPermissionGranted(permissionString: String): Boolean {
@@ -81,6 +82,11 @@ class PermissionsHelper(private val context: Context) {
 
         // As of version M (6) we need FINE_LOCATION (or COARSE_LOCATION, but we ask for FINE)
         permissions.add(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // As of version Q (10) we need BACKGROUND_LOCATION
+            permissions.add(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // As of version S (31, Android 12) we need FINE_LOCATION, BLUETOOTH_SCAN
@@ -183,6 +189,7 @@ open class BeaconScanPermissionsActivity: PermissionsActivity()  {
     fun getDefaultPermissionTitlesBundle(): Bundle {
         val bundle = Bundle()
         bundle.putString(Manifest.permission.ACCESS_FINE_LOCATION, "Location")
+        bundle.putString(Manifest.permission.ACCESS_BACKGROUND_LOCATION, "Background Location")
         bundle.putString(Manifest.permission.BLUETOOTH_SCAN, "Bluetooth")
         bundle.putString(Manifest.permission.POST_NOTIFICATIONS, "Notifications")
         return bundle
