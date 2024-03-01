@@ -53,6 +53,8 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
 1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
 1. other links: 
    * https://www.hackster.io/GRA_AND_AFCH/nixie-display-or-clock-in-14-raspberry-pi-hat-ncs314-79a19b 
+   * https://peppe8o.com/7-segment-display-and-raspberry-pi-pico-wiring-and-setup-with-micropython/
+   
 
 -> split flap preferred
 
