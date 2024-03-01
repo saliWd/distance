@@ -12,14 +12,15 @@ import uasyncio as asyncio # type: ignore (this is a pylance ignore warning dire
 import aioble # type: ignore (this is a pylance ignore warning directive)
 from random import randint
 
-LOOP_MAX = 200
-SIMULATE_BEACON = True
+# beacon simulation variables
+LOOP_MAX = 20000
+SIMULATE_BEACON = False
 SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
 SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
+
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 NUM_OF_RSSIS = 5 # how many values do I take for the moving average
-# 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
-LOOP_SLEEP_TIME = 0.2
+LOOP_SLEEP_TIME = 0.2 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
 DEFAULT_MEAS = {
     'loopCnt': 0,                # a counter
     'timeDiff': 0,               # in milliseconds
@@ -33,7 +34,6 @@ SIM_VALS = [ -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
             -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
              -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
              -80, -80, -80, -80, -80, -80, -80, -80, -80, -80]
-
 
 
 async def find_beacon():
