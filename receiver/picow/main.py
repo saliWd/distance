@@ -237,13 +237,15 @@ async def find_beacon():
 def my_print(LCD, text:str, end:str="\n"):
     # TODO: display more than one line
     LCD.fill(LCD.BLACK)
-    LCD.text(text,2,17,LCD.WHITE)
+    LCD.text(text[0:len(text)-1],2,17,LCD.WHITE) # last character is somewhat unknown. TODO: why?
     LCD.show_up()
     print(text, end=end)
 
 
 def print_infos(LCD, filehandle, meas:dict):
-    txt_csv = "%d, %d, %s, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'])
+    shortAddr = meas['addr']
+    shortAddr = shortAddr[len(shortAddr)-5:len(shortAddr)]
+    txt_csv = "%d, %d, %s, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], shortAddr, meas['rssi'], meas['rssiAve'])
     my_print(LCD=LCD, text=txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
 
