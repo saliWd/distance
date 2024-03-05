@@ -237,7 +237,7 @@ async def find_beacon():
 def my_print(LCD, text:str, end:str="\n"):
     # TODO: display more than one line
     LCD.fill(LCD.BLACK)
-    LCD.text(text[0:len(text)-1],2,17,LCD.WHITE) # last character is somewhat unknown. TODO: why?
+    LCD.text(text[0:len(text)-1],2,17,LCD.WHITE) # last character is a newline, LCD.text can't handle that
     LCD.show_up()
     print(text, end=end)
 
@@ -248,6 +248,7 @@ def print_infos(LCD, filehandle, meas:dict):
     txt_csv = "%d, %d, %s, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], shortAddr, meas['rssi'], meas['rssiAve'])
     my_print(LCD=LCD, text=txt_csv, end ='') # need the newline for the csv write. No additional new line here
     filehandle.write(txt_csv)
+    filehandle.flush()
 
 # calculate an average of the last 5 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
@@ -324,6 +325,7 @@ async def main():
     txt_csv = "id, time_ms, address, rssi, average\n"
     my_print(LCD=LCD, text=txt_csv, end ='')
     filehandle.write(txt_csv)
+    filehandle.flush()
 
     LCD.text("Schwimm-Messer",90,17,LCD.WHITE)
     LCD.show_up()
