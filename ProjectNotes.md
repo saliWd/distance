@@ -42,6 +42,7 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    1. e.g. TTGO-ESP32-PSRAM-Antenna-Bluetooth --> check details 
    1. e.g. Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32 --> check the one I have, does it have a connector?
    1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
+   1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
 
 ## Display
 1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm).
