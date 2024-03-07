@@ -1,0 +1,14 @@
+First raw data
+- pos:
+-- data collection did work
+-- I see up and downs in the data itself
+-- works for both the beckenrand and the further-away use case
+- neg:
+-- not that easy to judge whether a lane was done or not
+-- can't simply rely on the out of range
+-- unclear on how to go on, data analysis wise...
+- proposed model:
+-- check for differences in the range of 15 dBm (average 2 away) or 25 dBm (average 2, edge)
+--> already shows an issue, I don't know where the receiver will be placed and one criteria (15) does not work for the other (25)...
+
+(referring to the data taken from the naked pico)

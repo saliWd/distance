@@ -36,7 +36,11 @@ DEFAULT_MEAS = {
     'rssiAve': 0                 # in dBm
 }
 
-
+## global variables
+f_textLog = open('textLog.txt', 'a') # append   
+f_dataLog = open('dataLog.csv', 'a') # append
+LCD = LCD_disp()
+LOOP_MAX = 20000
 
 async def find_beacon():
     # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -47,21 +51,27 @@ async def find_beacon():
                     return result
     return None
 
-def my_print(LCD, text:str, end:str="\n"):
-    # TODO: display more than one line
-    LCD.fill(LCD.BLACK)
-    LCD.text(text[0:len(text)-1],2,17,LCD.WHITE) # last character is a newline, LCD.text can't handle that
-    LCD.show_up()
-    print(text, end=end)
+def my_print(text:str, sink:dict):
+    if sink['serial']:
+        print(text, end='') # text needs a newline at the end
+    if sink['lcd']:
+        LCD.fill(LCD.BLACK) # TODO do not clear the full disp but only the 'current line'
+        LCD.text(text[0:len(text)-1],2,17,LCD.WHITE) # last character is a newline, LCD.text can't handle that
+        LCD.show_up()    
+    if sink['textLog']:
+        f_textLog.write(text)
+        f_textLog.flush()
+    if sink['dataLog']:
+        f_dataLog.write(text)
+        f_dataLog.flush()
 
 
-def print_infos(LCD, filehandle, meas:dict):
+def print_infos(meas:dict):
     shortAddr = meas['addr']
     shortAddr = shortAddr[len(shortAddr)-5:len(shortAddr)]
     txt_csv = "%d, %d, %s, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], shortAddr, meas['rssi'], meas['rssiAve'])
-    my_print(LCD=LCD, text=txt_csv, end ='') # need the newline for the csv write. No additional new line here
-    filehandle.write(txt_csv)
-    filehandle.flush()
+    my_print(text=txt_csv, sink={'serial':True,'lcd':True,'textLog':False,'dataLog':True})
+    
 
 # calculate an average of the last 5 measurements
 # issue here: out of range is taking about 5 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
@@ -84,7 +94,7 @@ def moving_average(rssiVals:list, meas:dict):
 ##
 
 # laneCounter increase when following stages happen in this order: stage_decr -> stage_oor -> stage_incr
-def checkCriterias(LCD, laneInfos:list, laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
+def checkCriterias(laneInfos:list, laneCriterias:dict, loopCnt:int, meas:dict, oldMeas:dict):
     if (loopCnt % NUM_OF_RSSIS) > 0: # don't do this every time
         return (laneInfos, laneCriterias, oldMeas)
 
@@ -114,7 +124,7 @@ def checkCriterias(LCD, laneInfos:list, laneCriterias:dict, loopCnt:int, meas:di
         laneCriterias['didSeeOor']  = False
         laneCriterias['didSeeIncr'] = False
         someThingChanged = True
-        my_print(LCD=LCD, text="\n\n*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
+        # my_print(LCD=LCD, text="\n\n*** laneCounter + 1, laneTime: %d ***\n" % (laneTime))
         laneInfos.append(laneTime)
     # else just return
     
@@ -127,21 +137,14 @@ def checkCriterias(LCD, laneInfos:list, laneCriterias:dict, loopCnt:int, meas:di
 
 # main program
 async def main():
-    LCD = LCD_disp()
+    # clear the display
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
-    LCD.show_up()
-
-    loopMax = 20000
-
-    filehandle = open('data.csv', 'a') # append
-    txt_csv = "id, time_ms, address, rssi, average\n"
-    my_print(LCD=LCD, text=txt_csv, end ='')
-    filehandle.write(txt_csv)
-    filehandle.flush()
-
     LCD.text("Schwimm-Messer",90,17,LCD.WHITE)
     LCD.show_up()
+
+    txt_csv = "id, time_ms, address, rssi, average\n"
+    my_print(text=txt_csv, sink={'serial':True,'lcd':True,'textLog':False,'dataLog':True})    
 
     loopCnt = 0
     lastTime = ticks_ms()
@@ -162,7 +165,7 @@ async def main():
 
     laneInfos = []
     
-    while loopCnt < loopMax:
+    while loopCnt < LOOP_MAX:
         meas = DEFAULT_MEAS.copy()
 
         loopCnt += 1
@@ -192,19 +195,19 @@ async def main():
         lastTime = ticks_ms()
                 
         (rssiVals, meas) = moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
-        print_infos(LCD=LCD, filehandle=filehandle, meas=meas)
+        print_infos(LCD=LCD, filehandle=f_dataLog, meas=meas)
         
         ledOnboard.toggle()
-        (laneInfos, laneCriterias, oldMeas) = checkCriterias(LCD=LCD, laneInfos=laneInfos, laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
+        (laneInfos, laneCriterias, oldMeas) = checkCriterias(laneInfos=laneInfos, laneCriterias=laneCriterias, loopCnt=loopCnt, meas=meas, oldMeas=oldMeas)
         sleep(LOOP_SLEEP_TIME)
  
-    filehandle.close()
-    my_print(LCD=LCD, text="\n********\n* done *\n********")
+    f_dataLog.close()
+    # my_print(text="\n********\n* done *\n********\n")
     
-    if len(laneInfos) > 0:
-        my_print(LCD=LCD, text='time per lane: ')
-        my_print(LCD=LCD, text=laneInfos)
-    else:
-        my_print(LCD=LCD, text=laneCriterias)
+    # if len(laneInfos) > 0:
+    #     my_print(LCD=LCD, text='time per lane: ')
+    #     my_print(LCD=LCD, text=laneInfos)
+    # else:
+    #     my_print(LCD=LCD, text=laneCriterias)
 
 asyncio.run(main())
