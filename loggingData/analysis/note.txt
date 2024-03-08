@@ -2,12 +2,24 @@ First raw data
 - pos:
 -- data collection did work
 -- I see up and downs in the data itself
--- works for both the beckenrand and the further-away use case
+-- works for both the beckenrand and the further-away use case, both with display attached and also bare PicoW
 - neg:
 -- not that easy to judge whether a lane was done or not
 -- can't simply rely on the out of range
 -- unclear on how to go on, data analysis wise...
 - proposed model:
+-- need to do analysis based on two linear approximations (over the last ~60 seconds for 25m)
+--- need to see both a negative slope and a positive slope with about 20 dBm difference between highest and lowest
+--- ave2 is sufficient for smoothing stuff
+
+in this 60 seconds window: if
+- the middle value is equal to the min of all values
+- the oldest entry is ~20dBm higher than this min
+- the newest entry is ~20dBm higher than this min
+==> then we have a laneCount increase and can clear the window
+
+
+
 -- check for differences in the range of 15 dBm (average 2 away) or 25 dBm (average 2, edge)
 --> already shows an issue, I don't know where the receiver will be placed and one criteria (15) does not work for the other (25)...
 

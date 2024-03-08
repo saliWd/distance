@@ -45,7 +45,7 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
 
 ## Display
-1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm).
+1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely.
 1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)
    * [distrelec, 7.xV, 57mm, CHF 11.7](https://www.distrelec.ch/de/segment-led-anzeige-sa23-rot-57mm-655nm-45mcd-2v-tht-gemeinsame-anode-kingbright-sa23-12srwa/p/17511900)
    * [mouser, 3.9V, 25.4mm, CHF 4.-](https://www.mouser.ch/ProductDetail/Kingbright/SA10-21SYKWA?qs=FRBiz4Wv1YMB%252Bq%2FAgwsA4A%3D%3D)
