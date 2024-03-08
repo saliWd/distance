@@ -98,7 +98,7 @@ def lane_decision(rssiHistory:list):
     if length < 30: # can't make a meaningful decision on only a few values
         return
     
-    middle = length / 2 # doesn't matter whether it's one off
+    middle = int(length / 2) # doesn't matter whether it's one off
     minVal = min(rssiHistory)
 
     if rssiHistory[middle] != minVal: # only look at the stuff if the minimum value is in the middle
@@ -166,7 +166,7 @@ async def main():
         moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
         fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
         lane_decision(rssiHistory=rssiHistory)
-        print_infos(LCD=LCD, filehandle=f_dataLog, meas=meas)
+        print_infos(meas=meas)
         
         ledOnboard.toggle()
         sleep(LOOP_SLEEP_TIME)
