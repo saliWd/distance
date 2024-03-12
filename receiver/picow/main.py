@@ -29,8 +29,8 @@ DEFAULT_MEAS = {
 }
 
 ## global variables
-f_textLog = open('textLog.txt', 'a') # append
-f_dataLog = open('dataLog.csv', 'a') # append
+f_textLog = open('logText.txt', 'a') # append
+f_dataLog = open('logData.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
 
