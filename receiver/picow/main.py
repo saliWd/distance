@@ -14,8 +14,13 @@ from random import randint
 
 from lcd import LCD_disp # import the display class
 
+class SIM_RESULT():
+    device = '012345678901234567890123456789__01:23'
+    rssi = -27
+        
+
 # beacon simulation variables
-SIMULATE_BEACON = False
+SIMULATE_BEACON = True
 SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
 SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
 USE_SIM_VALS = True
@@ -42,22 +47,37 @@ f_dataLog = open('dataLog.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
 
-async def find_beacon():
-    # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
-    async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
-        async for result in scanner:
-            if(result.name()): # most are empty...
-                if result.name()[0:11] == 'widmedia.ch':
-                    return result
-    return None
+async def find_beacon(simulate:bool, loopCnt:int):
+    if simulate:
+        result = SIM_RESULT
+        sleep(SIMULATE_TIME_SHORT)
+        if USE_SIM_VALS:
+            result.rssi = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
+            return result
+        else:
+            randNum = randint(0,1)
+            if randNum == 0:
+                sleep(SIMULATE_TIME_LONG) # simulating time out
+                return None
+            else:
+                result.rssi = randint(-100,-80)
+                return result
+    else:
+        # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
+            async for result in scanner:
+                if(result.name()): # most are empty...
+                    if result.name()[0:11] == 'widmedia.ch':
+                        return result
+        return None
 
 def my_print(text:str, sink:dict):
     if sink['serial']:
         print(text, end='') # text needs a newline at the end
     if sink['lcd']: # text area of the LCD
-        LCD.fill_rect(2,60,300,160,LCD.BLACK)        
+        LCD.fill_rect(2,60,300,160,LCD.BLACK)
         LCD.text(text[0:len(text)-1],2,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that        
-        LCD.show_up()    
+        LCD.show_up()
     if sink['textLog']:
         f_textLog.write(text)
         f_textLog.flush()
@@ -92,13 +112,13 @@ def fill_history(rssiHistory:list, newVal:int):
 # -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
 # beacon out-of-range measurements take 3 seconds while others take about 0.5 seconds
 ##
-def lane_decision(rssiHistory:list):
+def lane_decision(rssiHistory:list, laneCounter:int):
     DBM_DIFF = 20
     length = len(rssiHistory)
     if length < 30: # can't make a meaningful decision on only a few values
         return
     
-    middle = int(length / 2) # doesn't matter whether it's one off
+    middle = length / 2 # doesn't matter whether it's one off
     minVal = min(rssiHistory)
 
     if rssiHistory[middle] != minVal: # only look at the stuff if the minimum value is in the middle
@@ -106,10 +126,18 @@ def lane_decision(rssiHistory:list):
 
     if ((rssiHistory[0] - minVal) > DBM_DIFF) and ((rssiHistory[length-1] - minVal) > DBM_DIFF):        
         my_print(text="increase the lane counter!", sink={'serial':True,'lcd':True,'textLog':True,'dataLog':True})
+        laneCounter += 1
+        update_lane_disp(laneCounter)
         rssiHistory.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # nb: rssiHistory is a reference, can clear it here
         return
 
+def update_lane_disp(laneCounter:int):
+    LCD.fill_rect(240,40,80,200,LCD.BLACK)
+    laneText = ("%02d" % laneCounter)
+    LCD.text(laneText,240,40,LCD.WHITE) # TODO: make text huge
+    LCD.show_up()
+    return
 
 # main program
 async def main():
@@ -128,36 +156,23 @@ async def main():
     ledOnboard = Pin("LED", Pin.OUT)
     ledOnboard.on()
     absTime_ms = 0
+    laneCounter = 0
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     rssiHistory = []
-    meas    = DEFAULT_MEAS.copy()    
     
     while loopCnt < LOOP_MAX:
         meas = DEFAULT_MEAS.copy()
 
         loopCnt += 1
         meas['loopCnt'] = loopCnt
-
-        if SIMULATE_BEACON:
-            sleep(SIMULATE_TIME_SHORT)
-            if USE_SIM_VALS:
-                meas['addr'] = '01:23'
-                meas['rssi'] = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
-            else:
-                randNum = randint(0,1)
-                if randNum == 0:
-                    sleep(SIMULATE_TIME_LONG) # simulating time out
-                else:
-                    meas['addr'] = '01:23'
-                    meas['rssi'] = randint(-100,-80)
-        else:
-            result = await find_beacon()
-            if result:
-                addr = "%s" % result.device # need to get string representation first
-                meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
-                meas['rssi'] = result.rssi
-            # else: it's not a error, just beacon out of range
+        
+        result = await find_beacon(simulate=SIMULATE_BEACON, loopCnt=loopCnt)
+        if result:
+            addr = "%s" % result.device # need to get string representation first
+            meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
+            meas['rssi'] = result.rssi
+        # else: it's not a error, just beacon out of range
 
         meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         absTime_ms += meas['timeDiff']
@@ -165,20 +180,13 @@ async def main():
                 
         moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
         fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
-        lane_decision(rssiHistory=rssiHistory)
+        lane_decision(rssiHistory=rssiHistory, laneCounter=laneCounter)
         print_infos(meas=meas)
         
         ledOnboard.toggle()
         sleep(LOOP_SLEEP_TIME)
  
     f_dataLog.close()
-    f_textLog.close()
-    # my_print(text="\n********\n* done *\n********\n")
-    
-    # if len(laneInfos) > 0:
-    #     my_print(LCD=LCD, text='time per lane: ')
-    #     my_print(LCD=LCD, text=laneInfos)
-    # else:
-    #     my_print(LCD=LCD, text=laneCriterias)
+    f_textLog.close()    
 
 asyncio.run(main())
