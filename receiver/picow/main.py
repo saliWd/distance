@@ -51,8 +51,8 @@ def my_print(text:str, sink:dict):
     if sink['serial']:
         print(text, end='') # text needs a newline at the end
     if sink['lcd']: # text area of the LCD
-        LCD.fill_rect(2,60,300,160,LCD.BLACK)
-        LCD.text(text[0:len(text)-1],2,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that
+        LCD.fill_rect(0,60,240,160,LCD.BLACK)
+        LCD.text(text[0:len(text)-1],0,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that
         LCD.show_up()
     if sink['textLog']:
         f_textLog.write(text)
@@ -107,9 +107,9 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         return laneCounter
 
 def update_lane_disp(laneCounter:int):
-    LCD.fill_rect(240,40,80,200,LCD.BLACK)
+    LCD.fill_rect(240,60,80,180,LCD.BLACK)
     laneText = ("%02d" % laneCounter)
-    LCD.text(laneText,240,40,LCD.WHITE) # TODO: make text huge
+    LCD.text(laneText,240,60,LCD.WHITE) # TODO: make text huge
     LCD.show_up()
     # this is just debug output. To be removed again
     my_print(text="Lane counter now: "+laneText+"\n", sink={'serial':True,'lcd':False,'textLog':True,'dataLog':False})
