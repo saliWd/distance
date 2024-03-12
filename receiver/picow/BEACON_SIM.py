@@ -3,9 +3,10 @@ from random import randint
 
 class BEACON_SIM():
     def __init__(self):
-        self.device = '012345678901234567890123456789__01:23'
-        self.rssi = -27
+        self.device = '012345678901234567890123456789__01:23' # only the last 5 characters matter
+        self.rssi = -27 # some non-meaningful values
 
+    # TODO: use the field test values as well
     def get_sim_val(self, usePredefined:bool, loopCnt:int):
         SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
         SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
