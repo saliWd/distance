@@ -1,6 +1,5 @@
 ###
 # LCD driver from waveshare, slightly adapted
-#
 ### 
 
 from machine import Pin,SPI,PWM #type: ignore
@@ -12,6 +11,26 @@ LCD_SCK  = 10 # used in init and in touch sensor
 LCD_MOSI = 11
 LCD_MISO = 12
 
+"""
+screen layout (approximative)
+                                  320                                     
+    _____________________240__________________________________80____________
+    |                                                                        |
+ 40 |                         -LOGO-                                         |   40
+    |                                                                        |
+ 20 |   csv header                                         00        1111    |
+    |                                                     0  0      11 11    |
+    |   -------------------------------------------      0    0    11  11    |
+    |   |  csv text-box                           |      0    0        11    |        240
+    |   |                                         |      0    0        11    |
+160 |   |                                         |      0    0 lane   11    |  200
+    |   |                                         |      0    0        11    |
+    |   |                                         |      0    0        11    |
+    |   -------------------------------------------       0  0         11    | 
+ 20 |                                                      00          11    |
+    _________________________________________________________________________
+
+"""
 
 class LCD_disp(framebuf.FrameBuffer):
 
