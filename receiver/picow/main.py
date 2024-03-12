@@ -10,41 +10,12 @@ from machine import Pin #type: ignore
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
-from random import randint
 
 from lcd import LCD_disp # import the display class
-
-class SIM_RESULT():
-    def __init__(self):
-        self.device = '012345678901234567890123456789__01:23'
-        self.rssi = -27
-
-    def get_sim_val(self,mode,loopCnt):
-        sleep(SIMULATE_TIME_SHORT)
-        if mode == 0:
-            SIM_VALS = [ -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
-                        -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
-                        -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
-                        -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
-                        -80, -80, -80, -80, -80, -80, -80, -80, -80, -80]
-            self.rssi = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
-            return self
-        else:
-            randNum = randint(0,1)
-            if randNum == 0:
-                sleep(SIMULATE_TIME_LONG) # simulating time out
-                return None
-            else:
-                self.rssi = randint(-100,-80)
-                return self
-
+from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
 SIMULATE_BEACON = True
-SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
-SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
-USE_SIM_VALS = False
-
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
@@ -65,11 +36,8 @@ LOOP_MAX = 20000
 
 async def find_beacon(simulate:bool, loopCnt:int):
     if simulate:
-        result = SIM_RESULT()        
-        if USE_SIM_VALS:            
-            return result.get_sim_val(mode=0, loopCnt=loopCnt)
-        else:
-            return result.get_sim_val(mode=1, loopCnt=loopCnt)            
+        beaconSim = BEACON_SIM()
+        return beaconSim.get_sim_val(usePredefined=False, loopCnt=loopCnt)
     else:
         # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
