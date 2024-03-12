@@ -121,10 +121,10 @@ async def main():
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
     LCD.text("Schwimm-Messer",90,17,LCD.WHITE)
-    LCD.text("id   time   address   rssi   average",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
+    LCD.text("id  time  address  rssi  ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
     LCD.show_up()
 
-    txt_csv = "id, time_ms, address, rssi, average\n"
+    txt_csv = "id, time_ms, address, rssi, ave\n"
     my_print(text=txt_csv, sink={'serial':True,'lcd':False,'textLog':False,'dataLog':True})
 
     loopCnt = 0
@@ -133,6 +133,7 @@ async def main():
     ledOnboard.on()
     absTime_ms = 0
     laneCounter = 0
+    update_lane_disp(laneCounter)
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     rssiHistory = []
