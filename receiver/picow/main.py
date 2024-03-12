@@ -15,20 +15,36 @@ from random import randint
 from lcd import LCD_disp # import the display class
 
 class SIM_RESULT():
-    device = '012345678901234567890123456789__01:23'
-    rssi = -27
-        
+    def __init__(self):
+        self.device = '012345678901234567890123456789__01:23'
+        self.rssi = -27
+
+    def get_sim_val(self,mode,loopCnt):
+        sleep(SIMULATE_TIME_SHORT)
+        if mode == 0:
+            SIM_VALS = [ -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
+                        -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
+                        -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
+                        -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
+                        -80, -80, -80, -80, -80, -80, -80, -80, -80, -80]
+            self.rssi = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
+            return self
+        else:
+            randNum = randint(0,1)
+            if randNum == 0:
+                sleep(SIMULATE_TIME_LONG) # simulating time out
+                return None
+            else:
+                self.rssi = randint(-100,-80)
+                return self
+
 
 # beacon simulation variables
 SIMULATE_BEACON = True
 SIMULATE_TIME_SHORT = 0.1 # 0.2 is comparable to normal mode
 SIMULATE_TIME_LONG  = 0.0 # 2.8 is comparable to normal mode
-USE_SIM_VALS = True
-SIM_VALS = [ -80, -80, -80, -80, -80, -80, -80, -80, -80, -80,
-             -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
-            -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
-             -90, -90, -90, -90, -90, -90, -90, -90, -90, -90,
-             -80, -80, -80, -80, -80, -80, -80, -80, -80, -80]
+USE_SIM_VALS = False
+
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
@@ -49,19 +65,11 @@ LOOP_MAX = 20000
 
 async def find_beacon(simulate:bool, loopCnt:int):
     if simulate:
-        result = SIM_RESULT
-        sleep(SIMULATE_TIME_SHORT)
-        if USE_SIM_VALS:
-            result.rssi = SIM_VALS[(loopCnt-1) % len(SIM_VALS)]
-            return result
+        result = SIM_RESULT()        
+        if USE_SIM_VALS:            
+            return result.get_sim_val(mode=0, loopCnt=loopCnt)
         else:
-            randNum = randint(0,1)
-            if randNum == 0:
-                sleep(SIMULATE_TIME_LONG) # simulating time out
-                return None
-            else:
-                result.rssi = randint(-100,-80)
-                return result
+            return result.get_sim_val(mode=1, loopCnt=loopCnt)            
     else:
         # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
@@ -118,7 +126,7 @@ def lane_decision(rssiHistory:list, laneCounter:int):
     if length < 30: # can't make a meaningful decision on only a few values
         return
     
-    middle = length / 2 # doesn't matter whether it's one off
+    middle = int(length / 2) # doesn't matter whether it's one off
     minVal = min(rssiHistory)
 
     if rssiHistory[middle] != minVal: # only look at the stuff if the minimum value is in the middle
