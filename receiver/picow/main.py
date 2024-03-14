@@ -34,8 +34,8 @@ f_dataLog = open('logData.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
 
-async def find_beacon(simulate:bool, loopCnt:int):
-    if simulate:
+async def find_beacon(loopCnt:int):
+    if SIMULATE_BEACON:
         beaconSim = BEACON_SIM()
         return beaconSim.get_sim_val(usePredefined=True, loopCnt=loopCnt)
     else:
@@ -109,7 +109,7 @@ def lane_decision(rssiHistory:list, laneCounter:int):
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(240,60,80,180,LCD.BLACK)
     laneText = ("%02d" % laneCounter)
-    LCD.text(laneText,240,60,LCD.WHITE) # TODO: make text huge
+    LCD.text(laneText,240,60,LCD.RED) # TODO: make text huge
     LCD.show_up()
     # this is just debug output. To be removed again
     my_print(text="Lane counter now: "+laneText+"\n", sink={'serial':True,'lcd':False,'textLog':True,'dataLog':False})
@@ -144,7 +144,7 @@ async def main():
         loopCnt += 1
         meas['loopCnt'] = loopCnt
         
-        result = await find_beacon(simulate=SIMULATE_BEACON, loopCnt=loopCnt)
+        result = await find_beacon(loopCnt=loopCnt)
         if result:
             addr = "%s" % result.device # need to get string representation first
             meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
