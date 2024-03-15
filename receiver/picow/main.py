@@ -5,7 +5,7 @@
 # import mip
 # mip.install("aioble")
 
-from time import sleep, ticks_ms, ticks_diff
+from time import sleep_ms, ticks_ms, ticks_diff
 from machine import Pin #type: ignore
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
@@ -20,14 +20,7 @@ beaconSim = BEACON_SIM()
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
-LOOP_SLEEP_TIME = 0.2 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
-DEFAULT_MEAS = {
-    'loopCnt':0,     # a counter
-    'timeDiff':0,    # in milliseconds
-    'addr':'xx:xx',  # string
-    'rssi':RSSI_OOR, # in dBm
-    'rssiAve':0      # in dBm
-}
+LOOP_SLEEP_TIME = 200 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
 
 ## global variables
 f_textLog = open('logText.txt', 'a') # append
@@ -36,9 +29,8 @@ LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
 
 async def find_beacon(loopCnt:int):
-    if SIMULATE_BEACON:        
-        # return beaconSim.get_sim_val(usePredefined=True, loopCnt=loopCnt)
-        return beaconSim.get_field_test_val()
+    if SIMULATE_BEACON:                
+        return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
         # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
@@ -142,10 +134,13 @@ async def main():
     rssiHistory = []
     
     while loopCnt < LOOP_MAX:
-        meas = DEFAULT_MEAS.copy()
-
-        loopCnt += 1
-        meas['loopCnt'] = loopCnt
+        meas = {
+            'loopCnt':loopCnt, # a counter
+            'timeDiff':0,      # in milliseconds
+            'addr':'xx:xx',    # string
+            'rssi':RSSI_OOR,   # in dBm
+            'rssiAve':0        # in dBm
+        }
         
         result = await find_beacon(loopCnt=loopCnt)
         if result:
@@ -164,7 +159,8 @@ async def main():
         print_infos(meas=meas)
         
         ledOnboard.toggle()
-        sleep(LOOP_SLEEP_TIME)
+        loopCnt += 1
+        sleep_ms(LOOP_SLEEP_TIME)
  
     f_dataLog.close()
     f_textLog.close()

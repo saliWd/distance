@@ -5,7 +5,7 @@
 from machine import Pin,SPI,PWM #type: ignore
 
 import framebuf # type: ignore
-import time
+from time import sleep_ms, sleep_us
 
 LCD_SCK  = 10 # used in init and in touch sensor
 LCD_MOSI = 11
@@ -80,14 +80,14 @@ class LCD_disp(framebuf.FrameBuffer):
     def init_display(self):
         # Initialize display
         self.rst(1)
-        time.sleep_ms(5)
+        sleep_ms(5)
         self.rst(0)
-        time.sleep_ms(10)
+        sleep_ms(10)
         self.rst(1)
-        time.sleep_ms(5)
+        sleep_ms(5)
         
         self.write_cmd(0x11)
-        time.sleep_ms(100)
+        sleep_ms(100)
         
         self.write_cmd(0x36)
         self.write_data(0x60)
@@ -190,7 +190,7 @@ class LCD_disp(framebuf.FrameBuffer):
             for i in range(0,3):
                 self.spi.write(bytearray([0XD0]))
                 Read_date = self.spi.read(2)
-                time.sleep_us(10)
+                sleep_us(10)
                 X_Point=X_Point+(((Read_date[0]<<8)+Read_date[1])>>3)
                 
                 self.spi.write(bytearray([0X90]))
