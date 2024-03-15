@@ -20,7 +20,7 @@ REAL_LIFE_SPEED = False
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
-SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
+SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision. TODO: not yet implemented
 
 ## global variables
 f_textLog = open('logText.txt', 'a') # append
