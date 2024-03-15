@@ -4,7 +4,7 @@ from random import randint
 class BEACON_SIM():
     def __init__(self):
         self.device = '012345678901234567890123456789__01:23' # only the last 5 characters matter
-        self.rssi = -27 # some non-meaningful values
+        self.rssi = -27 # some non-meaningful values        
         self.f = open('inputValues.csv', 'r')
     
     def get_sim_val(self, mode:str, loopCnt:int):
@@ -27,7 +27,7 @@ class BEACON_SIM():
                 return self
         elif mode == 'fieldTest':
             line = self.f.readline()
-            if not line:
+            if not line or len(line) < 4: # to detect an empty line at the end
                 self.rssi = -27
                 return self
             val = line.split(',')
