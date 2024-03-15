@@ -15,8 +15,8 @@ from lcd import LCD_disp # import the display class
 from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
-SIMULATE_BEACON = True
-REAL_LIFE_SPEED = True
+SIMULATE_BEACON = False
+REAL_LIFE_SPEED = False
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
@@ -80,7 +80,7 @@ def fill_history(rssiHistory:list, newVal:int):
 # beacon out-of-range measurements take 3 seconds while others take about 0.5 seconds
 ##
 def lane_decision(rssiHistory:list, laneCounter:int):
-    DBM_DIFF = 15
+    DBM_DIFF = 10
     length = len(rssiHistory)
     if length < 30: # can't make a meaningful decision on only a few values. TODO: maybe link to SECS_OF_RSSIS
         return False

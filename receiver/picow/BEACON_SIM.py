@@ -5,7 +5,7 @@ class BEACON_SIM():
     def __init__(self,REAL_LIFE_SPEED:bool):
         self.device = '012345678901234567890123456789__01:23' # only the last 5 characters matter
         self.rssi = -27 # some non-meaningful values        
-        self.f = open('inputValues.csv', 'r')
+        self.f = open('simInput.csv', 'r')
         self.REAL_LIFE_SPEED = REAL_LIFE_SPEED
     
     def get_sim_val(self, mode:str, loopCnt:int):
