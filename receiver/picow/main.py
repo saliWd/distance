@@ -16,6 +16,7 @@ from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
 SIMULATE_BEACON = True
+beaconSim = BEACON_SIM()
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
@@ -35,9 +36,9 @@ LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
 
 async def find_beacon(loopCnt:int):
-    if SIMULATE_BEACON:
-        beaconSim = BEACON_SIM()
-        return beaconSim.get_sim_val(usePredefined=True, loopCnt=loopCnt)
+    if SIMULATE_BEACON:        
+        # return beaconSim.get_sim_val(usePredefined=True, loopCnt=loopCnt)
+        return beaconSim.get_field_test_val()
     else:
         # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
@@ -108,6 +109,8 @@ def lane_decision(rssiHistory:list, laneCounter:int):
 
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(240,60,80,180,LCD.BLACK)
+    if laneCounter > 99:
+        return
     laneText = ("%02d" % laneCounter)
     LCD.text(laneText,240,60,LCD.RED) # TODO: make text huge
     LCD.show_up()
