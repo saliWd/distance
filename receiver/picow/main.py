@@ -16,11 +16,11 @@ from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
 SIMULATE_BEACON = True
-beaconSim = BEACON_SIM()
+REAL_LIFE_SPEED = True
+beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision
-LOOP_SLEEP_TIME = 200 # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
 
 ## global variables
 f_textLog = open('logText.txt', 'a') # append
@@ -54,8 +54,8 @@ def my_print(text:str, sink:dict):
         f_dataLog.write(text)
         f_dataLog.flush()
 
-def print_infos(meas:dict):    
-    txt_csv = "%d, %d, %s, %d, %d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'])
+def print_infos(meas:dict, laneCounter:int):    
+    txt_csv = "%5d, %4d, %s, %4d, %4d, %4d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'], laneCounter)
     my_print(text=txt_csv, sink={'serial':True,'lcd':True,'textLog':False,'dataLog':True})
 
 # calculate an average of the last 2 measurements
@@ -80,24 +80,23 @@ def fill_history(rssiHistory:list, newVal:int):
 # beacon out-of-range measurements take 3 seconds while others take about 0.5 seconds
 ##
 def lane_decision(rssiHistory:list, laneCounter:int):
-    DBM_DIFF = 20
+    DBM_DIFF = 15
     length = len(rssiHistory)
     if length < 30: # can't make a meaningful decision on only a few values. TODO: maybe link to SECS_OF_RSSIS
-        return laneCounter
+        return False
     
     middle = int(length / 2) # doesn't matter whether it's one off
     minVal = min(rssiHistory)
 
     if rssiHistory[middle] != minVal: # only look at the stuff if the minimum value is in the middle
-        return laneCounter
+        return False
 
     if ((rssiHistory[0] - minVal) > DBM_DIFF) and ((rssiHistory[length-1] - minVal) > DBM_DIFF):
         my_print(text="increase the lane counter!\n", sink={'serial':True,'lcd':False,'textLog':True,'dataLog':False})
-        laneCounter += 1
-        update_lane_disp(laneCounter)
+        update_lane_disp(laneCounter+1)
         rssiHistory.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # nb: rssiHistory is a reference, can clear it here
-        return laneCounter
+        return True
 
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(240,60,80,180,LCD.BLACK)
@@ -116,11 +115,8 @@ async def main():
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
     LCD.text("Schwimm-Messer",90,17,LCD.WHITE)
-    LCD.text("id  time  address  rssi  ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
+    LCD.text("id    time addr rssi ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
     LCD.show_up()
-
-    txt_csv = "id, time_ms, address, rssi, ave\n"
-    my_print(text=txt_csv, sink={'serial':True,'lcd':False,'textLog':False,'dataLog':True})
 
     loopCnt = 0
     lastTime = ticks_ms()
@@ -129,6 +125,9 @@ async def main():
     absTime_ms = 0
     laneCounter = 0
     update_lane_disp(laneCounter)
+    
+    txt_csv = "   id, time,  addr, rssi,  ave, lane\n"
+    my_print(text=txt_csv, sink={'serial':True,'lcd':False,'textLog':False,'dataLog':True})
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     rssiHistory = []
@@ -154,13 +153,16 @@ async def main():
         lastTime = ticks_ms()
                 
         moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
-        fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
-        laneCounter = lane_decision(rssiHistory=rssiHistory, laneCounter=laneCounter)
-        print_infos(meas=meas)
+        fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value        
+        if lane_decision(rssiHistory=rssiHistory, laneCounter=laneCounter):
+            laneCounter += 1
+        print_infos(meas=meas, laneCounter=laneCounter)
         
         ledOnboard.toggle()
         loopCnt += 1
-        sleep_ms(LOOP_SLEEP_TIME)
+        if REAL_LIFE_SPEED:
+            sleep_ms(200) # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
+
  
     f_dataLog.close()
     f_textLog.close()

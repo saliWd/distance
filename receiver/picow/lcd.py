@@ -4,7 +4,7 @@
 
 from machine import Pin,SPI,PWM #type: ignore
 
-import framebuf # type: ignore
+import framebuf # type: ignore (this is a micropython internal module)
 from time import sleep_ms, sleep_us
 
 LCD_SCK  = 10 # used in init and in touch sensor
