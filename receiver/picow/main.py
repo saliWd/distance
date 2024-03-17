@@ -15,15 +15,14 @@ from lcd import LCD_disp # import the display class
 from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
-SIMULATE_BEACON = False
-REAL_LIFE_SPEED = False
+SIMULATE_BEACON = True
+REAL_LIFE_SPEED = True
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
 SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision. TODO: not yet implemented
 
 ## global variables
-f_textLog = open('logText.txt', 'a') # append
 f_dataLog = open('logData.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide
 LOOP_MAX = 20000
@@ -33,7 +32,7 @@ async def find_beacon(loopCnt:int):
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
         # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
-        async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
+        async with aioble.scan(2000, interval_us=20000, window_us=20000, active=True) as scanner:
             async for result in scanner:
                 if(result.name()): # most are empty...
                     if result.name()[0:11] == 'widmedia.ch':
@@ -47,16 +46,13 @@ def my_print(text:str, sink:dict):
         LCD.fill_rect(0,60,240,160,LCD.BLACK)
         LCD.text(text[0:len(text)-1],0,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that
         LCD.show_up()
-    if sink['textLog']:
-        f_textLog.write(text)
-        f_textLog.flush()
     if sink['dataLog']:
         f_dataLog.write(text)
         f_dataLog.flush()
 
 def print_infos(meas:dict, laneCounter:int):    
     txt_csv = "%5d, %4d, %s, %4d, %4d, %4d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'], laneCounter)
-    my_print(text=txt_csv, sink={'serial':True,'lcd':True,'textLog':False,'dataLog':True})
+    my_print(text=txt_csv, sink={'serial':True,'lcd':True,'dataLog':True})
 
 # calculate an average of the last 2 measurements
 # possible issue here: out of range is taking about 3 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
@@ -92,21 +88,18 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         return False
 
     if ((rssiHistory[0] - minVal) > DBM_DIFF) and ((rssiHistory[length-1] - minVal) > DBM_DIFF):
-        my_print(text="increase the lane counter!\n", sink={'serial':True,'lcd':False,'textLog':True,'dataLog':False})
         update_lane_disp(laneCounter+1)
         rssiHistory.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # nb: rssiHistory is a reference, can clear it here
         return True
 
 def update_lane_disp(laneCounter:int):
-    LCD.fill_rect(240,60,80,180,LCD.BLACK)
+    LCD.fill_rect(240,100,80,180,LCD.BLACK)
     if laneCounter > 99:
         return
     laneText = ("%02d" % laneCounter)
-    LCD.text(laneText,240,60,LCD.RED) # TODO: make text huge
+    LCD.text(laneText,240,100,LCD.RED) # TODO: make text huge
     LCD.show_up()
-    # this is just debug output. To be removed again
-    my_print(text="Lane counter now: "+laneText+"\n", sink={'serial':True,'lcd':False,'textLog':True,'dataLog':False})
     return
 
 # main program
@@ -127,7 +120,7 @@ async def main():
     update_lane_disp(laneCounter)
     
     txt_csv = "   id, time,  addr, rssi,  ave, lane\n"
-    my_print(text=txt_csv, sink={'serial':True,'lcd':False,'textLog':False,'dataLog':True})
+    my_print(text=txt_csv, sink={'serial':True,'lcd':False,'dataLog':True})
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     rssiHistory = []
@@ -160,11 +153,8 @@ async def main():
         
         ledOnboard.toggle()
         loopCnt += 1
-        if REAL_LIFE_SPEED:
-            sleep_ms(200) # 0.2 secs sleep result in measurements taking 500 ms or 1000 ms, with some outliers at 1500 ms. OOR measurements however take about 3.2 seconds (timeout+sleep)
-
+        # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take about 2 seconds (timeout)
  
     f_dataLog.close()
-    f_textLog.close()
 
 asyncio.run(main())
