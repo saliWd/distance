@@ -24,7 +24,8 @@ SECS_OF_RSSIS = 60 # how long do I store values for the lane counter decision. T
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
-LCD = LCD_disp() # 240px high, 320px wide
+# LCD calls the framebuf module, see https://docs.micropython.org/en/latest/library/framebuf.html
+LCD = LCD_disp() # 240px high, 320px wide, see https://www.waveshare.com/wiki/Pico-ResTouch-LCD-2.8
 LOOP_MAX = 20000
 
 async def find_beacon(loopCnt:int):
@@ -94,6 +95,18 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         return True
 
 def update_lane_disp(laneCounter:int):
+    """
+    this one works: LCD.hline(10,10,60,LCD.WHITE)
+simple exampleProgram for poly:
+from lcd import LCD_disp
+import array
+LCD = LCD_disp()
+myData = array.array('I', [10,15,15,10,75,10,80,15,75,20,15,20])
+LCD.poly(10, 10, myData, LCD.WHITE, True)
+LCD.show_up()
+    """
+
+
     LCD.fill_rect(220,100,100,140,LCD.WHITE)
     if laneCounter > 99:
         return
@@ -107,7 +120,7 @@ async def main():
     # clear the display
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
-    LCD.text("Schwimm-Messer",90,17,LCD.WHITE)
+    LCD.text("Schwimm-Messer",95,17,LCD.WHITE) # LCD.text etc. are framebuffer functions
     LCD.text("id    time addr rssi ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
     LCD.show_up()
 
