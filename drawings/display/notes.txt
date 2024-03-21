@@ -1,0 +1,2 @@
+using image2rgb565 converter from https://longfangsong.github.io/en/image-to-rgb565/
+to convert the 30x37px image to the bin file

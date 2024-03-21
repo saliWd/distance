@@ -152,12 +152,6 @@ def draw_segment(x:int, y:int, horiz:bool):
     LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
-"""
-coord error: x=316, y=93, horiz=False
-coord error: x=316, y=154, horiz=False
-"""
-
-
 # main program
 async def main():
     # clear the display
