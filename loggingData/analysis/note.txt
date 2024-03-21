@@ -23,4 +23,13 @@ in this 60 seconds window: if
 -- check for differences in the range of 15 dBm (average 2 away) or 25 dBm (average 2, edge)
 --> already shows an issue, I don't know where the receiver will be placed and one criteria (15) does not work for the other (25)...
 
-(referring to the data taken from the naked pico)
+  1-----------------------2
+ /            48           \
+/0 4x4                  4x4 \3
+\                           /
+ \                         /
+  5------------------------4
+ 
+ 6 points per poly.
+ 
+ 56x8 per segment (or 8 by 56). Spacing between is 5, resulting in 61x13 per segment+space

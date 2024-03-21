@@ -5,18 +5,21 @@
 # import mip
 # mip.install("aioble")
 
-from time import sleep_ms, ticks_ms, ticks_diff
 from machine import Pin #type: ignore
+from time import ticks_ms, ticks_diff
+import array
+from math import floor
 
 import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
 import aioble # type: ignore (this is a pylance ignore warning directive)
 
+# files on file system
 from lcd import LCD_disp # import the display class
 from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
 SIMULATE_BEACON = True
-REAL_LIFE_SPEED = True
+REAL_LIFE_SPEED = False
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = -120 # What value do I give to out-of-range beacons?
@@ -32,7 +35,7 @@ async def find_beacon(loopCnt:int):
     if SIMULATE_BEACON:                
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
-        # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        # Scan for 2 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(2000, interval_us=20000, window_us=20000, active=True) as scanner:
             async for result in scanner:
                 if(result.name()): # most are empty...
@@ -95,25 +98,65 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         return True
 
 def update_lane_disp(laneCounter:int):
-    """
-    this one works: LCD.hline(10,10,60,LCD.WHITE)
-simple exampleProgram for poly:
-from lcd import LCD_disp
-import array
-LCD = LCD_disp()
-myData = array.array('I', [10,15,15,10,75,10,80,15,75,20,15,20])
-LCD.poly(10, 10, myData, LCD.WHITE, True)
-LCD.show_up()
-    """
-
-
-    LCD.fill_rect(220,100,100,140,LCD.WHITE)
+    LCD.fill_rect(130,80,190,160,LCD.RED) # TODO: change color to black
     if laneCounter > 99:
         return
-    laneText = ("%02d" % laneCounter)
-    LCD.text(laneText,240,100,LCD.RED) # TODO: make text huge
+    draw_digit(digit=floor(laneCounter / 10), posMsb=False)
+    draw_digit(digit=(laneCounter % 10), posMsb=True)
     LCD.show_up()
     return
+
+def draw_digit(digit:int, posMsb:bool):
+    # box size (for two digits) is about 184 x 151 (so, about 1/2 of width, 2/3 of height)
+    # one segment is 56x8, spacing is 5, thus resulting in 61x13 per segment+space
+    # x-direction: between digits another 20px is reserved, thus 13+56+13 +20+ 13+56+13 = 184
+    # y-direction: 13+56+ 13+ 56+13 = 151
+    
+    box_x = 130 # start point x
+    box_y = 80
+
+    spc_big = 61 # 56+5
+    spc_sml = 13 # 
+    spc_digit = 20    
+
+    if not posMsb:
+        box_x = box_x + 2*(spc_sml) + spc_big + spc_digit
+    
+    if digit > 1: # TODO
+        print("digit error: %d" % digit)
+        return
+
+    if digit == 0:
+        draw_segment(x=box_x+spc_sml,         y=box_y,                     horiz=True)     #  -
+        draw_segment(x=box_x,                 y=box_y+spc_sml,             horiz=False)    # |
+        draw_segment(x=box_x,                 y=box_y+spc_sml+spc_big,     horiz=False)    # |
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml+spc_big,     horiz=False)    #    |
+        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   _
+    elif digit == 1:
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml+spc_big,     horiz=False)    #    |    
+    return
+
+def draw_segment(x:int, y:int, horiz:bool):
+    if horiz:
+        if (x+56 > 319) or (y+8 > 239):
+            print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
+            return
+        coord = array.array('I', [x,y+4, x+4,y, x+52,y, x+56,y+4, x+52,y+8, x+4,y+8]) # unsigned integers array
+    else: # vertical
+        if (x+8 > 319) or (y+56 > 239):
+            print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
+            return
+        coord = array.array('I', [x+4,y, x,y+4, x,y+52, x+4,y+56, x+8,y+52, x+8,y+4])
+    LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
+    return # NB: no lcd.show_up as this is called after all segments are drawn
+
+"""
+coord error: x=316, y=93, horiz=False
+coord error: x=316, y=154, horiz=False
+"""
+
 
 # main program
 async def main():
