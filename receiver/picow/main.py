@@ -47,7 +47,7 @@ def my_print(text:str, sink:dict):
     if sink['serial']:
         print(text, end='') # text needs a newline at the end
     if sink['lcd']: # text area of the LCD
-        LCD.fill_rect(0,60,240,40,LCD.BLACK) # currently only one line instead of a text box
+        LCD.fill_rect(0,60,320,20,LCD.BLACK) # currently only one line instead of a text box
         LCD.text(text[0:len(text)-1],0,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that
         LCD.show_up()
     if sink['dataLog']:
@@ -98,11 +98,11 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         return True
 
 def update_lane_disp(laneCounter:int):
-    LCD.fill_rect(130,80,190,160,LCD.RED) # TODO: change color to black
+    LCD.fill_rect(130,80,190,160,LCD.BLACK)
     if laneCounter > 99:
         return
-    draw_digit(digit=floor(laneCounter / 10), posMsb=False)
-    draw_digit(digit=(laneCounter % 10), posMsb=True)
+    draw_digit(digit=floor(laneCounter / 10), posMsb=True)
+    draw_digit(digit=(laneCounter % 10), posMsb=False)
     LCD.show_up()
     return
 
@@ -116,26 +116,30 @@ def draw_digit(digit:int, posMsb:bool):
     box_y = 80
 
     spc_big = 61 # 56+5
-    spc_sml = 13 # 
-    spc_digit = 20    
+    spc_sml = 12 # 
+    spc_digit = 20
 
     if not posMsb:
         box_x = box_x + 2*(spc_sml) + spc_big + spc_digit
     
-    if digit > 1: # TODO
-        print("digit error: %d" % digit)
-        return
-
     if digit == 0:
         draw_segment(x=box_x+spc_sml,         y=box_y,                     horiz=True)     #  -
         draw_segment(x=box_x,                 y=box_y+spc_sml,             horiz=False)    # |
-        draw_segment(x=box_x,                 y=box_y+spc_sml+spc_big,     horiz=False)    # |
+        draw_segment(x=box_x,                 y=box_y+2*spc_sml+spc_big,   horiz=False)    # |
         draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml+spc_big,     horiz=False)    #    |
-        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   _
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |
+        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   -
     elif digit == 1:
         draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml+spc_big,     horiz=False)    #    |    
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |    
+    elif digit == 8:
+        draw_segment(x=box_x+spc_sml,         y=box_y,                     horiz=True)     #  -
+        draw_segment(x=box_x,                 y=box_y+spc_sml,             horiz=False)    # |
+        draw_segment(x=box_x+spc_sml,         y=box_y+spc_sml+spc_big,     horiz=True)     #  -
+        draw_segment(x=box_x,                 y=box_y+2*spc_sml+spc_big,   horiz=False)    # |
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
+        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |
+        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   -
     return
 
 def draw_segment(x:int, y:int, horiz:bool):
@@ -143,12 +147,12 @@ def draw_segment(x:int, y:int, horiz:bool):
         if (x+56 > 319) or (y+8 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = array.array('I', [x,y+4, x+4,y, x+52,y, x+56,y+4, x+52,y+8, x+4,y+8]) # unsigned integers array
+        coord = array.array('I', [0,4, 4,0, 52,0, 56,4, 52,8, 4,8]) # unsigned integers array
     else: # vertical
         if (x+8 > 319) or (y+56 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = array.array('I', [x+4,y, x,y+4, x,y+52, x+4,y+56, x+8,y+52, x+8,y+4])
+        coord = array.array('I', [4,0, 0,4, 0,52, 4,56, 8,52, 8,4])
     LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
