@@ -101,7 +101,8 @@ def update_lane_disp(laneCounter:int):
     LCD.fill_rect(130,80,190,160,LCD.BLACK)
     if laneCounter > 99:
         return
-    draw_digit(digit=floor(laneCounter / 10), posMsb=True)
+    if laneCounter > 9: # draw it only when there are two digits
+        draw_digit(digit=floor(laneCounter / 10), posMsb=True)
     draw_digit(digit=(laneCounter % 10), posMsb=False)
     LCD.show_up()
     return
