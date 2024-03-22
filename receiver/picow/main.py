@@ -107,41 +107,45 @@ def update_lane_disp(laneCounter:int):
     LCD.show_up()
     return
 
-def draw_digit(digit:int, posMsb:bool):
-    # box size (for two digits) is about 184 x 151 (so, about 1/2 of width, 2/3 of height)
-    # one segment is 56x8, spacing is 5, thus resulting in 61x13 per segment+space
-    # x-direction: between digits another 20px is reserved, thus 13+56+13 +20+ 13+56+13 = 184
-    # y-direction: 13+56+ 13+ 56+13 = 151
-    
-    box_x = 130 # start point x
-    box_y = 80
+def draw_digit(digit:int, posMsb:bool):   
+    #      a
+    #    f   b
+    #      g
+    #    e   c
+    #      d
+    segments = 0
+    if digit == 0:   segments=  63 # abcdef
+    elif digit == 1: segments=   6 #  bc
+    elif digit == 2: segments=  91 # ab de g
+    elif digit == 3: segments=  79 # abcd  g
+    elif digit == 4: segments= 102 #  bc  fg
+    elif digit == 5: segments= 109 # a cd fg
+    elif digit == 6: segments= 124 #   cdefg
+    elif digit == 7: segments=   7 # abc
+    elif digit == 8: segments= 127 # abcdefg
+    elif digit == 9: segments= 103 # abc  fg
+    else: return # error case
 
+    # box size (for two digits) is about 190 x 160
+    # one segment is 56x8, spacing is 5, thus resulting in 61x12 per segment+space
+    # x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180    
+    x = 130 # start point x
+    y = 80
     spc_big = 61 # 56+5
-    spc_sml = 12 # 
-    spc_digit = 20
+    spc_sml = 12 # 8+4
 
     if not posMsb:
-        box_x = box_x + 2*(spc_sml) + spc_big + spc_digit
-    
-    if digit == 0:
-        draw_segment(x=box_x+spc_sml,         y=box_y,                     horiz=True)     #  -
-        draw_segment(x=box_x,                 y=box_y+spc_sml,             horiz=False)    # |
-        draw_segment(x=box_x,                 y=box_y+2*spc_sml+spc_big,   horiz=False)    # |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |
-        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   -
-    elif digit == 1:
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |    
-    elif digit == 8:
-        draw_segment(x=box_x+spc_sml,         y=box_y,                     horiz=True)     #  -
-        draw_segment(x=box_x,                 y=box_y+spc_sml,             horiz=False)    # |
-        draw_segment(x=box_x+spc_sml,         y=box_y+spc_sml+spc_big,     horiz=True)     #  -
-        draw_segment(x=box_x,                 y=box_y+2*spc_sml+spc_big,   horiz=False)    # |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+spc_sml,             horiz=False)    #    |
-        draw_segment(x=box_x+spc_big+spc_sml, y=box_y+2*spc_sml+spc_big,   horiz=False)    #    |
-        draw_segment(x=box_x+spc_sml,         y=box_y+2*(spc_sml+spc_big), horiz=True)     #   -
+        x = x + 2*(spc_sml) + spc_big + 20
+  
+    if segments % 2   > 0: draw_segment(x=x+spc_sml,         y=y,                     horiz=True)  # the a-segment is required
+    if segments % 4   > 2: draw_segment(x=x+spc_big+spc_sml, y=y+spc_sml,             horiz=False) # b-segment
+    if segments % 8   > 4: draw_segment(x=x+spc_big+spc_sml, y=y+2*spc_sml+spc_big,   horiz=False) # c-segment
+    if segments % 16  > 8: draw_segment(x=x+spc_sml,         y=y+2*(spc_sml+spc_big), horiz=True)  # d-segment
+    if segments % 32  > 16:draw_segment(x=x,                 y=y+2*spc_sml+spc_big,   horiz=False) # e-segment
+    if segments % 64  > 32:draw_segment(x=x,                 y=y+spc_sml,             horiz=False) # f-segment
+    if segments % 128 > 64:draw_segment(x=x+spc_sml,         y=y+spc_sml+spc_big,     horiz=True)  # g-segment
     return
+
 
 def draw_segment(x:int, y:int, horiz:bool):
     if horiz:
