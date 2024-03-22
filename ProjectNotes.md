@@ -37,6 +37,11 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
 ## Bluetooth-Receiver
 1. Use a PicoW, drawback of having only an internal BT antenna
    1. [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
+   1. casing for PicoW + Waveshare 2.8 display:
+      * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...)
+      * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related
+      * (maybe): https://creazilla.com/nodes/7864877-case-2-8-tft-display-3d-model
+
 1. ESP variant
    1. e.g. [Adafruit ESP32 Feather V2 w.FL Antenna](https://www.adafruit.com/product/5438). Does have external antenna, not too pricey --> 32$ per pc with shipping from US
    1. e.g. TTGO-ESP32-PSRAM-Antenna-Bluetooth --> check details 
@@ -45,12 +50,12 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
 
 ## Display
-1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely.
+1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely. 
 1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)
    * [distrelec, 7.xV, 57mm, CHF 11.7](https://www.distrelec.ch/de/segment-led-anzeige-sa23-rot-57mm-655nm-45mcd-2v-tht-gemeinsame-anode-kingbright-sa23-12srwa/p/17511900)
    * [mouser, 3.9V, 25.4mm, CHF 4.-](https://www.mouser.ch/ProductDetail/Kingbright/SA10-21SYKWA?qs=FRBiz4Wv1YMB%252Bq%2FAgwsA4A%3D%3D)
    * [mouser, 7.xV, 122 mm, CHF 27.-](https://www.mouser.ch/ProductDetail/Kingbright/SA40-19SURKWA?qs=FRBiz4Wv1YNzfTxT3E0R9g%3D%3D) 
-1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution just buy, everybody does it themselves.
+1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution to just buy, everybody does it themselves.
 1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
 1. other links: 
    * https://www.hackster.io/GRA_AND_AFCH/nixie-display-or-clock-in-14-raspberry-pi-hat-ncs314-79a19b 

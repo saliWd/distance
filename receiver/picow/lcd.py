@@ -1,5 +1,5 @@
 ###
-# LCD driver from waveshare, slightly adapted
+# LCD driver from waveshare, adapted
 ### 
 
 from machine import Pin,SPI,PWM #type: ignore
@@ -74,7 +74,6 @@ class LCD_disp(framebuf.FrameBuffer):
         self.cs(0)
         self.spi.write(bytearray([buf]))
         self.cs(1)
-
 
     def init_display(self):
         # Initialize display
@@ -151,7 +150,6 @@ class LCD_disp(framebuf.FrameBuffer):
         self.write_cmd(0x29)
 
     def show_up(self):
-
         self.write_cmd(0x2A)
         self.write_data(0x00)
         self.write_data(0x00)
@@ -179,27 +177,3 @@ class LCD_disp(framebuf.FrameBuffer):
             pwm.duty_u16(65535)
         else:
             pwm.duty_u16(655*duty)
-
-    def touch_get(self): 
-        if self.irq() == 0:
-            self.spi = SPI(1,5_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
-            self.tp_cs(0)
-            X_Point = 0
-            Y_Point = 0
-            for i in range(0,3):
-                self.spi.write(bytearray([0XD0]))
-                Read_date = self.spi.read(2)
-                sleep_us(10)
-                X_Point=X_Point+(((Read_date[0]<<8)+Read_date[1])>>3)
-                
-                self.spi.write(bytearray([0X90]))
-                Read_date = self.spi.read(2)
-                Y_Point=Y_Point+(((Read_date[0]<<8)+Read_date[1])>>3)
-
-            X_Point=X_Point/3
-            Y_Point=Y_Point/3
-            
-            self.tp_cs(1) 
-            self.spi = SPI(1,30_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
-            Result_list = [X_Point,Y_Point]
-            return(Result_list)
