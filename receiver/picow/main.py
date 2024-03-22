@@ -161,6 +161,20 @@ def draw_segment(x:int, y:int, horiz:bool):
     LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
+def load_background():
+    with open ('background.bin', "rb") as file:
+        position = 0
+        while position < (240 * 120): # half the screen size as two bites per pixel are read
+            current_byte = file.read(1)
+            if len(current_byte) == 0:
+                break
+
+            # copy to buffer
+            LCD.buffer[position] = ord(current_byte)
+            position += 1
+    file.close()
+
+
 # main program
 async def main():
     # clear the display
@@ -168,6 +182,10 @@ async def main():
     LCD.fill(LCD.BLACK)
     LCD.text("Schwimm-Messer",95,17,LCD.WHITE) # LCD.text etc. are framebuffer functions
     LCD.text("id    time addr rssi ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
+    LCD.show_up()
+
+    # trial
+    load_background()
     LCD.show_up()
 
     loopCnt = 0
