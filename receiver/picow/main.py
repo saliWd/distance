@@ -165,9 +165,14 @@ def draw_segment(x:int, y:int, horiz:bool):
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
 def load_background():
+    LCD.bl_ctrl(100)
+    LCD.fill(LCD.BLACK)
+    
+    BG_IMAGE_SIZE = const(60*320*2) # I don't load the full image, it's too big/slow. Only part of it and the rest is black...
+
     with open ('background.bin', "rb") as file:
         position = 0
-        while position < (240 * 120): # half the screen size as two bites per pixel are read
+        while position < BG_IMAGE_SIZE: # two bites per pixel are read
             current_byte = file.read(1)
             if len(current_byte) == 0:
                 break
@@ -176,22 +181,14 @@ def load_background():
             LCD.buffer[position] = ord(current_byte)
             position += 1
     file.close()
+    LCD.show_up()
+    
 
 
 # main program
 async def main():
-    # clear the display
-    LCD.bl_ctrl(100)
-    LCD.fill(LCD.BLACK)
-    LCD.text("Schwimm-Messer",95,17,LCD.WHITE) # LCD.text etc. are framebuffer functions
-    LCD.text("id    time addr rssi ave",2,40,LCD.WHITE) # not using my_print because this shall be displayed all the time
-    LCD.show_up()
-
-    # trial
     load_background()
-    LCD.show_up()
-    # /end of trial
-
+    
     loopCnt = 0
     lastTime = ticks_ms()
     ledOnboard = Pin("LED", Pin.OUT)
