@@ -169,20 +169,15 @@ def load_background():
     LCD.fill(LCD.BLACK)
     LCD.show_up() # the code below takes some time, have it black from start onwards
     
-    BG_IMAGE_SIZE = const(60*320*2) # I don't load the full image, it's too big/slow. Only part of it and the rest is black...
-
+    BG_IMAGE_SIZE_BYTE = const(60*320*2) # I don't load the full image, it's too big/slow. Only part of it and the rest is black...
     with open ('background.bin', "rb") as file:
         position = 0
-        while position < BG_IMAGE_SIZE: # two bites per pixel are read
-            LCD.buffer[position] = int.from_bytes(file.read(1), 'little') # this somewhat works. Wrong color and does not matter whether reading big or little endian...
+        while position < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
+            b0 = int.from_bytes(file.read(2), 'big')
+            LCD.buffer[position] = b0 % 256
+            LCD.buffer[position+1] = floor(b0 / 256)
             position += 2
-            # This results in correct size of image, but wrong color
-    """
-     b0 = int.from_bytes(file.read(1), 'big')
-     b1 = int.from_bytes(file.read(1), 'big')
-     LCD.buffer[position] = b0*256+b1
-     position += 2
-    """
+
     file.close()
     LCD.show_up()
     
