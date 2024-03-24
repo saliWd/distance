@@ -1,2 +1,3 @@
-using image2rgb565 converter from https://longfangsong.github.io/en/image-to-rgb565/
-to convert the 30x37px image to the bin file
+using image2lcd converter tool (can be downloaded from waveshare)
+to convert the 320x60 jpg to a bin file. Settings: 
+- binary type, horizon scan, 256 color, no checkboxes ticked, color on 'adjust'
