@@ -33,7 +33,7 @@ LCD = LCD_disp() # 240px high, 320px wide, see https://www.waveshare.com/wiki/Pi
 LOOP_MAX = const(20000)
 
 async def find_beacon(loopCnt:int):
-    if SIMULATE_BEACON:                
+    if SIMULATE_BEACON:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
         # Scan for 2 seconds, in active mode, with very low interval/window (to maximise detection rate).
@@ -44,20 +44,40 @@ async def find_beacon(loopCnt:int):
                         return result
         return None
 
+
 def my_print(text:str, sink:dict):
     if sink['serial']:
         print(text, end='') # text needs a newline at the end
-    if sink['lcd']: # text area of the LCD
-        LCD.fill_rect(0,60,320,20,LCD.BLACK) # currently only one line instead of a text box
-        LCD.text(text[0:len(text)-1],0,60,LCD.WHITE) # last character is a newline, LCD.text can't handle that
-        LCD.show_up()
     if sink['dataLog']:
         f_dataLog.write(text)
         f_dataLog.flush()
 
-def print_infos(meas:dict, laneCounter:int):    
+
+def print_lcd_dbg(meas:dict, laneCounter:int):
+    X = const(10)
+    y = 80
+    LINE = const(15)
+    LCD.fill_rect(X,y,180,6*LINE,LCD.BLACK) # clear the area
+    
+    LCD.text("Loop:     %4d" % meas['loopCnt'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("Timediff: %4d" % meas['timeDiff'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("Address:  %s"  % meas['addr'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("RSSI:     %4d" % meas['rssi'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("RSSI ave: %4d" % meas['rssiAve'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("Lane:     %4d" % laneCounter,X,y,LCD.WHITE)
+    LCD.show_up()
+
+
+def print_infos(meas:dict, laneCounter:int):
     txt_csv = "%5d, %4d, %s, %4d, %4d, %4d\n" % (meas['loopCnt'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'], laneCounter)
     my_print(text=txt_csv, sink={'serial':True,'lcd':True,'dataLog':True})
+    print_lcd_dbg(meas=meas, laneCounter=laneCounter)   
+
 
 # calculate an average of the last 2 measurements
 # possible issue here: out of range is taking about 3 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
@@ -74,12 +94,13 @@ def fill_history(rssiHistory:list, newVal:int):
         rssiHistory.pop(0) # remove the oldest one
     return
 
-##
-# lane counting conditions which have to be fullfilled:
-# a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
-# -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
-# beacon out-of-range measurements take 3 seconds while others take about 0.5 seconds
-##
+
+"""
+lane counting conditions which have to be fullfilled:
+a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
+-> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
+beacon out-of-range measurements take 2 seconds while others take about 0.3 seconds
+"""
 def lane_decision(rssiHistory:list, laneCounter:int):
     DBM_DIFF = const(10)
     length = len(rssiHistory)
@@ -98,24 +119,21 @@ def lane_decision(rssiHistory:list, laneCounter:int):
         # nb: rssiHistory is a reference, can clear it here
         return True
 
+
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(130,80,190,160,LCD.BLACK)
     if laneCounter > 99:
         return
     if laneCounter > 9: # draw it only when there really are two digits
-        draw_digit(digit=floor(laneCounter / 10), posMsb=True)
-    draw_digit(digit=(laneCounter % 10), posMsb=False)
+        draw_digit(digit=floor(laneCounter / 10), posLsb=False)
+    draw_digit(digit=(laneCounter % 10), posLsb=True)
     LCD.show_up()
     return
 
-def draw_digit(digit:int, posMsb:bool):
+
+def draw_digit(digit:int, posLsb:bool):
     if digit > 9 or digit < 0:
         return
-    #      a
-    #    f   b
-    #      g
-    #    e   c
-    #      d
     #          a,b,c,d,e,f,g 
     arrSeg = [[1,1,1,1,1,1,0], # arrSeg[0] displays 0
               [0,1,1,0,0,0,0], # 1
@@ -137,7 +155,7 @@ def draw_digit(digit:int, posMsb:bool):
     SPC_BIG = const(61) # 56+5
     SPC_SML = const(12) # 8+4
 
-    if not posMsb:
+    if posLsb:
         x = x + 2*(SPC_SML) + SPC_BIG + 20
   
     if segments[0]: draw_segment(x=x+SPC_SML,         y=Y,                     horiz=True)  # a-segment
@@ -164,6 +182,7 @@ def draw_segment(x:int, y:int, horiz:bool):
     LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
+
 def load_background():
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
@@ -177,10 +196,37 @@ def load_background():
             LCD.buffer[position] = b0 % 256 # b0 & 0xFF # not sure whether this really works. Maybe use b0 % 256
             LCD.buffer[position+1] = floor(b0 / 256) # does not work: b0 & 0xFF00 
             position += 2
+            
+            # should be the same (maybe swap b0 and b1). If this works, then I can just do the while loop normally, with one var and position += 1.
+            """
+            b0 = int.from_bytes(file.read(1), 'big')
+            b1 = int.from_bytes(file.read(1), 'big')
+            LCD.buffer[position] = b0
+            LCD.buffer[position+1] = b1
+            position += 2            
+            """
+
+            # some other small optimization (don't need to copy black values)
+            """
+            b0 = int.from_bytes(file.read(2), 'big')
+            if b0 > 0:
+                LCD.buffer[position] = b0 % 256 # b0 & 0xFF # not sure whether this really works. Maybe use b0 % 256
+                LCD.buffer[position+1] = floor(b0 / 256) # does not work: b0 & 0xFF00 
+            position += 2            
+            """
+
+            # alternative solution I found
+            """
+            # bytearray is as its stored in the file. However, this looks like it stores the whole thing in RAM, wouldn't work
+            fb_smile1 = framebuf.FrameBuffer(bytearray(b'\x00~\x00\x03\xff\xc0\x07\x81\xe0\x1e\x00x8\x00\x1c0\x00\x0c`\x00\x0ea\xc3\x86\xe0\x00\x07\xc0\x00\x03\xc0\x00\x03\xc0\x00\x02\xc0\x00\x03\xc0\x00\x03\xe0B\x07`<\x06`\x00\x060\x00\x0c8\x00\x1c\x1e\x00x\x07\x81\xe0\x03\xff\xc0\x00\xff\x00'), 24, 23, framebuf.MONO_HLSB)
+            LCD.framebuf.blit(fb_smile1, 0, 20)
+            LCD.show_ip()
+            """
+
+            # using a struct to get from bytestream to int array
 
     file.close()
-    LCD.show_up()
-    
+    LCD.show_up()   
 
 
 # main program
@@ -222,7 +268,7 @@ async def main():
         lastTime = ticks_ms()
                 
         moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
-        fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value        
+        fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
         if lane_decision(rssiHistory=rssiHistory, laneCounter=laneCounter):
             laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)

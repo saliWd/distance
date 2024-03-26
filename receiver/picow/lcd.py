@@ -5,7 +5,7 @@
 from machine import Pin,SPI,PWM #type: ignore
 
 import framebuf # type: ignore (this is a micropython internal module)
-from time import sleep_ms, sleep_us
+from time import sleep_ms
 
 LCD_SCK  = 10 # used in init and in touch sensor
 LCD_MOSI = 11
@@ -18,9 +18,9 @@ screen layout (approximative)
     |                                                                        |
  40 |                         -LOGO-                                         |   40
     |                                                                        |
- 20 |   csv header                                                           |
+ 20 |                                                                        |
     |   -------------------------------------------        00       11 11    |   40
-    |   |  csv text-box                           |       0  0     11  11    |        240
+    |   |  dbg text output                        |       0  0     11  11    |        240
     |   |                                         |      0    0        11    |
 160 |   |                                         |      0    0 lane   11    |  160
     |   |                                         |      0    0        11    |
