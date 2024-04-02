@@ -63,7 +63,7 @@ def print_lcd_dbg(meas:dict, laneCounter:int):
     y += LINE
     LCD.text("Timediff: %4d" % meas['timeDiff'],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("Address:  %s"  % meas['addr'],X,y,LCD.WHITE)
+    LCD.text("Address: %s"  % meas['addr'],X,y,LCD.WHITE)
     y += LINE
     LCD.text("RSSI:     %4d" % meas['rssi'],X,y,LCD.WHITE)
     y += LINE
