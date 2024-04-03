@@ -192,19 +192,12 @@ def load_background():
     with open ('background.bin', "rb") as file:
         position = 0
         while position < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
-            b0 = int.from_bytes(file.read(2), 'big')
-            LCD.buffer[position] = b0 % 256 # b0 & 0xFF # not sure whether this really works. Maybe use b0 % 256
-            LCD.buffer[position+1] = floor(b0 / 256) # does not work: b0 & 0xFF00 
-            position += 2
-            
-            # should be the same (maybe swap b0 and b1). If this works, then I can just do the while loop normally, with one var and position += 1.
-            """
             b0 = int.from_bytes(file.read(1), 'big')
             b1 = int.from_bytes(file.read(1), 'big')
-            LCD.buffer[position] = b0
-            LCD.buffer[position+1] = b1
-            position += 2            
-            """
+            LCD.buffer[position] = b1
+            LCD.buffer[position+1] = b0
+            position += 2
+            
 
             # some other small optimization (don't need to copy black values)
             """
@@ -280,3 +273,4 @@ async def main():
     f_dataLog.close()
 
 asyncio.run(main())
+
