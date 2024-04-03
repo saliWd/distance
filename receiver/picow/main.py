@@ -194,30 +194,11 @@ def load_background():
         while position < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
             b0 = int.from_bytes(file.read(1), 'big')
             b1 = int.from_bytes(file.read(1), 'big')
-            LCD.buffer[position] = b1
-            LCD.buffer[position+1] = b0
-            position += 2
-            
-
-            # some other small optimization (don't need to copy black values)
-            """
-            b0 = int.from_bytes(file.read(2), 'big')
+            if b1 > 0:
+                LCD.buffer[position] = b1
             if b0 > 0:
-                LCD.buffer[position] = b0 % 256 # b0 & 0xFF # not sure whether this really works. Maybe use b0 % 256
-                LCD.buffer[position+1] = floor(b0 / 256) # does not work: b0 & 0xFF00 
-            position += 2            
-            """
-
-            # alternative solution I found
-            """
-            # bytearray is as its stored in the file. However, this looks like it stores the whole thing in RAM, wouldn't work
-            fb_smile1 = framebuf.FrameBuffer(bytearray(b'\x00~\x00\x03\xff\xc0\x07\x81\xe0\x1e\x00x8\x00\x1c0\x00\x0c`\x00\x0ea\xc3\x86\xe0\x00\x07\xc0\x00\x03\xc0\x00\x03\xc0\x00\x02\xc0\x00\x03\xc0\x00\x03\xe0B\x07`<\x06`\x00\x060\x00\x0c8\x00\x1c\x1e\x00x\x07\x81\xe0\x03\xff\xc0\x00\xff\x00'), 24, 23, framebuf.MONO_HLSB)
-            LCD.framebuf.blit(fb_smile1, 0, 20)
-            LCD.show_ip()
-            """
-
-            # using a struct to get from bytestream to int array
-
+                LCD.buffer[position+1] = b0
+            position += 2
     file.close()
     LCD.show_up()   
 
