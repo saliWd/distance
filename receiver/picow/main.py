@@ -192,16 +192,59 @@ def load_background():
     with open ('background.bin', "rb") as file:
         position = 0
         while position < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
-            b0 = int.from_bytes(file.read(1), 'big')
-            b1 = int.from_bytes(file.read(1), 'big')
-            if b1 > 0:
-                LCD.buffer[position] = b1
-            if b0 > 0:
-                LCD.buffer[position+1] = b0
-            position += 2
-    file.close()
-    LCD.show_up()   
+            if True:
+                # 'golden model', this one works
+                b0 = int.from_bytes(file.read(1), 'big') # big or little does not matter when reading only one byte
+                b1 = int.from_bytes(file.read(1), 'big')
+                if b1 > 0:
+                    LCD.buffer[position] = b1
+                if b0 > 0:
+                    LCD.buffer[position+1] = b0
+                position += 2
 
+
+            """ not working, mem alloc error
+            # trial to speed up file read (I guess file read itself is taking long)
+            b = int.from_bytes(file.read(2), 'small')
+            if position < (BG_IMAGE_SIZE_BYTE - 4): # trial to fix allocation errors
+                print(position)
+                LCD.buffer[position:position+1] = b.to_bytes(2, 'big')
+            position += 2
+            """
+            
+            """ 
+            # can't make it work
+            b = int.from_bytes(file.read(2), 'big') # two bytes. Somehow small or big does not matter... Don't know why
+            LCD.buffer[position+1] = b & 0x00FF # need an int to to bitmasking. 
+            LCD.buffer[position+0] = b & 0xFF00
+            position += 2
+            """
+    
+            """syntax issues 
+            buffer = file.read(2) # small buffer
+            b0 = int.from_bytes(buffer[0], 'big') # big or little does not matter when reading only one byte
+            b1 = int.from_bytes(buffer[1], 'big')
+            LCD.buffer[position] = b1
+            LCD.buffer[position+1] = b0
+            position += 2
+            """
+
+            """next trial
+            chunk_size = 4 * 1024 * 1024  # MB
+            with open('large_file.dat','rb') as f:
+                for chunk in iter(lambda: f.read(chunk_size), b''):
+                    handle(chunk)
+            """
+    # myInt = 1025, # LCD.buffer[0:1] = myInt.to_bytes(2, 'big') # results in mem alloc error
+    
+    file.close()
+    LCD.show_up()
+
+    # TODO: debug. remove again
+    print (LCD.buffer[19238:19263]) # some pix from middle line. just some dummy numbers where there are non-zero data, to verify the ordering is still correct
+    """ should be:
+    ok:bytearray(b'\xf7\x9e\xf7\x9e\xa5\x14\x10\x82\x00 \x00 \x00\x00\x00\x00\x08A!\x04\xd6\x9a\xff\xff\xff')       
+    """
 
 # main program
 async def main():
