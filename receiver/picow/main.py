@@ -189,26 +189,16 @@ def load_background():
     LCD.show_up() # the code below takes some time, have it black from start onwards
     
     BG_IMAGE_SIZE_BYTE = const(60*320*2) # I don't load the full image, it's too big/slow. Only part of it and the rest is constant color
+    BUF_SIZE = const(256) # make sure the image size and the buffer size are nicely arranged
     with open ('background.bin', "rb") as file:
-        bufPos = 0
-        # arrPos = 0
-        BUF_SIZE = const(4) # make sure the image size and the buffer size are nicely arranged
-        while bufPos < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
+        for bufPos in range(0, BG_IMAGE_SIZE_BYTE, BUF_SIZE):
             buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
-            LCD.buffer[bufPos]   = buffer[1]
-            LCD.buffer[bufPos+1] = buffer[0]
-            LCD.buffer[bufPos+2] = buffer[3]
-            LCD.buffer[bufPos+3] = buffer[2]
-            bufPos += BUF_SIZE
+            for arrPos in range(0, BUF_SIZE, 2):
+                LCD.buffer[bufPos+arrPos]   = buffer[arrPos+1] # need to re-order bytes
+                LCD.buffer[bufPos+arrPos+1] = buffer[arrPos]            
     
     file.close()
     LCD.show_up()
-
-    # TODO: debug. remove again
-    print (LCD.buffer[19238:19263]) # some pix from middle line. just some dummy numbers where there are non-zero data, to verify the ordering is still correct
-    """ should be:
-    ok:bytearray(b'\xf7\x9e\xf7\x9e\xa5\x14\x10\x82\x00 \x00 \x00\x00\x00\x00\x08A!\x04\xd6\x9a\xff\xff\xff')       
-    """
 
 # main program
 async def main():
