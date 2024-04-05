@@ -190,52 +190,16 @@ def load_background():
     
     BG_IMAGE_SIZE_BYTE = const(60*320*2) # I don't load the full image, it's too big/slow. Only part of it and the rest is constant color
     with open ('background.bin', "rb") as file:
-        position = 0
-        while position < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
-            if True:
-                # 'golden model', this one works
-                b0 = int.from_bytes(file.read(1), 'big') # big or little does not matter when reading only one byte
-                b1 = int.from_bytes(file.read(1), 'big')
-                if b1 > 0:
-                    LCD.buffer[position] = b1
-                if b0 > 0:
-                    LCD.buffer[position+1] = b0
-                position += 2
-
-
-            """ not working, mem alloc error
-            # trial to speed up file read (I guess file read itself is taking long)
-            b = int.from_bytes(file.read(2), 'small')
-            if position < (BG_IMAGE_SIZE_BYTE - 4): # trial to fix allocation errors
-                print(position)
-                LCD.buffer[position:position+1] = b.to_bytes(2, 'big')
-            position += 2
-            """
-            
-            """ 
-            # can't make it work
-            b = int.from_bytes(file.read(2), 'big') # two bytes. Somehow small or big does not matter... Don't know why
-            LCD.buffer[position+1] = b & 0x00FF # need an int to to bitmasking. 
-            LCD.buffer[position+0] = b & 0xFF00
-            position += 2
-            """
-    
-            """syntax issues 
-            buffer = file.read(2) # small buffer
-            b0 = int.from_bytes(buffer[0], 'big') # big or little does not matter when reading only one byte
-            b1 = int.from_bytes(buffer[1], 'big')
-            LCD.buffer[position] = b1
-            LCD.buffer[position+1] = b0
-            position += 2
-            """
-
-            """next trial
-            chunk_size = 4 * 1024 * 1024  # MB
-            with open('large_file.dat','rb') as f:
-                for chunk in iter(lambda: f.read(chunk_size), b''):
-                    handle(chunk)
-            """
-    # myInt = 1025, # LCD.buffer[0:1] = myInt.to_bytes(2, 'big') # results in mem alloc error
+        bufPos = 0
+        # arrPos = 0
+        BUF_SIZE = const(4) # make sure the image size and the buffer size are nicely arranged
+        while bufPos < BG_IMAGE_SIZE_BYTE: # two bites per pixel are read
+            buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
+            LCD.buffer[bufPos]   = buffer[1]
+            LCD.buffer[bufPos+1] = buffer[0]
+            LCD.buffer[bufPos+2] = buffer[3]
+            LCD.buffer[bufPos+3] = buffer[2]
+            bufPos += BUF_SIZE
     
     file.close()
     LCD.show_up()
@@ -248,10 +212,11 @@ def load_background():
 
 # main program
 async def main():
+    lastTime = ticks_ms() # temporary, to judge run time of background load
     load_background()
     
     loopCnt = 0
-    lastTime = ticks_ms()
+    # lastTime = ticks_ms()
     ledOnboard = Pin("LED", Pin.OUT)
     ledOnboard.on()
     absTime_ms = 0
