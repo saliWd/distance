@@ -202,14 +202,12 @@ def load_background():
 
 # main program
 async def main():
-    lastTime = ticks_ms() # temporary, to judge run time of background load
+    lastTime = ticks_ms() # first time measurement is not really valid, it shows system startup time instead (which I'm interested in)
     load_background()
     
     loopCnt = 0
-    # lastTime = ticks_ms()
     ledOnboard = Pin("LED", Pin.OUT)
     ledOnboard.on()
-    absTime_ms = 0
     laneCounter = 0
     update_lane_disp(laneCounter)
     
@@ -236,7 +234,6 @@ async def main():
         # else: it's not a error, just beacon out of range
 
         meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
-        absTime_ms += meas['timeDiff']
         lastTime = ticks_ms()
                 
         moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
