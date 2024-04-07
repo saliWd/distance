@@ -36,8 +36,8 @@ async def find_beacon(loopCnt:int):
     if SIMULATE_BEACON:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
-        # Scan for 2 seconds, in active mode, with very low interval/window (to maximise detection rate).
-        async with aioble.scan(2000, interval_us=20000, window_us=20000, active=True) as scanner:
+        # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
             async for result in scanner:
                 if(result.name()): # most are empty...
                     if result.name()[0:11] == 'widmedia.ch':
@@ -99,7 +99,7 @@ def fill_history(rssiHistory:list, newVal:int):
 lane counting conditions which have to be fullfilled:
 a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
 -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
-beacon out-of-range measurements take 2 seconds while others take about 0.3 seconds
+beacon out-of-range measurements take 3 seconds while others take about 0.3 seconds
 """
 def lane_decision(rssiHistory:list, laneCounter:int):
     DBM_DIFF = const(10)
@@ -244,7 +244,7 @@ async def main():
         
         ledOnboard.toggle()
         loopCnt += 1
-        # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take about 2 seconds (timeout)
+        # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take about 3 seconds (timeout)
  
     f_dataLog.close()
 
