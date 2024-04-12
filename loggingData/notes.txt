@@ -1,0 +1,1 @@
+20240411: first time the lane count was correct. Changed the ble search window back to 3000 ms, no additional loop pause time. 20 double-lanes (25m indoor)
