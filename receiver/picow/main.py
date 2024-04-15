@@ -19,7 +19,7 @@ from lcd import LCD_disp # import the display class
 from BEACON_SIM import BEACON_SIM # import the simulator class
 
 # beacon simulation variables
-SIMULATE_BEACON = const(True)
+SIMULATE_BEACON = const(False)
 REAL_LIFE_SPEED = const(False)
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
@@ -193,9 +193,8 @@ def load_background():
     with open ('background.bin', "rb") as file:
         for bufPos in range(0, BG_IMAGE_SIZE_BYTE, BUF_SIZE):
             buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
-            for arrPos in range(0, BUF_SIZE, 2):
-                LCD.buffer[bufPos+arrPos]   = buffer[arrPos+1] # need to re-order bytes
-                LCD.buffer[bufPos+arrPos+1] = buffer[arrPos]            
+            for arrPos in range(0, BUF_SIZE):
+                LCD.buffer[bufPos+arrPos]   = buffer[arrPos]            
     
     file.close()
     LCD.show_up()
@@ -249,4 +248,5 @@ async def main():
     f_dataLog.close()
 
 asyncio.run(main())
+
 
