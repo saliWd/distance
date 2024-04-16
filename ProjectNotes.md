@@ -1,6 +1,72 @@
 # Project documentation
 
-* Github project SwimMeter, user: saliWd. This file contains both a task list (TODO and DONE) as well as some general documentation about the different parts of this project: bluetooth beacon HW & SW / android app / website
+Github project distance. This file contains some general documentation about the different parts of this project:
+1. bluetooth beacon: HolyIOT (transmitter)
+1. bluetooth receiver: PicoW with micropython
+1. display: standard LCD display from waveshare 
+1. website
+1. (currently obsolete) android app
+
+## Bluetooth-Beacon
+using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
+* CR2032-Knopfzelle / Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
+* Eddystone: Beacon URLs + Akkuspannung senden
+* Sendeleistung von 0 bis 6 dBm (1 bis 4 Milliwatt), Sendeintervall zwischen 30 und 1000 ms (auf Sicht ~80 Meter Reichweite bei 1000 ms Intervall, 6 dBm Sendeleistung, Empfänger ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler, Reichweite variiert stark mit Empfangsantenne)
+* „Holyiot-Beacon“ app to configure is working
+   * default password is AA14061112
+   * config tx: 500 ms, txpower 6
+   * config: beacon mode
+      * name=widmedia.ch
+      * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
+      * filter for the major number 30569.
+      * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](transmitter/beaconSettings_id1.png)
+
+### Alternative
+Nordic RF chips directly, program them on 'bare metal level'
+nRF52840 Dongle / Taiyo Yuden: see documentation below. Both need C/C++ programming 
+
+
+## Bluetooth-Receiver
+Use a PicoW, drawback of having only an internal BT antenna
+* [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
+
+### Alternative
+ESP variants (not tried)
+1. e.g. [Adafruit ESP32 Feather V2 w.FL Antenna](https://www.adafruit.com/product/5438). Does have external antenna, not too pricey --> 32$ per pc with shipping from US
+1. e.g. TTGO-ESP32-PSRAM-Antenna-Bluetooth --> check details 
+1. e.g. Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32 --> check the one I have, does it have a connector?
+1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
+1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
+
+## Display
+Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely. 
+
+### Alternative
+1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)
+   * [distrelec, 7.xV, 57mm, CHF 11.7](https://www.distrelec.ch/de/segment-led-anzeige-sa23-rot-57mm-655nm-45mcd-2v-tht-gemeinsame-anode-kingbright-sa23-12srwa/p/17511900)
+   * [mouser, 3.9V, 25.4mm, CHF 4.-](https://www.mouser.ch/ProductDetail/Kingbright/SA10-21SYKWA?qs=FRBiz4Wv1YMB%252Bq%2FAgwsA4A%3D%3D)
+   * [mouser, 7.xV, 122 mm, CHF 27.-](https://www.mouser.ch/ProductDetail/Kingbright/SA40-19SURKWA?qs=FRBiz4Wv1YNzfTxT3E0R9g%3D%3D) 
+1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution to just buy, everybody does it themselves.
+1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
+1. other links: 
+   * https://www.hackster.io/GRA_AND_AFCH/nixie-display-or-clock-in-14-raspberry-pi-hat-ncs314-79a19b 
+   * https://peppe8o.com/7-segment-display-and-raspberry-pi-pico-wiring-and-setup-with-micropython/
+-> split flap preferred
+
+## Casing
+Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank. Might need to add a switch?
+
+### Alternative
+(not tried out)
+* casing for PicoW + Waveshare 2.8 display:
+   * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...)
+   * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related
+   * (maybe): https://creazilla.com/nodes/7864877-case-2-8-tft-display-3d-model
+
+
+## Website
+Currently at [widmedia.ch/schwimmmesser](https://widmedia.ch/schwimmmesser)
+
 
 ## SwimMeter App
 using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and adapted their reference app. Previously have been using [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
@@ -18,54 +84,9 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    * get it back into the app store
    * maybe change behaviour, no automatic scanning at start but rather start it by clicking the button? Drawback: bigger nuisance to test it...
 
-## Bluetooth-Beacon
-1. using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
-   * CR2032-Knopfzelle / Konfigurieren per App „Holyiot-Beacon“; Modi: Beacon / iBeacon / Eddystone
-   * Eddystone: Beacon URLs + Akkuspannung senden
-   * Sendeleistung von 0 bis 6 dBm (1 bis 4 Milliwatt), Sendeintervall zwischen 30 und 1000 ms
-   * ESP32, Firmware OpenMQTTGateway
-   * Auf Sicht 80 Meter Reichweite (1000 ms Intervall, 6 dBm Sendeleistung), Reichweite variiert mit Antenne: ESP32 mit IPEX-Anschluss und 2,4-GHz-Rundstrahler > Raspberry Platinenantenne
-   1. app to configure is working
-      * default password is AA14061112
-      * config tx: 500 ms, txpower 6
-      * config: beacon mode
-         * name=widmedia.ch
-         * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
-         * filter for the major number 30569.
-         * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](beaconSettings_id1.png)
 
-## Bluetooth-Receiver
-1. Use a PicoW, drawback of having only an internal BT antenna
-   1. [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
-   1. casing for PicoW + Waveshare 2.8 display:
-      * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...)
-      * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related
-      * (maybe): https://creazilla.com/nodes/7864877-case-2-8-tft-display-3d-model
-
-1. ESP variant
-   1. e.g. [Adafruit ESP32 Feather V2 w.FL Antenna](https://www.adafruit.com/product/5438). Does have external antenna, not too pricey --> 32$ per pc with shipping from US
-   1. e.g. TTGO-ESP32-PSRAM-Antenna-Bluetooth --> check details 
-   1. e.g. Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32 --> check the one I have, does it have a connector?
-   1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
-   1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
-
-## Display
-1. Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely. 
-1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)
-   * [distrelec, 7.xV, 57mm, CHF 11.7](https://www.distrelec.ch/de/segment-led-anzeige-sa23-rot-57mm-655nm-45mcd-2v-tht-gemeinsame-anode-kingbright-sa23-12srwa/p/17511900)
-   * [mouser, 3.9V, 25.4mm, CHF 4.-](https://www.mouser.ch/ProductDetail/Kingbright/SA10-21SYKWA?qs=FRBiz4Wv1YMB%252Bq%2FAgwsA4A%3D%3D)
-   * [mouser, 7.xV, 122 mm, CHF 27.-](https://www.mouser.ch/ProductDetail/Kingbright/SA40-19SURKWA?qs=FRBiz4Wv1YNzfTxT3E0R9g%3D%3D) 
-1. Fallblattanzeige / split flap display (search for splitflap) --> could reuse a clock. There seems to be no widely available solution to just buy, everybody does it themselves.
-1. Nixie tube (clock kit): Nixieclocks.ch (sells one tube for 100.-) Need a replica, is available...
-1. other links: 
-   * https://www.hackster.io/GRA_AND_AFCH/nixie-display-or-clock-in-14-raspberry-pi-hat-ncs314-79a19b 
-   * https://peppe8o.com/7-segment-display-and-raspberry-pi-pico-wiring-and-setup-with-micropython/
-   
-
--> split flap preferred
-
-## nRF52840 Dongle
-
+## Older Stuff...
+### nRF52840 Dongle
 (newer to older)
 
 1. eddystone example requires micro-ecc. To do that: run SDK16\external\micro-ecc\build_all.bat
@@ -81,17 +102,17 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    * nRF5SDK15\examples\ble_peripheral\nrf52-ble-tutorial-advertising\pca10040\s132 -> (adapted main.c) DeviceName = WidmediaDistance. Can connect to it...
    * did not do any board adaptions
 
-## nRF52 DK
+### nRF52 DK
 
 1. build example project: C:\Nordic\SDK\nRF5SDK16\examples\ble_peripheral\ble_app_uart\pca10040\s132\ses
 1. ble advertise my own data: advertising name is now WidmediaDistance. Using [ble advertising tutorial](https://devzone.nordicsemi.com/nordic/short-range-guides/b/bluetooth-low-energy/posts/ble-advertising-a-beginners-tutorial), for pca10040, requires the SoftDevice S132 with SDK version 15.0. Does survive a power cycle.
 1. blinky: working fine: examples\peripheral\blinky\hex, copy to jlink folder
 
-## EBSLCNZWW TY
+### EBSLCNZWW TY
 
 1. debugger connection with J-link edu ok
 
-## Webpage
+### Webpage
 
 * [https://widmedia.ch/swimmeter](https://widmedia.ch/swimmeter) is the main page. /swim and /SwimMeter are forwarding to it.
 * logging display is on [swimmeter/logging/](https://widmedia.ch/swimmeter/logging/)
