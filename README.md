@@ -10,9 +10,7 @@ I like to swim and I don't like to count the lanes. Because it's mindless and di
 
 Use technology to do that mindless task.
 
-## How it works (hopefully at some time in the future)
-
-![Concept overview](drawings/Overview.png "concept overview")
+## How it works
 
 Use a bluetooth low energy beacon attached to your swimming goggles because it's light and works for years on a small battery. Have a bluetooth detector at the edge of the pool displaying your counted lanes. To detect those, it checks whether the signal is getting stronger (you are swimming towards it) or weaker (you're swimming away). A change from 'stronger' to 'weaker' results in an increase of the swimming lane counter. Voilà. Ok, some strong filtering is required on the beacon signal as this will sometimes be below water etc.
 
