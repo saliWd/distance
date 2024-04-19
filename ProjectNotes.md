@@ -1,11 +1,18 @@
 # Project documentation
 
 Github project distance. This file contains some general documentation about the different parts of this project:
-1. bluetooth beacon: HolyIOT (transmitter)
+1. bluetooth transmitter: HolyIOT (beacon)
 1. bluetooth receiver: PicoW with micropython
-1. display: standard LCD display from waveshare 
+1. display: standard LCD display from waveshare
+1. casing: wooden block
 1. website
 1. (currently obsolete) android app
+
+# TODO
+1. casing: wooden casing not suitable for more than one or two devices. Styrofoam for prototyping? 3d printed casing for the future. Haptic feeling of wooden brick however is luxurious though
+   1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
+1. website, project documentation, maybe also e.g. kickstarter to promote the thing. Start in friends circle first...
+
 
 ## Bluetooth-Beacon
 using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip inside
@@ -54,7 +61,9 @@ Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-
 -> split flap preferred
 
 ## Casing
-Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank. Might need to add a switch?
+Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank. 
+1. Might need to add a switch?
+1. Add screws to fixate plexi glass cover
 
 ### Alternative
 (not tried out)

@@ -1,10 +1,3 @@
-##
-# using aioble library (https://github.com/micropython/micropython-lib/blob/master/micropython/bluetooth/aioble)
-##
-# external libraries: do once (or tools -> manage packages -> install (uasyncio is already part of micropython))
-# import mip
-# mip.install("aioble")
-
 import array
 from math import floor
 from micropython import const #type: ignore
