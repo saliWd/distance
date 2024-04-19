@@ -24,6 +24,7 @@ REAL_LIFE_SPEED = const(False)
 beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
 
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
+OOR_MEAS_WEIGHT = const(3)
 NUM_OF_RSSIS = const(60) # how many RSSI values do I store (for the lane counter decision). maybe to do: should use seconds instead of num of measurements
 
 ## global variables
@@ -36,8 +37,8 @@ async def find_beacon(loopCnt:int):
     if SIMULATE_BEACON:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
-        # Scan for 3 seconds, in active mode, with very low interval/window (to maximise detection rate).
-        async with aioble.scan(3000, interval_us=30000, window_us=30000, active=True) as scanner:
+        # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner:
             async for result in scanner:
                 if(result.name()): # most are empty...
                     if result.name()[0:11] == 'widmedia.ch':
@@ -80,7 +81,6 @@ def print_infos(meas:dict, laneCounter:int):
 
 
 # calculate an average of the last 2 measurements
-# possible issue here: out of range is taking about 3 seconds whereas range measurements happen every 1 or two seconds. So, OOR should have more weight
 def moving_average(rssiVals:list, meas:dict):
     rssiVals.append(meas['rssi'])
     rssiVals.pop(0)
@@ -99,7 +99,7 @@ def fill_history(rssiHistory:list, newVal:int):
 lane counting conditions which have to be fullfilled:
 a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
 -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
-beacon out-of-range measurements take 3 seconds while others take about 0.3 seconds
+beacon out-of-range measurements take several seconds while others take about 0.3 seconds
 """
 def lane_decision(rssiHistory:list, laneCounter:int):
     DBM_DIFF = const(10)
@@ -215,6 +215,7 @@ async def main():
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     rssiHistory = []
+    compensateTimeout = 0
     
     while loopCnt < LOOP_MAX:
         meas = {
@@ -230,20 +231,25 @@ async def main():
             addr = "%s" % result.device # need to get string representation first
             meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
             meas['rssi'] = result.rssi
-        # else: it's not a error, just beacon out of range
+            compensateTimeout = 1
+        else: # it's not a error, just beacon out of range
+            compensateTimeout = OOR_MEAS_WEIGHT # OOR measurements take much longer. To compensate this, the OOR measurements gets more weight
 
         meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
         lastTime = ticks_ms()
-                
-        moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
-        fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
+
+        while compensateTimeout > 0:
+            moving_average(rssiVals=rssiVals, meas=meas) # average value of 0 means it's not yet valid
+            fill_history(rssiHistory=rssiHistory, newVal=meas['rssiAve']) # use the averaged value
+            compensateTimeout -= 1 
+
         if lane_decision(rssiHistory=rssiHistory, laneCounter=laneCounter):
             laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)
         
         ledOnboard.toggle()
         loopCnt += 1
-        # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take about 3 seconds (timeout)
+        # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take longer (timeout)
  
     f_dataLog.close()
 
