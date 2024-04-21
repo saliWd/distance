@@ -58,7 +58,7 @@ def print_lcd_dbg(meas:dict, laneCounter:int):
     X = const(10)
     y = 80
     LINE = const(15)
-    LCD.fill_rect(X,y,180,6*LINE,LCD.BLACK) # clear the area
+    LCD.fill_rect(X,y,114,6*LINE,LCD.BLACK) # clear the area
     
     LCD.text("Loop:     %4d" % meas['loopCnt'],X,y,LCD.WHITE)
     y += LINE

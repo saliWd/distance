@@ -15,7 +15,7 @@ def print_lcd_dbg(meas:dict, laneCounter:int):
     X = const(10)
     y = 80
     LINE = const(15)
-    LCD.fill_rect(X,y,180,6*LINE,LCD.BLACK) # clear the area
+    LCD.fill_rect(X,y,114,6*LINE,LCD.BLACK) # clear the area
     
     LCD.text("Loop:     %4d" % meas['loopCnt'],X,y,LCD.WHITE)
     y += LINE
@@ -104,16 +104,15 @@ def load_background():
     with open ('background.bin', "rb") as file:
         for bufPos in range(0, BG_IMAGE_SIZE_BYTE, BUF_SIZE):
             buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
-            for arrPos in range(0, BUF_SIZE, 2):
-                LCD.buffer[bufPos+arrPos]   = buffer[arrPos+1] # need to re-order bytes
-                LCD.buffer[bufPos+arrPos+1] = buffer[arrPos]            
+            for arrPos in range(0, BUF_SIZE):
+                LCD.buffer[bufPos+arrPos]   = buffer[arrPos]            
     
     file.close()
     LCD.show_up()
 
 # main program
 load_background()
-update_lane_disp(0)
+update_lane_disp(78)
 
 meas = {
     'loopCnt':27, # a counter
@@ -125,4 +124,19 @@ meas = {
             
 print_lcd_dbg(meas=meas, laneCounter=0)
       
+# rectangle around dbg output      
+coord = array.array('I', [0,0, 114,0, 114,90, 0,90])
+LCD.poly(8, 76, coord, LCD.WHITE, False)
+LCD.show_up()
+
+# 0xa554 grey 
+# 0xce99 bright grey
+
+coord = array.array('I', [0,0, 116,0, 116,92, 0,92])
+LCD.poly(7, 75, coord, 0xa554, False)
+LCD.show_up()
+
+coord = array.array('I', [0,0, 118,0, 118,94, 0,94])
+LCD.poly(6, 74, coord, 0xce99, False)
+LCD.show_up()
 
