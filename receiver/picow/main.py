@@ -18,10 +18,10 @@ import aioble # type: ignore (this is a pylance ignore warning directive)
 from lcd import LCD_disp # import the display class
 from BEACON_SIM import BEACON_SIM # import the simulator class
 
-# beacon simulation variables
-SIMULATE_BEACON = const(False)
-REAL_LIFE_SPEED = const(False)
-beaconSim = BEACON_SIM(REAL_LIFE_SPEED)
+import my_config
+CONFIG = my_config.get_config() # which device address do I look for and debug stuff like beacon simulation variables
+
+beaconSim = BEACON_SIM(CONFIG)
 
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 OOR_MEAS_WEIGHT = const(3)
@@ -33,16 +33,18 @@ f_dataLog = open('logData.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide, see https://www.waveshare.com/wiki/Pico-ResTouch-LCD-2.8
 LOOP_MAX = const(20000)
 
-async def find_beacon(loopCnt:int):
-    if SIMULATE_BEACON:
+async def find_beacon(loopCnt:int, CONFIG:dict):
+    if CONFIG['simulate_beacon']:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
         # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner:
             async for result in scanner:
-                if(result.name()): # most are empty...
-                    if result.name()[0:11] == 'widmedia.ch':
-                        return result
+                if result.name(): # most are empty...
+                    if result.name()[0:11] == CONFIG['beacon_name']:
+                        addr = "%s" % result.device # need to get string representation first
+                        if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
+                            return result
         return None
 
 
@@ -226,7 +228,7 @@ async def main():
             'rssiAve':0        # in dBm
         }
         
-        result = await find_beacon(loopCnt=loopCnt)
+        result = await find_beacon(loopCnt=loopCnt, CONFIG=CONFIG)
         if result:
             addr = "%s" % result.device # need to get string representation first
             meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
