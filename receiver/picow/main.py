@@ -28,7 +28,7 @@ RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 # lane decision constants
 OLDEST_RSSI = const(90000) # [ms]. Store RSSIs for this amount of time. Usually have 60 secs for one lane. TODO: re-check with 50m pool
 MIN_RSSI_HIST_AGE = const(20000) # [ms] oldest entry must be at least this age
-MIN_DBM_DIFF = const(15)
+MIN_DBM_DIFF = const(30)
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
@@ -62,12 +62,14 @@ def my_print(text:str, sink:dict):
 def print_lcd_dbg(meas:dict, laneCounter:int):
     X = const(10)
     y = 80
-    LINE = const(15)
-    LCD.fill_rect(X,y,114,6*LINE,LCD.BLACK) # clear the area
+    LINE = const(14)
+    LCD.fill_rect(X,y,114,8*LINE,LCD.BLACK) # clear the area
     
     LCD.text("Loop:     %4d" % meas['loopCnt'],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("TimeAbs: %6d" % meas['timeAbs'],X,y,LCD.WHITE)
+    LCD.text("T_abs: %7d" % meas['timeAbs'],X,y,LCD.WHITE)
+    y += LINE
+    LCD.text("T_diff:  %5d" % meas['timeDiff'],X,y,LCD.WHITE)
     y += LINE
     LCD.text("Address: %s"  % meas['addr'],X,y,LCD.WHITE)
     y += LINE
@@ -75,12 +77,14 @@ def print_lcd_dbg(meas:dict, laneCounter:int):
     y += LINE
     LCD.text("RSSI ave: %4d" % meas['rssiAve'],X,y,LCD.WHITE)
     y += LINE
+    LCD.text("Arr len:   %3d" % meas['arrLen'],X,y,LCD.WHITE)
+    y += LINE
     LCD.text("Lane:     %4d" % laneCounter,X,y,LCD.WHITE)
     LCD.show_up()
 
 
 def print_infos(meas:dict, laneCounter:int):
-    txt_csv = "%5d, %6d, %4d, %s, %4d, %4d, %4d\n" % (meas['loopCnt'], meas['timeAbs'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'], laneCounter)
+    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d, %3d, %4d\n" % (meas['loopCnt'], meas['timeAbs'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'],  meas['arrLen'],laneCounter)
     my_print(text=txt_csv, sink={'serial':True,'lcd':True,'dataLog':True})
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)   
 
@@ -232,7 +236,7 @@ async def main():
     laneCounter = 0
     update_lane_disp(laneCounter)
     
-    txt_csv = "   id, timeA, timeD, addr, rssi,  ave, lane\n"
+    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  ave, arrLen, lane\n"
     my_print(text=txt_csv, sink={'serial':True,'lcd':False,'dataLog':True})
 
     rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
@@ -246,7 +250,8 @@ async def main():
             'timeDiff':0,      # in milliseconds
             'addr':'xx:xx',    # string
             'rssi':RSSI_OOR,   # in dBm
-            'rssiAve':0        # in dBm
+            'rssiAve':0,       # in dBm
+            'arrLen':0
         }
         
         result = await find_beacon(loopCnt=loopCnt, CONFIG=CONFIG)
@@ -264,11 +269,10 @@ async def main():
         rssiAve = moving_average(rssiVals=rssiVals, rssi=meas['rssi'])
         meas['rssiAve'] = rssiAve
         fill_history(histRssi=histRssi, histTime=histTime, rssi=rssiAve, time=timeAbs)
-
+        meas['arrLen'] = len(histRssi) # len of histTime is the same
         
         if lane_decision(histRssi=histRssi, histTime=histTime, laneCounter=laneCounter):
             laneCounter += 1
-        print("Rssi: %3d, Time: %3d" % (len(histRssi), len(histTime)), end='')
         print_infos(meas=meas, laneCounter=laneCounter)
         
         
