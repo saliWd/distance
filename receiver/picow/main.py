@@ -6,7 +6,8 @@
 # mip.install("aioble")
 
 from machine import Pin #type: ignore
-from time import ticks_ms, ticks_diff
+import time
+import gc
 import array
 from math import floor
 from micropython import const #type: ignore
@@ -40,61 +41,43 @@ async def find_beacon(loopCnt:int, CONFIG:dict):
     if CONFIG['simulate_beacon']:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
-        # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
-        async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner:
+        async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
+        # async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
             async for result in scanner:
-                if result.name(): # most are empty...
-                    if result.name()[0:11] == CONFIG['beacon_name']:
-                        addr = "%s" % result.device # need to get string representation first
-                        if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
-                            return result
+                if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...                    
+                    addr = "%s" % result.device # need to get string representation first
+                    if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
+                        return result                            
         return None
 
+def print_datalog(text:str):
+    f_dataLog.write(text)
+    f_dataLog.flush()
 
-def my_print(text:str, sink:dict):
-    if sink['serial']:
-        print(text, end='') # text needs a newline at the end
-    if sink['dataLog']:
-        f_dataLog.write(text)
-        f_dataLog.flush()
-
-
-def print_lcd_dbg(meas:dict, laneCounter:int):
+def print_lcd_dbg(meas:list, laneCounter:int):
     X = const(10)
     y = 80
     LINE = const(14)
-    LCD.fill_rect(X,y,114,8*LINE,LCD.BLACK) # clear the area
+    LCD.fill_rect(X,y,114,6*LINE,LCD.BLACK) # clear the area
     
-    LCD.text("Loop:     %4d" % meas['loopCnt'],X,y,LCD.WHITE)
+    LCD.text("Loop:     %4d" % meas[0],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("T_abs: %7d" % meas['timeAbs'],X,y,LCD.WHITE)
+    LCD.text("T_abs: %7d" % meas[1],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("T_diff:  %5d" % meas['timeDiff'],X,y,LCD.WHITE)
+    LCD.text("T_diff:  %5d" % meas[2],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("Address: %s"  % meas['addr'],X,y,LCD.WHITE)
+    LCD.text("Address: %s"  % meas[3],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("RSSI:     %4d" % meas['rssi'],X,y,LCD.WHITE)
-    y += LINE
-    LCD.text("RSSI ave: %4d" % meas['rssiAve'],X,y,LCD.WHITE)
-    y += LINE
-    LCD.text("Arr len:   %3d" % meas['arrLen'],X,y,LCD.WHITE)
-    y += LINE
+    LCD.text("RSSI:     %4d" % meas[4],X,y,LCD.WHITE)
+    y += LINE    
     LCD.text("Lane:     %4d" % laneCounter,X,y,LCD.WHITE)
     LCD.show_up()
 
-
-def print_infos(meas:dict, laneCounter:int):
-    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d, %3d, %4d\n" % (meas['loopCnt'], meas['timeAbs'], meas['timeDiff'], meas['addr'], meas['rssi'], meas['rssiAve'],  meas['arrLen'],laneCounter)
-    my_print(text=txt_csv, sink={'serial':True,'lcd':True,'dataLog':True})
+def print_infos(meas:list, laneCounter:int):
+    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d\n" % (meas[0], meas[1], meas[2], meas[3], meas[4],laneCounter)
+    print_datalog(text=txt_csv)
+    print(txt_csv, end='')    
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)   
-
-
-# calculate an average of the last 2 measurements
-def moving_average(rssiVals:list, rssi:int):
-    rssiVals.append(rssi)
-    rssiVals.pop(0)
-    return int(sum(rssiVals) / 2)
-
 
 def fill_history(histRssi:list, histTime:list, rssi:int, time:int):
     histRssi.append(rssi)
@@ -103,18 +86,6 @@ def fill_history(histRssi:list, histTime:list, rssi:int, time:int):
         histRssi.pop(0) # remove the oldest one
         histTime.pop(0)
     return
-
-""" returns the value closest to the given time """
-def getValAtTime(histRssi:list, histTime:list, middleTime:int):    
-    for i in range(0,len(histTime)-1):
-        if (histTime[i] <= middleTime) and (histTime[i+1] > middleTime):
-            return histRssi[i] # return the lower value. Could also return the upper one
-    # did not find anything. Should never happen
-    print(histRssi)
-    print(histTime)
-    print(middleTime)
-    print('Error: did not find middle value')
-    return False
 
 """
 lane counting conditions which have to be fullfilled:
@@ -130,19 +101,43 @@ def lane_decision(histRssi:list, histTime:list, laneCounter:int):
     if timeDiff < MIN_RSSI_HIST_AGE: # can't make a meaningful decision on only a limited time
         return False
     
-    middleTime = int(timeDiff / 2) + histTime[0] # doesn't matter whether it's one off
-    middleVal = getValAtTime(histRssi=histRssi, histTime=histTime, middleTime=middleTime)
+    # need 5 ranges to decide: p0=oldest, p1=quarter in, p2=middle, p3=3/4, p4=newest. rangeOldest = between histTime[0] and (histTime[0] + 0.2 * timeDiff)
+    sixTimes:list[int] = list()
+    sixTimes.append(histTime[0])
+    for i in range(1,6):
+        sixTimes.append(histTime[0] + int((i)*0.2 * timeDiff))
 
-    # first and last value must be higher than the middle val
-    if ((histRssi[0] - middleVal) > MIN_DBM_DIFF) and ((histRssi[-1] - middleVal) > MIN_DBM_DIFF):
-        update_lane_disp(laneCounter+1)
-        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
-        histTime.clear()
-        # NB: lists are given as a reference, can clear it here
-        return True
-    else:    
+    rssiSums:list[int] = list()
+    for i in range(0,5):
+        rssiSums.append(get_rssi_sum(histRssi=histRssi, histTime=histTime, t0=sixTimes[i], t1=sixTimes[i+1]))
+
+    # 1st bigger than 2nd, 2nd bigger than 3rd and
+    # 4th bigger than 3rd, 5th bigger than 4th. With tolerance
+    if (rssiSums[0] - MIN_DBM_DIFF) <= rssiSums[1]:
+        return False
+    if (rssiSums[1] - MIN_DBM_DIFF) <= rssiSums[2]:
+        return False
+    if (rssiSums[3] - MIN_DBM_DIFF) <= rssiSums[2]:
+        return False
+    if (rssiSums[4] - MIN_DBM_DIFF) <= rssiSums[3]:
         return False
 
+    # if none of above cases did trigger, I do have a valid lane change
+    update_lane_disp(laneCounter+1)
+    histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
+    histTime.clear()
+    # NB: lists are given as a reference, can clear it here
+    return True
+
+
+def get_rssi_sum(histRssi:list, histTime:list, t0:int, t1:int):
+    rangeSum = 0    
+    for i,singleTime in enumerate(histTime):
+        if singleTime > t1: # time is bigger than end time
+            break 
+        if singleTime >= t0: # time is between start and end time
+            rangeSum += histRssi[i]        
+    return rangeSum
 
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(130,80,190,160,LCD.BLACK)
@@ -222,13 +217,21 @@ def load_background():
     
     file.close()
     LCD.show_up()
-
+"""
+def free():
+  gc.collect()  
+  F = gc.mem_free()
+  A = gc.mem_alloc()
+  T = F+A
+  P = '{0:.2f}%'.format(F/T*100)
+  print('Total:{0} Free:{1} ({2})'.format(T,F,P))
+"""
 # main program
 async def main():
-    lastTime = ticks_ms() # first time measurement is not really valid, it shows system startup time instead (which I'm interested in)
+    lastTime = time.ticks_ms() # first time measurement is not really valid, it shows system startup time instead (which I'm interested in)
     load_background()
     
-    startTime = ticks_ms() # time 0 for the absolute time measurement
+    startTime = time.ticks_ms() # time 0 for the absolute time measurement
 
     loopCnt = 0
     ledOnboard = Pin("LED", Pin.OUT)
@@ -236,46 +239,41 @@ async def main():
     laneCounter = 0
     update_lane_disp(laneCounter)
     
-    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  ave, arrLen, lane\n"
-    my_print(text=txt_csv, sink={'serial':True,'lcd':False,'dataLog':True})
+    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  lane\n"
+    print_datalog(text=txt_csv)
+    print(txt_csv, end='')
 
-    rssiVals = [-50,-50] # taking the average of 2 measurements, that's enough
     histRssi:list[int] = list() # NB: tried with list of lists, but getting memAlloc issues. 
     histTime:list[int] = list()
     
     while loopCnt < LOOP_MAX:
-        meas = {
-            'loopCnt':loopCnt, # a counter
-            'timeAbs':0,       # in milliseconds
-            'timeDiff':0,      # in milliseconds
-            'addr':'xx:xx',    # string
-            'rssi':RSSI_OOR,   # in dBm
-            'rssiAve':0,       # in dBm
-            'arrLen':0
-        }
-        
         result = await find_beacon(loopCnt=loopCnt, CONFIG=CONFIG)
+        meas = [
+            loopCnt, # 0: a counter
+            0,       # 1: timeAbs in milliseconds
+            0,       # 2: timeDiff in milliseconds
+            'xx:xx', # 3: addr, a string
+            RSSI_OOR # 4: rssi in dBm                        
+        ]
         if result:
             addr = "%s" % result.device # need to get string representation first
-            meas['addr'] = addr[32:37] # only take the MAC part, the last 5 characters
-            meas['rssi'] = result.rssi            
+            meas[3] = addr[32:37] # only take the MAC part, the last 5 characters
+            meas[4] = result.rssi
 
-        meas['timeDiff'] = ticks_diff(ticks_ms(), lastTime) # update the timeDiff
-        lastTime = ticks_ms()
+        now = time.ticks_ms()
+        meas[2] = time.ticks_diff(now, lastTime) # update the timeDiff
+        lastTime = now
 
-        timeAbs = ticks_diff(ticks_ms(), startTime)
-        meas['timeAbs']  = timeAbs
+        timeAbs = time.ticks_diff(now, startTime)
+        meas[1]  = timeAbs
         
-        rssiAve = moving_average(rssiVals=rssiVals, rssi=meas['rssi'])
-        meas['rssiAve'] = rssiAve
-        fill_history(histRssi=histRssi, histTime=histTime, rssi=rssiAve, time=timeAbs)
-        meas['arrLen'] = len(histRssi) # len of histTime is the same
+        fill_history(histRssi=histRssi, histTime=histTime, rssi=meas[4], time=timeAbs)        
         
         if lane_decision(histRssi=histRssi, histTime=histTime, laneCounter=laneCounter):
             laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        
+        del meas, result
         ledOnboard.toggle()
         loopCnt += 1
         # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take longer (timeout)
