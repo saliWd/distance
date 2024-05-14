@@ -8,17 +8,8 @@ class BEACON_SIM():
         self.f = open('simInput.csv', 'r')
         self.REAL_LIFE_SPEED = CONFIG['real_life_speed']
     
-    def get_sim_val(self, mode:str, loopCnt:int):
-        if mode == 'predefined':
-            if self.REAL_LIFE_SPEED: sleep_ms(100)
-            SIM_VALS = [-80,-80,-80,-80,-80,-80,-80,-80,-80,-80,
-                        -90,-90,-90,-90,-90,-90,-90,-90,-90,-90,
-                        -120,-120,-120,-120,-120,-120,-120,-120,-120,-120,
-                        -90,-90,-90,-90,-90,-90,-90,-90,-90,-90,
-                        -80,-80,-80,-80,-80,-80,-80,-80,-80,-80]
-            self.rssi = SIM_VALS[(loopCnt-1) % 50] # len of array
-            return self
-        elif mode == 'random':            
+    def get_sim_val(self, mode:str):
+        if mode == 'random':
             randNum = randint(0,1)
             if randNum == 0:
                 if self.REAL_LIFE_SPEED: sleep_ms(5000) # simulating time-out
@@ -26,7 +17,7 @@ class BEACON_SIM():
             else:
                 self.rssi = randint(-100,-80)
                 return self
-        elif mode == 'fieldTest':
+        else: # mode == 'fieldTest':
             line = self.f.readline()
             if not line or len(line) < 5: # to detect an empty line at the end
                 self.rssi = -27
@@ -36,5 +27,3 @@ class BEACON_SIM():
                 if int(val[0]) > 100: sleep_ms(int(val[0])-100) # minus 100 because the normal loop sleep time is 0.1 sec                    
             self.rssi = int(val[1])
             return self
-        else: # should never happen
-            return None
