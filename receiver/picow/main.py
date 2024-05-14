@@ -7,8 +7,8 @@
 
 from machine import Pin #type: ignore
 import time
-import gc
 import array
+import gc
 from math import floor
 from micropython import const #type: ignore
 
@@ -29,7 +29,7 @@ RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 # lane decision constants
 OLDEST_RSSI = const(90000) # [ms]. Store RSSIs for this amount of time. Usually have 60 secs for one lane. TODO: re-check with 50m pool
 MIN_RSSI_HIST_AGE = const(20000) # [ms] oldest entry must be at least this age
-MIN_DBM_DIFF = const(30)
+MIN_DBM_DIFF = const(70)
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
@@ -41,18 +41,14 @@ async def find_beacon(loopCnt:int, CONFIG:dict):
     if CONFIG['simulate_beacon']:
         return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
     else:
-        async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
-        # async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
+        async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
             async for result in scanner:
-                if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...                    
+                if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...
                     addr = "%s" % result.device # need to get string representation first
                     if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
-                        return result                            
+                        return result
         return None
-
-def print_datalog(text:str):
-    f_dataLog.write(text)
-    f_dataLog.flush()
 
 def print_lcd_dbg(meas:list, laneCounter:int):
     X = const(10)
@@ -74,10 +70,11 @@ def print_lcd_dbg(meas:list, laneCounter:int):
     LCD.show_up()
 
 def print_infos(meas:list, laneCounter:int):
-    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d\n" % (meas[0], meas[1], meas[2], meas[3], meas[4],laneCounter)
-    print_datalog(text=txt_csv)
-    print(txt_csv, end='')    
-    print_lcd_dbg(meas=meas, laneCounter=laneCounter)   
+    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d\n" % (meas[0],meas[1],meas[2],meas[3],meas[4],laneCounter)
+    f_dataLog.write(txt_csv)
+    f_dataLog.flush()
+    print(txt_csv, end='')
+    print_lcd_dbg(meas=meas, laneCounter=laneCounter)
 
 def fill_history(histRssi:list, histTime:list, rssi:int, time:int):
     histRssi.append(rssi)
@@ -129,14 +126,13 @@ def lane_decision(histRssi:list, histTime:list, laneCounter:int):
     # NB: lists are given as a reference, can clear it here
     return True
 
-
 def get_rssi_sum(histRssi:list, histTime:list, t0:int, t1:int):
-    rangeSum = 0    
+    rangeSum = 0
     for i,singleTime in enumerate(histTime):
         if singleTime > t1: # time is bigger than end time
             break 
         if singleTime >= t0: # time is between start and end time
-            rangeSum += histRssi[i]        
+            rangeSum += histRssi[i]
     return rangeSum
 
 def update_lane_disp(laneCounter:int):
@@ -148,7 +144,6 @@ def update_lane_disp(laneCounter:int):
     draw_digit(digit=(laneCounter % 10), posLsb=True)
     LCD.show_up()
     return
-
 
 def draw_digit(digit:int, posLsb:bool):
     if digit > 9 or digit < 0:
@@ -173,7 +168,6 @@ def draw_digit(digit:int, posLsb:bool):
     Y = const(80)
     SPC_BIG = const(61) # 56+5
     SPC_SML = const(12) # 8+4
-
     if posLsb:
         x = x + 2*(SPC_SML) + SPC_BIG + 20
   
@@ -185,7 +179,6 @@ def draw_digit(digit:int, posLsb:bool):
     if segments[5]: draw_segment(x=x,                 y=Y+SPC_SML,             horiz=False) # f-segment
     if segments[6]: draw_segment(x=x+SPC_SML,         y=Y+SPC_SML+SPC_BIG,     horiz=True)  # g-segment
     return
-
 
 def draw_segment(x:int, y:int, horiz:bool):
     if horiz:
@@ -201,7 +194,6 @@ def draw_segment(x:int, y:int, horiz:bool):
     LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
     return # NB: no lcd.show_up as this is called after all segments are drawn
 
-
 def load_background():
     LCD.bl_ctrl(100)
     LCD.fill(LCD.BLACK)
@@ -213,19 +205,10 @@ def load_background():
         for bufPos in range(0, BG_IMAGE_SIZE_BYTE, BUF_SIZE):
             buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
             for arrPos in range(0, BUF_SIZE):
-                LCD.buffer[bufPos+arrPos]   = buffer[arrPos]            
-    
+                LCD.buffer[bufPos+arrPos] = buffer[arrPos]    
     file.close()
     LCD.show_up()
-"""
-def free():
-  gc.collect()  
-  F = gc.mem_free()
-  A = gc.mem_alloc()
-  T = F+A
-  P = '{0:.2f}%'.format(F/T*100)
-  print('Total:{0} Free:{1} ({2})'.format(T,F,P))
-"""
+
 # main program
 async def main():
     lastTime = time.ticks_ms() # first time measurement is not really valid, it shows system startup time instead (which I'm interested in)
@@ -239,11 +222,11 @@ async def main():
     laneCounter = 0
     update_lane_disp(laneCounter)
     
-    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  lane\n"
-    print_datalog(text=txt_csv)
+    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  lane\n"    
+    f_dataLog.write(txt_csv)
     print(txt_csv, end='')
 
-    histRssi:list[int] = list() # NB: tried with list of lists, but getting memAlloc issues. 
+    histRssi:list[int] = list() # NB: tried with list of lists, but getting memAlloc issues.
     histTime:list[int] = list()
     
     while loopCnt < LOOP_MAX:
@@ -253,7 +236,7 @@ async def main():
             0,       # 1: timeAbs in milliseconds
             0,       # 2: timeDiff in milliseconds
             'xx:xx', # 3: addr, a string
-            RSSI_OOR # 4: rssi in dBm                        
+            RSSI_OOR # 4: rssi in dBm
         ]
         if result:
             addr = "%s" % result.device # need to get string representation first
@@ -261,25 +244,22 @@ async def main():
             meas[4] = result.rssi
 
         now = time.ticks_ms()
-        meas[2] = time.ticks_diff(now, lastTime) # update the timeDiff
-        lastTime = now
-
-        timeAbs = time.ticks_diff(now, startTime)
-        meas[1]  = timeAbs
+        meas[2] = time.ticks_diff(now, lastTime) 
+        meas[1] = time.ticks_diff(now, startTime)
+        lastTime = now # update the timeDiff
         
-        fill_history(histRssi=histRssi, histTime=histTime, rssi=meas[4], time=timeAbs)        
+        fill_history(histRssi=histRssi, histTime=histTime, rssi=meas[4], time=meas[1])
         
         if lane_decision(histRssi=histRssi, histTime=histTime, laneCounter=laneCounter):
             laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        del meas, result
+        del meas, result, now
         ledOnboard.toggle()
         loopCnt += 1
+        gc.collect() # garbage collection
         # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take longer (timeout)
  
     f_dataLog.close()
 
 asyncio.run(main())
-
-
