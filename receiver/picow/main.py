@@ -27,9 +27,9 @@ beaconSim = BEACON_SIM(CONFIG)
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-OLDEST_RSSI = const(90000) # [ms]. Store RSSIs for this amount of time. Usually have 60 secs for one lane. TODO: re-check with 50m pool
-MIN_RSSI_HIST_AGE = const(20000) # [ms] oldest entry must be at least this age
-MIN_DBM_DIFF = const(70)
+MIN_DIFF     = const(10) # [dBm/sec]
+RANGE_WIDTH  = const(12000) # [ms] one range is 12 seconds long
+MAX_NUM_HIST = const(20) # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
@@ -76,13 +76,20 @@ def print_infos(meas:list, laneCounter:int):
     print(txt_csv, end='')
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)
 
-def fill_history(histRssi:list, histTime:list, rssi:int, time:int):
-    histRssi.append(rssi)
-    histTime.append(time)
-    while ((histTime[0] + OLDEST_RSSI) < time): # while oldest+90sec is smaller than newest: remove oldest
-        histRssi.pop(0) # remove the oldest one
-        histTime.pop(0)
-    return
+def fill_twelve_sec(twelveSecRssi:list, twelveSecTime:list, histRssi:list, rssi:int, time:int):
+    twelveSecRssi.append(rssi)
+    twelveSecTime.append(time)
+
+    if ((twelveSecTime[0] + RANGE_WIDTH) < time): # oldest entry is older than twelve secs
+        average = sum(twelveSecRssi) / sum(twelveSecTime) * 1000 # rssi-dbms per second
+        twelveSecRssi.clear()
+        twelveSecTime.clear()
+        histRssi.append(average)
+        if (len(histRssi) > MAX_NUM_HIST):
+            histRssi.pop(0) # remove the oldest one        
+        return True
+    else:
+        return False
 
 """
 lane counting conditions which have to be fullfilled:
@@ -90,41 +97,30 @@ a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
 -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
 beacon out-of-range measurements take several seconds while others take about 0.3 seconds
 """
-def lane_decision(histRssi:list, histTime:list, laneCounter:int):
-    if len(histRssi) < 5: # can't decide anything if I have only few decision points
+def lane_decision(histRssi:list, laneCounter:int):
+    arrLen = len(histRssi)
+    if arrLen < 5: # need at least 5 ranges to decide
         return False
 
-    timeDiff = histTime[-1] - histTime[0] # last entry minus oldest entry
-    if timeDiff < MIN_RSSI_HIST_AGE: # can't make a meaningful decision on only a limited time
-        return False
+    for i in range(0,(arrLen-5)): # I may have more than 5 ranges. Start a search for the 'right conditions'
+        # 1st bigger than 2nd, 2nd bigger than 3rd and
+        # 4th bigger than 3rd, 5th bigger than 4th. With tolerance
+        if (histRssi[i] - MIN_DIFF) <= histRssi[i+1]:
+            continue
+        if (histRssi[i+1] - MIN_DIFF) <= histRssi[i+2]:
+            continue
+        if (histRssi[i+3] - MIN_DIFF) <= histRssi[i+2]:
+            continue
+        if (histRssi[i+4] - MIN_DIFF) <= histRssi[i+3]:
+            continue
+        
+        # if none of above cases did trigger, I do have a valid lane change
+        update_lane_disp(laneCounter+1)
+        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again    
+        # NB: lists are given as a reference, can clear it here
+        return True
     
-    # need 5 ranges to decide: p0=oldest, p1=quarter in, p2=middle, p3=3/4, p4=newest. rangeOldest = between histTime[0] and (histTime[0] + 0.2 * timeDiff)
-    sixTimes:list[int] = list()
-    sixTimes.append(histTime[0])
-    for i in range(1,6):
-        sixTimes.append(histTime[0] + int((i)*0.2 * timeDiff))
-
-    rssiSums:list[int] = list()
-    for i in range(0,5):
-        rssiSums.append(get_rssi_sum(histRssi=histRssi, histTime=histTime, t0=sixTimes[i], t1=sixTimes[i+1]))
-
-    # 1st bigger than 2nd, 2nd bigger than 3rd and
-    # 4th bigger than 3rd, 5th bigger than 4th. With tolerance
-    if (rssiSums[0] - MIN_DBM_DIFF) <= rssiSums[1]:
-        return False
-    if (rssiSums[1] - MIN_DBM_DIFF) <= rssiSums[2]:
-        return False
-    if (rssiSums[3] - MIN_DBM_DIFF) <= rssiSums[2]:
-        return False
-    if (rssiSums[4] - MIN_DBM_DIFF) <= rssiSums[3]:
-        return False
-
-    # if none of above cases did trigger, I do have a valid lane change
-    update_lane_disp(laneCounter+1)
-    histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
-    histTime.clear()
-    # NB: lists are given as a reference, can clear it here
-    return True
+    return False   
 
 def get_rssi_sum(histRssi:list, histTime:list, t0:int, t1:int):
     rangeSum = 0
@@ -226,8 +222,11 @@ async def main():
     f_dataLog.write(txt_csv)
     print(txt_csv, end='')
 
-    histRssi:list[int] = list() # NB: tried with list of lists, but getting memAlloc issues.
-    histTime:list[int] = list()
+    # NB: be aware of list of lists, might get memAlloc issues
+    histRssi = list()     
+
+    twelveSecRssi:list[int] = list()
+    twelveSecTime:list[int] = list()
     
     while loopCnt < LOOP_MAX:
         result = await find_beacon(loopCnt=loopCnt, CONFIG=CONFIG)
@@ -248,13 +247,13 @@ async def main():
         meas[1] = time.ticks_diff(now, startTime)
         lastTime = now # update the timeDiff
         
-        fill_history(histRssi=histRssi, histTime=histTime, rssi=meas[4], time=meas[1])
-        
-        if lane_decision(histRssi=histRssi, histTime=histTime, laneCounter=laneCounter):
-            laneCounter += 1
+        didCompact = fill_twelve_sec(twelveSecRssi=twelveSecRssi, twelveSecTime=twelveSecTime, histRssi=histRssi, rssi=meas[4], time=meas[1])
+        if didCompact:            
+            if lane_decision(histRssi=histRssi, laneCounter=laneCounter):
+                laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        del meas, result, now
+        del meas, result, now # to compat memAlloc issues
         ledOnboard.toggle()
         loopCnt += 1
         gc.collect() # garbage collection
