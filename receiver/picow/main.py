@@ -27,7 +27,7 @@ beaconSim = BEACON_SIM(CONFIG)
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-MIN_DIFF     = const(10) # [dBm/sec]
+MIN_DIFF     = const(5) # [dBm/sec]
 RANGE_WIDTH  = const(12000) # [ms] one range is 12 seconds long
 MAX_NUM_HIST = const(20) # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
@@ -102,25 +102,35 @@ def lane_decision(histRssi:list, laneCounter:int):
     if arrLen < 5: # need at least 5 ranges to decide
         return False
 
-    for i in range(0,(arrLen-5)): # I may have more than 5 ranges. Start a search for the 'right conditions'
-        # 1st bigger than 2nd, 2nd bigger than 3rd and
-        # 4th bigger than 3rd, 5th bigger than 4th. With tolerance
-        if (histRssi[i] - MIN_DIFF) <= histRssi[i+1]:
-            continue
-        if (histRssi[i+1] - MIN_DIFF) <= histRssi[i+2]:
-            continue
-        if (histRssi[i+3] - MIN_DIFF) <= histRssi[i+2]:
-            continue
-        if (histRssi[i+4] - MIN_DIFF) <= histRssi[i+3]:
-            continue
-        
-        # if none of above cases did trigger, I do have a valid lane change
+    #                down   down   up     up
+    conditionsMet = [False, False, False, False]
+    rangeIndex = 0
+    for condition in range(0,4): 
+        for i in range(rangeIndex,(arrLen-1)): # I may have more than 5 ranges. Start a search for the 'right conditions'
+            if down_up_check(a=histRssi[rangeIndex+i], b=histRssi[rangeIndex+i+1], down=(condition < 2)):
+                conditionsMet[condition] = True
+                rangeIndex = i
+                # TODO
+                print("condition %d is fullfilled" % condition)
+                break # break the for loop
+            else:
+                if i == (arrLen-2): # condition was not fulfilled in the whole for-i loop
+                    return False
+
+    if conditionsMet[0] and conditionsMet[1] and conditionsMet[2] and conditionsMet[3]:
         update_lane_disp(laneCounter+1)
         histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again    
         # NB: lists are given as a reference, can clear it here
         return True
     
-    return False   
+    return False
+
+def down_up_check(a, b, down:bool):
+    if down:
+        return (a - MIN_DIFF) <= b
+    else:
+        return (b - MIN_DIFF) <= a
+
 
 def get_rssi_sum(histRssi:list, histTime:list, t0:int, t1:int):
     rangeSum = 0
