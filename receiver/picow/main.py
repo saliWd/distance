@@ -27,7 +27,7 @@ beaconSim = BEACON_SIM(CONFIG)
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-MIN_DIFF     = const(5) # [dBm/sec]
+MIN_DIFF     = const(4) # [dBm/sec]
 RANGE_WIDTH  = const(12000) # [ms] one range is 12 seconds long
 MAX_NUM_HIST = const(20) # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
@@ -37,18 +37,15 @@ f_dataLog = open('logData.csv', 'a') # append
 LCD = LCD_disp() # 240px high, 320px wide, see https://www.waveshare.com/wiki/Pico-ResTouch-LCD-2.8
 LOOP_MAX = const(20000) # 20k corresponds to at least 2.2h (with 0.4 secs per meas)
 
-async def find_beacon(loopCnt:int, CONFIG:dict):
-    if CONFIG['simulate_beacon']:
-        return beaconSim.get_sim_val(mode='fieldTest', loopCnt=loopCnt)
-    else:
-        # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
-        async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
-            async for result in scanner:
-                if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...
-                    addr = "%s" % result.device # need to get string representation first
-                    if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
-                        return result
-        return None
+async def find_beacon():
+    # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
+    async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        async for result in scanner:
+            if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...
+                addr = "%s" % result.device # need to get string representation first
+                if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
+                    return result
+    return None
 
 def print_lcd_dbg(meas:list, laneCounter:int):
     X = const(10)
@@ -58,7 +55,7 @@ def print_lcd_dbg(meas:list, laneCounter:int):
     
     LCD.text("Loop:     %4d" % meas[0],X,y,LCD.WHITE)
     y += LINE
-    LCD.text("T_abs: %7d" % meas[1],X,y,LCD.WHITE)
+    LCD.text("T_abs:  %6d" % int(meas[1] / 1000),X,y,LCD.WHITE)
     y += LINE
     LCD.text("T_diff:  %5d" % meas[2],X,y,LCD.WHITE)
     y += LINE
@@ -70,23 +67,25 @@ def print_lcd_dbg(meas:list, laneCounter:int):
     LCD.show_up()
 
 def print_infos(meas:list, laneCounter:int):
-    txt_csv = "%5d, %7d, %5d, %s, %4d, %4d\n" % (meas[0],meas[1],meas[2],meas[3],meas[4],laneCounter)
+    txt_csv = "%5d, %6d, %5d, %s, %4d, %4d\n" % (meas[0],int(meas[1] / 1000),meas[2],meas[3],meas[4],laneCounter)
     f_dataLog.write(txt_csv)
     f_dataLog.flush()
     print(txt_csv, end='')
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)
 
-def fill_twelve_sec(twelveSecRssi:list, twelveSecTime:list, histRssi:list, rssi:int, time:int):
+def fill_twelve_sec(twelveSecRssi:list, twelveSecTime:list, histRssi:list, rssi:int, timeDiff:int):
     twelveSecRssi.append(rssi)
-    twelveSecTime.append(time)
+    twelveSecTime.append(timeDiff)
 
-    if ((twelveSecTime[0] + RANGE_WIDTH) < time): # oldest entry is older than twelve secs
-        average = sum(twelveSecRssi) / sum(twelveSecTime) * 1000 # rssi-dbms per second
+    timeSum = sum(twelveSecTime)
+    if (timeSum > RANGE_WIDTH): # oldest entry is older than twelve secs
+        rssiSum = sum(twelveSecRssi) * 1000 # because time is in ms
+        average = rssiSum / timeSum # rssi-dbms per second
         twelveSecRssi.clear()
         twelveSecTime.clear()
         histRssi.append(average)
         if (len(histRssi) > MAX_NUM_HIST):
-            histRssi.pop(0) # remove the oldest one        
+            histRssi.pop(0) # remove the oldest one
         return True
     else:
         return False
@@ -105,21 +104,22 @@ def lane_decision(histRssi:list, laneCounter:int):
     #                down   down   up     up
     conditionsMet = [False, False, False, False]
     rangeIndex = 0
-    for condition in range(0,4): 
-        for i in range(rangeIndex,(arrLen-1)): # I may have more than 5 ranges. Start a search for the 'right conditions'
-            if down_up_check(a=histRssi[rangeIndex+i], b=histRssi[rangeIndex+i+1], down=(condition < 2)):
+    for condition in range(0,4):
+        for i in range(rangeIndex,(arrLen-2)): # I may have more than 5 ranges. Start a search for the 'right conditions'
+            if down_up_check(a=histRssi[i], b=histRssi[i+1], down=(condition < 2)):
                 conditionsMet[condition] = True
-                rangeIndex = i
-                # TODO
-                print("condition %d is fullfilled" % condition)
+                rangeIndex = i+1
+                # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO
+
                 break # break the for loop
             else:
-                if i == (arrLen-2): # condition was not fulfilled in the whole for-i loop
+                if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
                     return False
 
     if conditionsMet[0] and conditionsMet[1] and conditionsMet[2] and conditionsMet[3]:
         update_lane_disp(laneCounter+1)
-        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again    
+        # print(histRssi) # TODO
+        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # NB: lists are given as a reference, can clear it here
         return True
     
@@ -127,19 +127,10 @@ def lane_decision(histRssi:list, laneCounter:int):
 
 def down_up_check(a, b, down:bool):
     if down:
-        return (a - MIN_DIFF) <= b
+        return (a - MIN_DIFF) > b
     else:
-        return (b - MIN_DIFF) <= a
+        return (a + MIN_DIFF) < b
 
-
-def get_rssi_sum(histRssi:list, histTime:list, t0:int, t1:int):
-    rangeSum = 0
-    for i,singleTime in enumerate(histTime):
-        if singleTime > t1: # time is bigger than end time
-            break 
-        if singleTime >= t0: # time is between start and end time
-            rangeSum += histRssi[i]
-    return rangeSum
 
 def update_lane_disp(laneCounter:int):
     LCD.fill_rect(130,80,190,160,LCD.BLACK)
@@ -169,7 +160,7 @@ def draw_digit(digit:int, posLsb:bool):
     
     # box size (for two digits) is about 190 x 160
     # one segment is 56x8, spacing is 5, thus resulting in 61x12 per segment+space
-    # x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180    
+    # x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180
     x = 130 # start point x
     Y = const(80)
     SPC_BIG = const(61) # 56+5
@@ -211,7 +202,7 @@ def load_background():
         for bufPos in range(0, BG_IMAGE_SIZE_BYTE, BUF_SIZE):
             buffer = array.array('b', file.read(BUF_SIZE)) # file read command itself is taking long
             for arrPos in range(0, BUF_SIZE):
-                LCD.buffer[bufPos+arrPos] = buffer[arrPos]    
+                LCD.buffer[bufPos+arrPos] = buffer[arrPos]
     file.close()
     LCD.show_up()
 
@@ -228,7 +219,7 @@ async def main():
     laneCounter = 0
     update_lane_disp(laneCounter)
     
-    txt_csv = "   id,   t_abs,t_diff,  addr, rssi,  lane\n"    
+    txt_csv = "   id,  t_abs,t_diff,  addr, rssi,  lane\n"
     f_dataLog.write(txt_csv)
     print(txt_csv, end='')
 
@@ -239,7 +230,10 @@ async def main():
     twelveSecTime:list[int] = list()
     
     while loopCnt < LOOP_MAX:
-        result = await find_beacon(loopCnt=loopCnt, CONFIG=CONFIG)
+        if CONFIG['simulate_beacon']:
+            result = beaconSim.get_sim_val()
+        else:
+            result = await find_beacon()
         meas = [
             loopCnt, # 0: a counter
             0,       # 1: timeAbs in milliseconds
@@ -253,17 +247,21 @@ async def main():
             meas[4] = result.rssi
 
         now = time.ticks_ms()
-        meas[2] = time.ticks_diff(now, lastTime) 
-        meas[1] = time.ticks_diff(now, startTime)
+        if CONFIG['simulate_beacon'] and CONFIG['sim_speedup']:
+            meas[2] = result.diffTime
+            meas[1] = 27000 # absolute time. Not really nice like this but doesn't matter
+        else:
+            meas[2] = time.ticks_diff(now, lastTime)
+            meas[1] = time.ticks_diff(now, startTime)
         lastTime = now # update the timeDiff
         
-        didCompact = fill_twelve_sec(twelveSecRssi=twelveSecRssi, twelveSecTime=twelveSecTime, histRssi=histRssi, rssi=meas[4], time=meas[1])
-        if didCompact:            
+        didCompact = fill_twelve_sec(twelveSecRssi=twelveSecRssi, twelveSecTime=twelveSecTime, histRssi=histRssi, rssi=meas[4], timeDiff=meas[2])
+        if didCompact:
             if lane_decision(histRssi=histRssi, laneCounter=laneCounter):
                 laneCounter += 1
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        del meas, result, now # to compat memAlloc issues
+        del meas, result, now # to combat memAlloc issues
         ledOnboard.toggle()
         loopCnt += 1
         gc.collect() # garbage collection

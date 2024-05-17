@@ -4,3 +4,4 @@ nonPublic/SwimMeterKeyStore.jks
 nonPublic/
 zz__old_swimmeterApp/
 swimmeterApp/.idea/deploymentTargetSelector.xml
+receiver/picow/logData.csv
