@@ -27,7 +27,8 @@ beaconSim = BEACON_SIM(CONFIG)
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-MIN_DIFF     = const(4) # [dBm/sec]
+MIN_DIFF     = const(9) # [dBm/sec]
+RSSI_LOW     = const(-18) # [dBm/sec]
 RANGE_WIDTH  = const(12000) # [ms] one range is 12 seconds long
 MAX_NUM_HIST = const(20) # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
@@ -101,24 +102,30 @@ def lane_decision(histRssi:list, laneCounter:int):
     if arrLen < 5: # need at least 5 ranges to decide
         return False
 
-    #                down   down   up     up
-    conditionsMet = [False, False, False, False]
+    #                down   below  up
+    conditionsMet = [False, False, False]
     rangeIndex = 0
-    for condition in range(0,4):
+    for condition in range(0,3):
         for i in range(rangeIndex,(arrLen-2)): # I may have more than 5 ranges. Start a search for the 'right conditions'
-            if down_up_check(a=histRssi[i], b=histRssi[i+1], down=(condition < 2)):
+            if condition == 0:
+                conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=True)
+            elif condition == 1:
+                conditionMet = (histRssi[i] < RSSI_LOW)
+            else:
+                conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=False)
+            if conditionMet:
                 conditionsMet[condition] = True
                 rangeIndex = i+1
-                # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO
+                print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO
 
                 break # break the for loop
             else:
                 if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
                     return False
 
-    if conditionsMet[0] and conditionsMet[1] and conditionsMet[2] and conditionsMet[3]:
+    if conditionsMet[0] and conditionsMet[1] and conditionsMet[2]:
         update_lane_disp(laneCounter+1)
-        # print(histRssi) # TODO
+        print(histRssi) # TODO
         histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # NB: lists are given as a reference, can clear it here
         return True

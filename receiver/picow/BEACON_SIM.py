@@ -12,9 +12,7 @@ class BEACON_SIM():
     def get_sim_val(self):
         line = self.f.readline()
         if not line or len(line) < 5: # to detect an empty line at the end
-            self.rssi = -27
-            self.diffTime = 327
-            return self
+            quit() # quit or exit() do not work in micropython. But it throws an error and thus stops, so it still does the job
         val = line.split(',')
         if not self.sim_speedup:
             sleep_ms(int(val[0]))
