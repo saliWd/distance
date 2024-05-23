@@ -25,12 +25,12 @@ class BEACON_SIM():
 
 beaconSim = BEACON_SIM()
 
-RSSI_OOR = (-120) # What value do I give to out-of-range beacons?
+RSSI_OOR = (-600) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-MIN_DIFF     = (10)     # [dBm/sec]
+MIN_DIFF     = (35)     # [dBm/sec]
 RSSI_LOW     = (-90)   # [dBm/sec]
-RANGE_WIDTH  = (12000) # [ms] one range is 12 seconds long
+RANGE_WIDTH  = (10000) # [ms] one range is 12 seconds long
 MAX_NUM_HIST = (20)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
@@ -98,7 +98,7 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
 
     if laneConditions[0] and laneConditions[1] and laneConditions[2]:
         # print(histRssi) # TODO
-        # histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again. TODO: do I really need to do that?       
+        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again. TODO: do I really need to do that?       
         # NB: lists are given as a reference, can clear it here
         return True
     
@@ -130,7 +130,6 @@ def main():
     
     while loopCnt < LOOP_MAX:
         result = beaconSim.get_sim_val()
-        
         meas = [
             loopCnt, # 0: a counter
             0,       # 1: timeAbs in milliseconds
@@ -138,12 +137,9 @@ def main():
             'xx:xx', # 3: addr, a string
             RSSI_OOR # 4: rssi in dBm
         ]
-        if result:
-            addr = "%s" % result.device # need to get string representation first
-            meas[3] = addr[32:37] # only take the MAC part, the last 5 characters
-            meas[4] = result.rssi
-
-        
+        addr = "%s" % result.device # need to get string representation first
+        meas[3] = addr[32:37] # only take the MAC part, the last 5 characters
+        meas[4] = result.rssi
         meas[2] = result.diffTime
         meas[1] = 27000 # absolute time. Not really nice like this but doesn't matter
         
