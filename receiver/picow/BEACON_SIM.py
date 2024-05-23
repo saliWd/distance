@@ -1,5 +1,4 @@
 from time import sleep_ms
-from random import randint
 
 class BEACON_SIM():
     def __init__(self,CONFIG:dict):

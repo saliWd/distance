@@ -27,10 +27,10 @@ beaconSim = BEACON_SIM(CONFIG)
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 
 # lane decision constants
-MIN_DIFF     = const(9) # [dBm/sec]
-RSSI_LOW     = const(-18) # [dBm/sec]
+MIN_DIFF     = const(10)     # [dBm/sec]
+RSSI_LOW     = const(-90)   # [dBm/sec]
 RANGE_WIDTH  = const(12000) # [ms] one range is 12 seconds long
-MAX_NUM_HIST = const(20) # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
+MAX_NUM_HIST = const(20)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
@@ -74,16 +74,16 @@ def print_infos(meas:list, laneCounter:int):
     print(txt_csv, end='')
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)
 
-def fill_twelve_sec(twelveSecRssi:list, twelveSecTime:list, histRssi:list, rssi:int, timeDiff:int):
-    twelveSecRssi.append(rssi)
-    twelveSecTime.append(timeDiff)
+def fill_some_sec(someSecRssi:list, someSecTime:list, histRssi:list, rssi:int, timeDiff:int):
+    someSecRssi.append(rssi)
+    someSecTime.append(timeDiff)
 
-    timeSum = sum(twelveSecTime)
-    if (timeSum > RANGE_WIDTH): # oldest entry is older than twelve secs
-        rssiSum = sum(twelveSecRssi) * 1000 # because time is in ms
+    timeSum = sum(someSecTime)
+    if (timeSum > RANGE_WIDTH): # oldest entry is older than some secs
+        rssiSum = sum(someSecRssi) * 1000 # because time is in ms
         average = rssiSum / timeSum # rssi-dbms per second
-        twelveSecRssi.clear()
-        twelveSecTime.clear()
+        someSecRssi.clear()
+        someSecTime.clear()
         histRssi.append(average)
         if (len(histRssi) > MAX_NUM_HIST):
             histRssi.pop(0) # remove the oldest one
@@ -97,36 +97,40 @@ a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
 -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
 beacon out-of-range measurements take several seconds while others take about 0.3 seconds
 """
-def lane_decision(histRssi:list, laneCounter:int):
+def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
     arrLen = len(histRssi)
-    if arrLen < 5: # need at least 5 ranges to decide
+    if arrLen < 3: # need at least some ranges to decide
         return False
 
-    #                down   below  up
-    conditionsMet = [False, False, False]
-    rangeIndex = 0
-    for condition in range(0,3):
-        for i in range(rangeIndex,(arrLen-2)): # I may have more than 5 ranges. Start a search for the 'right conditions'
-            if condition == 0:
-                conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=True)
-            elif condition == 1:
-                conditionMet = (histRssi[i] < RSSI_LOW)
-            else:
-                conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=False)
-            if conditionMet:
-                conditionsMet[condition] = True
-                rangeIndex = i+1
-                print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO
+    condition = 0
+    
+    for i in range((arrLen-2)): # I have enough ranges. Start a search for the 'right conditions'
+        if not laneConditions[0]:
+            condition = 0
+            conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=True)
+        elif not laneConditions[1]:
+            condition = 1
+            conditionMet = (histRssi[i] < RSSI_LOW)
+        elif not laneConditions[2]:
+            condition = 2
+            conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=False)
+        else:
+            print("Error. All conditions already fullfilled. i=%d. arrLen=%d" % (i, arrLen))
 
-                break # break the for loop
-            else:
-                if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
-                    return False
 
-    if conditionsMet[0] and conditionsMet[1] and conditionsMet[2]:
+        if conditionMet:
+            laneConditions[condition] = True
+            print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
+            histRssi.pop(0) # remove the oldest, so it does not trigger again for this condition
+            break # break the for loop
+        else:
+            if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
+                return False
+
+    if laneConditions[0] and laneConditions[1] and laneConditions[2]:
         update_lane_disp(laneCounter+1)
-        print(histRssi) # TODO
-        histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
+        # print(histRssi) # TODO
+        # histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again. TODO: do I really need to do that?       
         # NB: lists are given as a reference, can clear it here
         return True
     
@@ -233,8 +237,10 @@ async def main():
     # NB: be aware of list of lists, might get memAlloc issues
     histRssi = list()     
 
-    twelveSecRssi:list[int] = list()
-    twelveSecTime:list[int] = list()
+    someSecRssi:list[int] = list()
+    someSecTime:list[int] = list()    
+    laneConditions:list[bool] = [False, False, False] # down, below, up
+    
     
     while loopCnt < LOOP_MAX:
         if CONFIG['simulate_beacon']:
@@ -262,13 +268,14 @@ async def main():
             meas[1] = time.ticks_diff(now, startTime)
         lastTime = now # update the timeDiff
         
-        didCompact = fill_twelve_sec(twelveSecRssi=twelveSecRssi, twelveSecTime=twelveSecTime, histRssi=histRssi, rssi=meas[4], timeDiff=meas[2])
+        didCompact = fill_some_sec(someSecRssi=someSecRssi, someSecTime=someSecTime, histRssi=histRssi, rssi=meas[4], timeDiff=meas[2])
         if didCompact:
-            if lane_decision(histRssi=histRssi, laneCounter=laneCounter):
+            if lane_decision(histRssi=histRssi, laneConditions=laneConditions, laneCounter=laneCounter):
                 laneCounter += 1
+                laneConditions = [False, False, False]
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        del meas, result, now # to combat memAlloc issues
+        del meas, result, now, didCompact # to combat memAlloc issues
         ledOnboard.toggle()
         loopCnt += 1
         gc.collect() # garbage collection

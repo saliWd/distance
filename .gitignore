@@ -5,3 +5,5 @@ nonPublic/
 zz__old_swimmeterApp/
 swimmeterApp/.idea/deploymentTargetSelector.xml
 receiver/picow/logData.csv
+/receiver/picow/__pycache__
+receiver/picow/logDataLocal.csv
