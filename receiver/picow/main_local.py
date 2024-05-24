@@ -28,10 +28,10 @@ beaconSim = BEACON_SIM()
 RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in the range of -400
 
 # lane decision constants
-MIN_DIFF     = (30)    # [dBm/sec]
-RSSI_LOW     = (-180)  # [dBm/sec]
-RANGE_WIDTH  = (10000) # [ms] one range is 12 seconds long
-MAX_NUM_HIST = (20)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
+MIN_DIFF     = 30    # [dBm/sec]
+RSSI_LOW     = -170  # [dBm/sec]
+RANGE_WIDTH  =  8000 # [ms] 
+MAX_NUM_HIST = 30    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logDataLocal.csv', 'w') # append
@@ -89,7 +89,7 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
 
         if conditionMet:
             laneConditions[condition] = True
-            print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
+            # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
             histRssi.pop(0) # remove the oldest, so it does not trigger again for this condition
             break # break the for loop
         else:
