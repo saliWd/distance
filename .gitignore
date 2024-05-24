@@ -7,3 +7,4 @@ swimmeterApp/.idea/deploymentTargetSelector.xml
 receiver/picow/logData.csv
 /receiver/picow/__pycache__
 receiver/picow/logDataLocal.csv
+receiver/loggingData/.~lock.Analysis.ods#

@@ -25,11 +25,11 @@ class BEACON_SIM():
 
 beaconSim = BEACON_SIM()
 
-RSSI_OOR = (-600) # What value do I give to out-of-range beacons?
+RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in the range of -400
 
 # lane decision constants
-MIN_DIFF     = (35)     # [dBm/sec]
-RSSI_LOW     = (-90)   # [dBm/sec]
+MIN_DIFF     = (30)    # [dBm/sec]
+RSSI_LOW     = (-180)  # [dBm/sec]
 RANGE_WIDTH  = (10000) # [ms] one range is 12 seconds long
 MAX_NUM_HIST = (20)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
