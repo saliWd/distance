@@ -28,10 +28,16 @@ beaconSim = BEACON_SIM()
 RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in the range of -400
 
 # lane decision constants
-MIN_DIFF     = 30    # [dBm/sec]
-RSSI_LOW     = -170  # [dBm/sec]
-RANGE_WIDTH  =  8000 # [ms] 
-MAX_NUM_HIST = 30    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
+# normal meas: -90 dBm. measTime about 0.4 to 1.8 secs 
+# OOR is -120 dBm and takes 5.1 secs
+## normal meas: -90*0.5*16 (8 secs window) -> -720
+## OOR -120*5*8/5                          -> -960
+
+
+MIN_DIFF     = 15     # [dBm*sec]-based
+RSSI_LOW     = -110   # [dBm*sec]-based
+RANGE_WIDTH  =  8000  # [ms]
+MAX_NUM_HIST = 30     # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logDataLocal.csv', 'w') # append
@@ -44,16 +50,13 @@ def print_infos(meas:list, laneCounter:int):
     print(txt_csv, end='')
 
 def fill_some_sec(someSecRssi:list, someSecTime:list, histRssi:list, rssi:int, timeDiff:int):
-    someSecRssi.append(rssi)
-    someSecTime.append(timeDiff)
-
-    timeSum = sum(someSecTime)
-    if (timeSum > RANGE_WIDTH): # oldest entry is older than some secs
-        rssiSum = sum(someSecRssi) * 1000 # because time is in ms
-        average = rssiSum / timeSum # rssi-dbms per second
+    someSecRssi.append(rssi) # example: -90 (range -60 to -120)
+    someSecTime.append(timeDiff) # example: 400 (range 300 to 5300)
+    
+    if (sum(someSecTime) > RANGE_WIDTH): # oldest entry is older than some secs
+        histRssi.append(int(sum(someSecRssi) / RANGE_WIDTH)) # rssi-dbms * seconds 
         someSecRssi.clear()
-        someSecTime.clear()
-        histRssi.append(average)
+        someSecTime.clear()        
         if (len(histRssi) > MAX_NUM_HIST):
             histRssi.pop(0) # remove the oldest one
         return True
@@ -73,7 +76,7 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
 
     condition = 0
     
-    for i in range((arrLen-2)): # I have enough ranges. Start a search for the 'right conditions'
+    for i in range(arrLen-2): # I have enough ranges. Start a search for the 'right conditions'. NB: range is -2, because I check with i+1
         if not laneConditions[0]:
             condition = 0
             conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=True)
@@ -84,20 +87,18 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
             condition = 2
             conditionMet = down_up_check(a=histRssi[i], b=histRssi[i+1], down=False)
         else:
-            print("Error. All conditions already fullfilled. i=%d. arrLen=%d" % (i, arrLen))
+            print("Error. All conditions already fulfilled. i=%d. arrLen=%d" % (i, arrLen))
 
 
         if conditionMet:
             laneConditions[condition] = True
-            # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
+            print("condition %d is fulfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
             histRssi.pop(0) # remove the oldest, so it does not trigger again for this condition
             break # break the for loop
-        else:
-            if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
-                return False
 
+    print(histRssi) # TODO
     if laneConditions[0] and laneConditions[1] and laneConditions[2]:
-        # print(histRssi) # TODO
+        print("lane conditions are met")
         histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again. TODO: do I really need to do that?       
         # NB: lists are given as a reference, can clear it here
         return True
@@ -144,7 +145,7 @@ def main():
         meas[1] = 27000 # absolute time. Not really nice like this but doesn't matter
         
         
-        didCompact = fill_some_sec(someSecRssi=someSecRssi, someSecTime=someSecTime, histRssi=histRssi, rssi=meas[4], timeDiff=meas[2])
+        didCompact = fill_some_sec(someSecRssi=someSecRssi, someSecTime=someSecTime, histRssi=histRssi, rssi=(meas[4]*meas[2]), timeDiff=meas[2])
         if didCompact:
             if lane_decision(histRssi=histRssi, laneConditions=laneConditions, laneCounter=laneCounter):
                 laneCounter += 1

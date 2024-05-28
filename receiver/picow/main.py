@@ -219,9 +219,7 @@ def load_background():
 
 # main program
 async def main():
-    lastTime = time.ticks_ms() # first time measurement is not really valid, it shows system startup time instead (which I'm interested in)
-    load_background()
-    
+    load_background()    
     startTime = time.ticks_ms() # time 0 for the absolute time measurement
 
     loopCnt = 0
@@ -238,15 +236,17 @@ async def main():
     histRssi = list()     
 
     someSecRssi:list[int] = list()
-    someSecTime:list[int] = list()    
+    someSecTime:list[int] = list()
     laneConditions:list[bool] = [False, False, False] # down, below, up
     
     
     while loopCnt < LOOP_MAX:
+        now = time.ticks_ms()
         if CONFIG['simulate_beacon']:
             result = beaconSim.get_sim_val()
         else:
             result = await find_beacon()
+        bleTimeDiff = time.ticks_diff(time.ticks_ms(), now)
         meas = [
             loopCnt, # 0: a counter
             0,       # 1: timeAbs in milliseconds
@@ -259,14 +259,13 @@ async def main():
             meas[3] = addr[32:37] # only take the MAC part, the last 5 characters
             meas[4] = result.rssi
 
-        now = time.ticks_ms()
+        
         if CONFIG['simulate_beacon'] and CONFIG['sim_speedup']:
             meas[2] = result.diffTime
             meas[1] = 27000 # absolute time. Not really nice like this but doesn't matter
         else:
-            meas[2] = time.ticks_diff(now, lastTime)
+            meas[2] = bleTimeDiff
             meas[1] = time.ticks_diff(now, startTime)
-        lastTime = now # update the timeDiff
         
         didCompact = fill_some_sec(someSecRssi=someSecRssi, someSecTime=someSecTime, histRssi=histRssi, rssi=meas[4], timeDiff=meas[2])
         if didCompact:
@@ -275,7 +274,7 @@ async def main():
                 laneConditions = [False, False, False]
         print_infos(meas=meas, laneCounter=laneCounter)
         
-        del meas, result, now, didCompact # to combat memAlloc issues
+        del meas, result, now, bleTimeDiff, didCompact # to combat memAlloc issues
         ledOnboard.toggle()
         loopCnt += 1
         gc.collect() # garbage collection
