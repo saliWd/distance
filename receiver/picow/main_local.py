@@ -34,8 +34,8 @@ RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in
 ## OOR -120*5*8/5                          -> -960
 
 
-MIN_DIFF     = 15     # [dBm*sec]-based
-RSSI_LOW     = -110   # [dBm*sec]-based
+MIN_DIFF     =  5     # [dBm*sec]-based
+RSSI_LOW     = -100   # [dBm*sec]-based
 RANGE_WIDTH  =  8000  # [ms]
 MAX_NUM_HIST = 30     # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
@@ -89,12 +89,14 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
         else:
             print("Error. All conditions already fulfilled. i=%d. arrLen=%d" % (i, arrLen))
 
-
         if conditionMet:
             laneConditions[condition] = True
             print("condition %d is fulfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
             histRssi.pop(0) # remove the oldest, so it does not trigger again for this condition
             break # break the for loop
+        else:
+            if i == (arrLen-3): # condition was not fulfilled in the whole for-i loop
+                return False
 
     print(histRssi) # TODO
     if laneConditions[0] and laneConditions[1] and laneConditions[2]:
