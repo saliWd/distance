@@ -25,7 +25,7 @@ class BEACON_SIM():
 
 beaconSim = BEACON_SIM()
 
-RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in the range of -400
+RSSI_OOR = (-120) # What value do I give to out-of-range beacons? -> dBm/sec in the range of -400
 
 # lane decision constants
 # normal meas: -90 dBm. measTime about 0.4 to 1.8 secs 
@@ -36,8 +36,8 @@ RSSI_OOR = (-2000) # What value do I give to out-of-range beacons? -> dBm/sec in
 
 MIN_DIFF     =  5     # [dBm*sec]-based
 RSSI_LOW     = -100   # [dBm*sec]-based
-RANGE_WIDTH  =  8000  # [ms]
-MAX_NUM_HIST = 30     # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
+RANGE_WIDTH  =  7000  # [ms]
+MAX_NUM_HIST = 35     # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logDataLocal.csv', 'w') # append

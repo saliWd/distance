@@ -29,8 +29,8 @@ RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
 # lane decision constants
 MIN_DIFF     = const(5)     # [dBm*sec]-based
 RSSI_LOW     = const(-100)  # [dBm*sec]-based
-RANGE_WIDTH  = const(8000)  # [ms] one range is 12 seconds long
-MAX_NUM_HIST = const(30)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
+RANGE_WIDTH  = const(7000)  # [ms] length of one range
+MAX_NUM_HIST = const(35)    # [num of entries] corresponds to 240 seconds, max duration for a 50m lane
 
 ## global variables
 f_dataLog = open('logData.csv', 'a') # append
