@@ -2,3 +2,4 @@
 20240418: wooden protoype, lane count not correct (12 instead of 20), different lane used with metal sign sometimes in between rx and tx. On the second half (should be 10 lanes) there are longer parts with OOR measurements where lanes cannot be detected... 
 20240421: wooden prototype, lane count almost correct (some lanes too much), changed timeout to 5 seconds, weight of OOR is increase to 3
 20240430: styro foam prototype, works as well (in general). Count at the end correct (61, should be 60). But in between not correct (15 after 1k)
+20240609: different algo, 2600m, correct lane countig. wooden prototype at edge
