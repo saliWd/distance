@@ -9,9 +9,11 @@ Github project distance. This file contains some general documentation about the
 1. (currently obsolete) android app
 
 # TODO
-1. casing: wooden casing not suitable for more than one or two devices. Styrofoam for prototyping? 3d printed casing for the future. Haptic feeling of wooden brick however is luxurious though
+1. casing: wooden casing not suitable for more than one or two devices  (styrofoam is easier to handle but not firm enough, edges are crumbling). 
+   1. 3d printed casing for the future (haptic feeling of wooden brick however is luxurious though, on the other hand it's quite heavy and big)
    1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
-1. website, project documentation, maybe also e.g. kickstarter to promote the thing. Start in friends circle first...
+1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
+1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility.
 
 
 ## Bluetooth-Beacon
