@@ -8,3 +8,7 @@ receiver/picow/logData.csv
 /receiver/picow/__pycache__
 receiver/picow/logDataLocal.csv
 receiver/loggingData/.~lock.Analysis.ods#
+/receiver/case/thingiverse_6128955/files
+/receiver/case/thingiverse_6128955/images
+receiver/case/thingiverse_6128955/LICENSE.txt
+receiver/case/thingiverse_6128955/README.txt

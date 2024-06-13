@@ -71,8 +71,7 @@ Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power
 (not tried out)
 * casing for PicoW + Waveshare 2.8 display:
    * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...)
-   * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related
-   * (maybe): https://creazilla.com/nodes/7864877-case-2-8-tft-display-3d-model
+   * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related   
 
 
 ## Website
