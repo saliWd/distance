@@ -46,6 +46,7 @@ ESP variants (not tried)
 1. e.g. Geekcreit-ESP32-CAM-WiFi-bluetooth-Camera-Module-Development-Board-ESP32 --> check the one I have, does it have a connector?
 1. e.g. LILYGO-TTGO-T8-V1_1-ESP32-4MB-PSRAM-TF-CARD-3D-ANTENNA
 1. [feather form with internal antenna](https://www.heise.de/news/ePulse-Feather-ESP-C6-Zigbee-WiFi-BLE-Thread-und-Matter-9646111.html)
+1. [seed studio for all wireless formats](https://www.heise.de/news/Seeed-Studio-XIAO-ESP32C6-Kleines-Board-fuer-Matter-Zigbee-und-vieles-9743884.html)
 
 ## Display
 Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely. 
@@ -63,14 +64,21 @@ Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-
 -> split flap preferred
 
 ## Casing
-Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank. 
+Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank
 1. Might need to add a switch?
 1. Add screws to fixate plexi glass cover
+1. [CHF 17.60 for both parts](https://www.drei-de.ch/online3ddruck.html) or [international offers](https://craftcloud3d.com)
+
+## 3d Tool
+1. Blender is complicated but can/(should-be-able-to) do everything
+1. ~~Tinkercad seems like a colorful toy for teachers, not really useful~~
+1. Microsoft 3D Builder: ...to be checked... (somewhat cannot be installed on wlap)
+
 
 ### Alternative
 (not tried out)
 * casing for PicoW + Waveshare 2.8 display:
-   * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...)
+   * https://www.thingiverse.com/thing:6128955 (just display, no bttrPck...) -> looks good, two parts. Need to adapt it for the power bank
    * https://www.printables.com/de/model/746392-waveshare-dsi-28in-screen-case-for-ender-3-v3-se/related   
 
 
