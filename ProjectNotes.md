@@ -13,7 +13,8 @@ Github project distance. This file contains some general documentation about the
    1. 3d printed casing for the future (haptic feeling of wooden brick however is luxurious though, on the other hand it's quite heavy and big)
    1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
 1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
-1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility.
+1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility
+1. Testing on 50m lane
 
 
 ## Bluetooth-Beacon
@@ -67,7 +68,7 @@ Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-
 Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power bank
 1. Might need to add a switch?
 1. Add screws to fixate plexi glass cover
-1. [CHF 17.60 for both parts](https://www.drei-de.ch/online3ddruck.html) or [international offers](https://craftcloud3d.com)
+1. [CHF 17.60 for both parts](https://www.drei-de.ch/online3ddruck.html) or [international offers](https://craftcloud3d.com) -> trial with craftcloud
 
 ## 3d Tool
 1. Blender is complicated but can/(should-be-able-to) do everything
