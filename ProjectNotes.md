@@ -72,6 +72,7 @@ Currently going for a Holzklotz prototype for PicoW+Display, USB cable and power
 
 ## 3d Tool
 1. Blender is complicated but can/(should-be-able-to) do everything
+1. Checking out autodesk fusion (Zscaler issue)
 1. ~~Tinkercad seems like a colorful toy for teachers, not really useful~~
 1. Microsoft 3D Builder: ...to be checked... (somewhat cannot be installed on wlap)
 
@@ -89,6 +90,9 @@ Currently at [widmedia.ch/schwimmmesser](https://widmedia.ch/schwimmmesser)
 
 ## SwimMeter App
 using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and adapted their reference app. Previously have been using [simple ble scanner](https://github.com/lorenzofelletti/SimpleBleScanner)
+official [altbeacon](https://github.com/AltBeacon/android-beacon-library) is much younger than the davidyoung part. Need to rely on that one?
+   1. need to get rid of background location access. Possible to still use altbeacon? -> https://github.com/agap/luch has about the same interest (only foreground)
+
 
 1. implemented features
    1. searches for beacons, lists them (including rssi, moving average distance estimation)
@@ -100,8 +104,12 @@ using [altbeacon](https://github.com/davidgyoung/android-beacon-library) and ada
    * colors: blue is 0x2314C2, yellow is 0xE5B72A
    * GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
 1.  TODO
-   * get it back into the app store
-   * maybe change behaviour, no automatic scanning at start but rather start it by clicking the button? Drawback: bigger nuisance to test it...
+   * get it back into the app store: 
+      * removed background location access
+      * version 47
+      * API ok (34)
+      * from previous (rejected) version: foreground scanning was not explained. Better now? Maybe need to set ServiceCompat? "ServiceCompat.startForeground(0, notification, FOREGROUND_SERVICE_TYPE_LOCATION)"
+
 
 
 ## Older Stuff...
