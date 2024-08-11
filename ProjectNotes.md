@@ -13,7 +13,7 @@ Github project distance. This file contains some general documentation about the
    1. 3d printed casing for the future (haptic feeling of wooden brick however is luxurious though, on the other hand it's quite heavy and big)
    1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
 1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
-1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility
+1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility. Also wireless connection to transmit the data and reset the 1000 lanes counter
 1. Testing on 50m lane
 
 
@@ -103,12 +103,9 @@ official [altbeacon](https://github.com/AltBeacon/android-beacon-library) is muc
    * icon/icon-foreground sizes(192-432/144-324/96-216/72-162/48-108)
    * colors: blue is 0x2314C2, yellow is 0xE5B72A
    * GooglePlay logo: 512, feature graphic: 1024x500. Screenshots in correct language (phone + tablet)
-1.  TODO
-   * get it back into the app store: 
-      * removed background location access
-      * version 47
-      * API ok (34)
-      * from previous (rejected) version: foreground scanning was not explained. Better now? Maybe need to set ServiceCompat? "ServiceCompat.startForeground(0, notification, FOREGROUND_SERVICE_TYPE_LOCATION)"
+1. got it back into the app store: 
+   * removed background location access
+   * version 47, API ok (34)
 
 
 
