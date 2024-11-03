@@ -15,6 +15,13 @@ Github project distance. This file contains some general documentation about the
 1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
 1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility. Also wireless connection to transmit the data and reset the 1000 lanes counter
 1. Testing on 50m lane
+1. github master to main:
+"""
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a
+"""
 
 
 ## Bluetooth-Beacon
@@ -30,6 +37,16 @@ using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip 
       * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
       * filter for the major number 30569.
       * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](transmitter/beaconSettings_id1.png)
+
+#### orders
+Aliexpress order on 20240903 (received 20240917):
+                              hook? | waterproof? | bat incl.? | order id           | notes
+--------------------------------------------------------------------------------------------
+2 x nRF51822, 4.59, CR2477,      -  |       X     |     X      |                    | nRF51822 no BLE5.0 / Bat is bigger, 4xcapacity
+3 x nRF52810, 5.32, CR2032,      X  |       -     |     -      |
+5 x nRF52810, 6.60, CR2032,      X  |       -     |     -      | (same as old)
+
+
 
 ### Alternative
 Nordic RF chips directly, program them on 'bare metal level'
