@@ -1,1 +1,0 @@
-originally from https://www.waveshare.com/wiki/Pico-ResTouch-LCD-2.8#Micropython

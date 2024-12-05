@@ -4,9 +4,9 @@ nonPublic/SwimMeterKeyStore.jks
 nonPublic/
 zz__old_swimmeterApp/
 swimmeterApp/.idea/deploymentTargetSelector.xml
-receiver/picow/logData.csv
-/receiver/picow/__pycache__
-receiver/picow/logDataLocal.csv
+receiver/pico2w/logData.csv
+/receiver/pico2w/__pycache__
+receiver/pico2w/logDataLocal.csv
 receiver/loggingData/.~lock.Analysis.ods#
 /receiver/case/thingiverse_6128955/files
 /receiver/case/thingiverse_6128955/images

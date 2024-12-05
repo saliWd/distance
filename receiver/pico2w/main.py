@@ -1,9 +1,5 @@
 ##
-# using aioble library (https://github.com/micropython/micropython-lib/blob/master/micropython/bluetooth/aioble)
-##
-# external libraries: do once (or tools -> manage packages -> install (uasyncio is already part of micropython))
-# import mip
-# mip.install("aioble")
+# using aioble library which is part of micropython already
 
 from machine import Pin #type: ignore
 import time
