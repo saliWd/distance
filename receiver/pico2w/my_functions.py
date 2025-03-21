@@ -24,7 +24,7 @@ async def find_beacon():
     # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
     async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
         async for result in scanner:
-            if result.name() and result.name()[0:11] == CONFIG['beacon_name']: # most are empty...
+            if result.name() and result.name()[0:11] == 'widmedia.ch': # name of the beacon: # most are empty...
                 addr = "%s" % result.device # need to get string representation first
                 if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
                     return result
