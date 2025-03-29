@@ -35,7 +35,7 @@ using Holyiot Bluetooth-Beacons (aliexpress, ~CHF 8.-), do have a NRF52810 chip 
    * config: beacon mode
       * name=widmedia.ch
       * uuid=7769 646d 6564 6961 2e63 682f 00a5 0001 (this means widmedia.ch/"00a5"&4_chars_number). major(5chars)=30569, minor=10001. MAC=77:69:64:6d:65:01
-      * filter for the major number 30569.
+      * filter for the name widmedia.ch and for the last part of the mac (65:01, part of the config file).
       * factory settings for uuid/major/minor/MAC: fda50693a4e24fb1afcfc6eb07647825/10011/19641/E6:D9:29:7B:33:F1. UUID:32hex numbers ![beacon settings screenshot](transmitter/beaconSettings_id1.png)
 
 #### orders
