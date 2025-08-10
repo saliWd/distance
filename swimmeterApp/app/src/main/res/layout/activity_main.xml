@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="120dp" />
+
     <TextView
         android:id="@+id/beaconCount"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:text="0 visible beacons:"
+        android:text="@string/_0_visible_beacons"
         android:textAlignment="center" />
 
     <ListView
@@ -21,6 +24,7 @@
         android:layout_weight="1"></ListView>
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
@@ -28,19 +32,25 @@
 
         <Button
             android:id="@+id/rangingButton"
+            style="?android:attr/button"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
             android:onClick="rangingButtonTapped"
-            android:text="@string/suche_einschalten" />
+            android:text="@string/suche_einschalten"
+            tools:ignore="NestedWeights" />
 
         <Button
             android:id="@+id/monitoringButton"
+            style="?android:attr/button"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
             android:onClick="monitoringButtonTapped"
             android:text="@string/speichern" />
     </LinearLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
 
 </LinearLayout>

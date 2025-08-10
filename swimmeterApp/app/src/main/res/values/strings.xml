@@ -9,4 +9,5 @@
     <string name="suche_einschalten">Suche einschalten</string>
     <string name="wurde_gespeichert">Datei wurde gespeichert: Downloads/data1.csv</string>
     <string name="notification">Bluetooth-Suche aktiv</string>
+    <string name="_0_visible_beacons">0 visible beacons:</string>
 </resources>
