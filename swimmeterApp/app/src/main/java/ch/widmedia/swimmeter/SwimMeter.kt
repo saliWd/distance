@@ -1,13 +1,20 @@
 package ch.widmedia.swimmeter
 
-import android.app.*
-import android.content.Context
+import android.app.Application
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.Observer
-import org.altbeacon.beacon.*
+import org.altbeacon.beacon.Beacon
+import org.altbeacon.beacon.BeaconManager
+import org.altbeacon.beacon.BeaconParser
+import org.altbeacon.beacon.Identifier
+import org.altbeacon.beacon.Region
 
-class SwimMeter: Application() {
+class SwimMeter : Application() {
     // the region definition is a wildcard that matches all beacons regardless of identifiers.
     // if you only want to detect beacons with a specific UUID, change the id1 parameter to
     // a UUID like Identifier.parse("2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6")
@@ -22,15 +29,16 @@ class SwimMeter: Application() {
         // BeaconManager.setDebug(true) // enabling debugging will send lots of verbose debug information from the library to Logcat
 
         // Block the library from updating its distance model database
-        BeaconManager.setDistanceModelUpdateUrl("")
+        // BeaconManager.setDistanceModelUpdateUrl("")
 
         // The example shows how to find iBeacon.
-        val parser = BeaconParser().
-        setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")
+        val parser = BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")
         parser.setHardwareAssistManufacturerCodes(arrayOf(0x004c).toIntArray())
         beaconManager.beaconParsers.add(
-            parser)
+            parser
+        )
     }
+
     fun setupBeaconScanning() {
         BeaconManager.getInstanceForApplication(this)
 
@@ -41,20 +49,23 @@ class SwimMeter: Application() {
         // 8+.   the method below shows how you set that up.
         try {
             setupForegroundService()
-        }
-        catch (e: SecurityException) {
+        } catch (e: SecurityException) {
             // On Android TIRAMISU + this security exception will happen
             // if location permission has not been granted when we start
             // a foreground service.  In this case, wait to set this up
             // until after that permission is granted
-            Log.d(TAG, "Not setting up foreground service scanning until location permission granted by user")
+            Log.d(
+                TAG,
+                "Not setting up foreground service scanning until location permission granted by user"
+            )
             return
         }
 
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
-        val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)
+        val regionViewModel =
+            BeaconManager.getInstanceForApplication(this).getRegionViewModel(region)
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
-        regionViewModel.rangedBeacons.observeForever( centralRangingObserver)
+        regionViewModel.rangedBeacons.observeForever(centralRangingObserver)
     }
 
     private fun setupForegroundService() {
@@ -63,30 +74,34 @@ class SwimMeter: Application() {
         builder.setContentTitle(getString(R.string.notification))
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
+            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
         )
         builder.setContentIntent(pendingIntent)
-        val channel =  NotificationChannel("swimmeter-notification-id",
-            "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel(
+            "swimmeter-notification-id",
+            "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT
+        )
         channel.description = "My Notification Channel Description"
-        val notificationManager =  getSystemService(
-                Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(
+            NOTIFICATION_SERVICE
+        ) as NotificationManager
         notificationManager.createNotificationChannel(channel)
         builder.setChannelId(channel.id)
         Log.d(TAG, "Calling enableForegroundServiceScanning")
-        BeaconManager.getInstanceForApplication(this).enableForegroundServiceScanning(builder.build(), 456)
+        BeaconManager.getInstanceForApplication(this)
+            .enableForegroundServiceScanning(builder.build(), 456)
         Log.d(TAG, "Back from  enableForegroundServiceScanning")
     }
 
     private val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
-        val rangeAgeMillis = System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp ?: 0)
+        val rangeAgeMillis =
+            System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp ?: 0)
         if (rangeAgeMillis < 10000) {
             Log.d(MainActivity.TAG, "Ranged: ${beacons.count()} beacons")
             for (beacon: Beacon in beacons) {
                 Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             }
-        }
-        else {
+        } else {
             Log.d(MainActivity.TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
         }
     }

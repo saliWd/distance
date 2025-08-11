@@ -16,13 +16,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -31,10 +31,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace 'ch.widmedia.swimmeter'
+    namespace = 'ch.widmedia.swimmeter'
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'org.altbeacon:android-beacon-library:2.20.7'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'org.altbeacon:android-beacon-library:2.21.1'
 }

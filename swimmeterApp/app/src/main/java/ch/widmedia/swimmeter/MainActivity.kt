@@ -2,7 +2,6 @@ package ch.widmedia.swimmeter
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -46,7 +45,8 @@ class MainActivity : AppCompatActivity() {
         swimMeterApplication = application as SwimMeter
 
         // Set up a Live Data observer for beacon data
-        val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(swimMeterApplication.region)
+        val regionViewModel = BeaconManager.getInstanceForApplication(this)
+            .getRegionViewModel(swimMeterApplication.region)
 
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
         regionViewModel.rangedBeacons.observe(this, rangingObserver)
@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
         beaconListView = findViewById(R.id.beaconList)
         beaconCountTextView = findViewById(R.id.beaconCount)
         beaconCountTextView.text = getString(R.string.suche_ausgeschaltet)
-        beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
+        beaconListView.adapter =
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
 
         // write the header to the output file (without append mode set, so overwriting everything)
         val data = "Name, Major-Minor, RSSI, Distance\n"
@@ -64,15 +65,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         // All permissions are granted now
-        fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_PRIVATE)
+        fileOutputStream = openFileOutput(fileNameInternal, MODE_PRIVATE)
         fileOutputStream.write(data.toByteArray())
-        fileOutputStream = openFileOutput(fileNameInternal, Context.MODE_APPEND)
+        fileOutputStream = openFileOutput(fileNameInternal, MODE_APPEND)
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause")
         super.onPause()
     }
+
     override fun onResume() {
         Log.d(TAG, "onResume")
         super.onResume()
@@ -100,33 +102,37 @@ class MainActivity : AppCompatActivity() {
             val visibleBeacons = BeaconRangingSmoother.shared.add(beacons).visibleBeacons
             beaconCountTextView.text =
                 getString(R.string.suche_eingeschaltet_beacon_s_gefunden, beacons.count())
-            beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
+            beaconListView.adapter = ArrayAdapter(
+                this, android.R.layout.simple_list_item_1,
                 visibleBeacons // when using beacons, the one beacon disappears and appears again, with the visible beacons, it's added to the list (for 5 seconds)
                     .sortedBy { it.distance }
                     // bluetoothName: widmedia                    
                     // distance: moving average (I think)
-                    .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }.toTypedArray())
+                    .map { "name: ${it.bluetoothName}\nuuid: ${it.id1}\nmajor: ${it.id2} minor: ${it.id3} rssi: ${it.rssi}\ndistance: ${it.distance} m" }
+                    .toTypedArray()
+            )
             if (beacons.isNotEmpty()) { // this does not use visibleBeacons, but beacons instead
-                fileOutputStream.write(beacons
-                    .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
-                    .toByteArray()
+                fileOutputStream.write(
+                    beacons
+                        .map { "${it.bluetoothName}, ${it.id2}-${it.id3}, ${it.rssi}, ${it.distance}\n" }[0]
+                        .toByteArray()
                 )
             }
         }
     }
 
-    fun rangingButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
+    fun rangingButtonTapped(@Suppress("UNUSED_PARAMETER") view: View) { // warning is wrong, this is required
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.isEmpty()) {
             beaconManager.startRangingBeacons(swimMeterApplication.region)
             rangingButton.text = getString(R.string.suche_ausschalten)
             beaconCountTextView.text = getString(R.string.suche_eingeschaltet_warte)
-        }
-        else {
+        } else {
             beaconManager.stopRangingBeacons(swimMeterApplication.region)
             rangingButton.text = getString(R.string.suche_einschalten)
             beaconCountTextView.text = getString(R.string.suche_ausgeschaltet)
-            beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
+            beaconListView.adapter =
+                ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
         }
     }
 
@@ -147,7 +153,10 @@ class MainActivity : AppCompatActivity() {
                 val filePath =
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                         .toString()
-                val outputStream = File(filePath, "data1.csv") // NB: files are never overwritten, name might be data1(7).csv
+                val outputStream = File(
+                    filePath,
+                    "data1.csv"
+                ) // NB: files are never overwritten, name might be data1(7).csv
                 FileOutputStream(outputStream)
             }
 
@@ -165,11 +174,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER")view: View) { // warning is wrong, this is required
+    fun monitoringButtonTapped(@Suppress("UNUSED_PARAMETER") view: View) { // warning is wrong, this is required
         saveToStorage(fileOutputStream)
         monitoringButton.text = getText(R.string.speichern)
 
-        val toast = Toast.makeText(this, getString(R.string.wurde_gespeichert), Toast.LENGTH_LONG) // in Activity
+        val toast = Toast.makeText(
+            this,
+            getString(R.string.wurde_gespeichert),
+            Toast.LENGTH_LONG
+        ) // in Activity
         toast.show()
     }
 

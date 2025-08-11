@@ -49,6 +49,7 @@
             android:onClick="monitoringButtonTapped"
             android:text="@string/speichern" />
     </LinearLayout>
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="60dp" />

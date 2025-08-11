@@ -1,7 +1,6 @@
 package ch.widmedia.swimmeter
 
 import org.altbeacon.beacon.Beacon
-import java.util.ArrayList
 
 /*
  * This class is used to smooth out the beacon ranging data to prevent periodic dropouts.  By
@@ -16,7 +15,8 @@ import java.util.ArrayList
 class BeaconRangingSmoother {
     private var beacons: ArrayList<Beacon> = ArrayList<Beacon>()
     private var smoothingWindowMillis: Long = 5000
-    var visibleBeacons: List<Beacon> = ArrayList<Beacon>() // when fixing this warning, the list just grows...
+    var visibleBeacons: List<Beacon> =
+        ArrayList<Beacon>() // when fixing this warning, the list just grows...
         get() {
             val visible = ArrayList<Beacon>()
             for (beacon in beacons) {
@@ -26,6 +26,7 @@ class BeaconRangingSmoother {
             }
             return visible
         }
+
     fun add(detectedBeacons: Collection<Beacon>): BeaconRangingSmoother {
         for (beacon in detectedBeacons) {
             beacon.lastCycleDetectionTimestamp = System.currentTimeMillis()
@@ -33,6 +34,7 @@ class BeaconRangingSmoother {
         }
         return this
     }
+
     companion object {
         val shared = BeaconRangingSmoother()
     }
