@@ -11,3 +11,7 @@ for /f "tokens=1,* delims=|" %%i in ('git log -n 10 --pretty^=format:"%%H|%%cd" 
     )
     endlocal
 )
+
+
+rem java -jar bundletool-all-1.12.1.jar  build-apks --bundle=app-release_2024-07-19_13_35_51.aab --output=my_app.apks --mode=universal
+rem does not work, can't install it without the keystore... Need to copy this one from somewhere else...
