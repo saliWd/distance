@@ -55,8 +55,8 @@ nRF52840 Dongle / Taiyo Yuden: see documentation below. Both need C/C++ programm
 
 ## Bluetooth-Receiver
 Use a Pico2W, drawback of having only an internal BT antenna
-* micropython not yet released for pico 2 w. Preliminary version v1.25.0-preview available [here] (https://www.raspberrypi.com/documentation/microcontrollers/micropython.html)
-* aioble already installed
+* micropython, use released version RPI_PICO2_W-20250809-v1.26.0
+* aioble already installed, uasyncio already installed
 * [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
 
 ### Alternative

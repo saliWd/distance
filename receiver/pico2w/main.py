@@ -1,5 +1,5 @@
 ##
-# using aioble library which is part of micropython already
+# using uasyncio library which is part of micropython already
 
 from machine import Pin #type: ignore
 import time

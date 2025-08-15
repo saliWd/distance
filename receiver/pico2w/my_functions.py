@@ -2,9 +2,7 @@
 # functions used in different files 
 # 
 # using aioble library (https://github.com/micropython/micropython-lib/blob/master/micropython/bluetooth/aioble)
-# external libraries: do once (or tools -> manage packages -> install (uasyncio is already part of micropython))
-# import mip
-# mip.install("aioble")
+# external libraries: do once (or tools -> manage packages -> install (aioble is already part of micropython))
 
 import array
 from micropython import const #type: ignore
