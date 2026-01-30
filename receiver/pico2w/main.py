@@ -1,20 +1,18 @@
-##
-# using uasyncio library which is part of micropython already
-
-from machine import Pin #type: ignore
-import time
-import array
+## see ProjectNotes.md about external dependencies
 import gc
+from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY_2, PEN_RGB565  # type: ignore
+from picovector import PicoVector, ANTIALIAS_X16, Polygon # type: ignore See https://github.com/pimoroni/presto/blob/main/docs/picovector.md
+import time
+from pngdec import PNG # type: ignore
+from micropython import const # type: ignore
 from math import floor
-from micropython import const #type: ignore
+import uasyncio as asyncio # type: ignore
+import aioble # type: ignore (this is a pylance ignore warning directive)
+from class_def import RgbLed, BEACON_SIM # class def
 
-import uasyncio as asyncio # type: ignore (this is a pylance ignore warning directive)
+import my_config
 
-# files on file system
-from BEACON_SIM import BEACON_SIM # import the simulator class
-
-from my_functions import LCD, CONFIG, load_background, find_beacon
-
+CONFIG = my_config.get_config() # which device address do I look for and debug stuff like beacon simulation variables
 beaconSim = BEACON_SIM(CONFIG)
 
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
@@ -29,24 +27,40 @@ MAX_NUM_HIST = const(35)    # [num of entries] corresponds to 240 seconds, max d
 f_dataLog = open('logData.csv', 'a') # append
 LOOP_MAX = const(20000) # 20k corresponds to at least 2.2h (with 0.4 secs per meas)
 
+display = PicoGraphics(display=DISPLAY_PICO_DISPLAY_2, rotate=0, pen_type=PEN_RGB565)
+display.set_backlight(0.8)
+display.set_font('bitmap8') # for the non-fancy text output during startup
+
+vector = PicoVector(display)
+vector.set_antialiasing(ANTIALIAS_X16)
+vector.set_font('font.af', 30) # contains only the characters 'CHFW 0123456789.-' (see notes.md) FIXME: need full set
+
+BLACK       = display.create_pen(0, 0, 0)
+WHITE       = display.create_pen(255, 255, 255)
+COLOR_PLUS  = display.create_pen(170, 255, 170)
+COLOR_MINUS = display.create_pen(255, 170, 170)
+
+
 def print_lcd_dbg(meas:list, laneCounter:int):
     X = const(10)
     y = 80
     LINE = const(14)
-    LCD.fill_rect(X,y,114,6*LINE,LCD.BLACK) # clear the area
-    
-    LCD.text("Loop:     %4d" % meas[0],X,y,LCD.WHITE)
+    display.set_pen(BLACK)
+    display.rectangle(X, y, 114, 6*LINE) # clear the area
+    display.set_pen(WHITE)
+
+    vector.text("Loop:     %4d" % meas[0],X,y,0)
     y += LINE
-    LCD.text("T_abs:  %6d" % int(meas[1] / 1000),X,y,LCD.WHITE)
+    vector.text("T_abs:  %6d" % int(meas[1] / 1000),X,y,0)
     y += LINE
-    LCD.text("T_diff:  %5d" % meas[2],X,y,LCD.WHITE)
+    vector.text("T_diff:  %5d" % meas[2],X,y,0)
     y += LINE
-    LCD.text("Address: %s"  % meas[3],X,y,LCD.WHITE)
+    vector.text("Address: %s"  % meas[3],X,y,0)
     y += LINE
-    LCD.text("RSSI:     %4d" % meas[4],X,y,LCD.WHITE)
+    vector.text("RSSI:     %4d" % meas[4],X,y,0)
     y += LINE    
-    LCD.text("Lane:     %4d" % laneCounter,X,y,LCD.WHITE)
-    LCD.show_up()
+    vector.text("Lane:     %4d" % laneCounter,X,y,0)
+    display.update()
 
 def print_infos(meas:list, laneCounter:int):
     txt_csv = "%5d, %6d, %5d, %s, %4d, %4d\n" % (meas[0],int(meas[1] / 1000),meas[2],meas[3],meas[4],laneCounter)
@@ -121,13 +135,16 @@ def down_up_check(a, b, down:bool):
 
 
 def update_lane_disp(laneCounter:int):
-    LCD.fill_rect(130,80,190,160,LCD.BLACK)
+    display.set_pen(BLACK)
+    display.rectangle(130,80,190,160) # clear the area
+    display.set_pen(WHITE)
+
     if laneCounter > 99:
         return
     if laneCounter > 9: # draw it only when there really are two digits
         draw_digit(digit=floor(laneCounter / 10), posLsb=False)
     draw_digit(digit=(laneCounter % 10), posLsb=True)
-    LCD.show_up()
+    display.update()
     return
 
 def draw_digit(digit:int, posLsb:bool):
@@ -170,23 +187,41 @@ def draw_segment(x:int, y:int, horiz:bool):
         if (x+56 > 319) or (y+8 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = array.array('I', [0,4, 4,0, 52,0, 56,4, 52,8, 4,8]) # unsigned integers array
+        coord = [(0,4), (4,0), (52,0), (56,4), (52,8), (4,8)] # unsigned integers array
     else: # vertical
         if (x+8 > 319) or (y+56 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = array.array('I', [4,0, 0,4, 0,52, 4,56, 8,52, 8,4])
-    LCD.poly(x, y, coord, LCD.WHITE, True) # array is required, can't write the coordinates directly
+        coord = [(4,0), (0,4), (0,52), (4,56), (8,52), (8,4)]
+    segment = Polygon()
+    segment.path(*coord)
+    display.update()
     return # NB: no lcd.show_up as this is called after all segments are drawn
+
+async def find_beacon():
+    # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
+    async with aioble.scan(5000, interval_us=30000, window_us=30000, active=True) as scanner: # Scan for 5 seconds, in active mode, with very low interval/window (to maximise detection rate).
+        async for result in scanner:
+            if result.name() and result.name()[0:8] == 'widmedia': # name of the beacon: # most are empty...
+                addr = "%s" % result.device # need to get string representation first
+                if addr[32:37] == CONFIG['mac_addr_short']: # last 5 characters of MAC_ADDR
+                    return result
+    return None
 
 # main program
 async def main():
-    load_background()    
+    # fills the screen
+    png = PNG(display)
+    png.open_file('background.png')
+    png.decode(0, 0)
+    display.update()
+
+    
     startTime = time.ticks_ms() # time 0 for the absolute time measurement
 
     loopCnt = 0
-    ledOnboard = Pin("LED", Pin.OUT)
-    ledOnboard.on()
+    rgb_led = RgbLed()
+    rgb_led.toggle()
     laneCounter = 0
     update_lane_disp(laneCounter)
     
@@ -237,7 +272,7 @@ async def main():
         print_infos(meas=meas, laneCounter=laneCounter)
         
         del meas, result, now, bleTimeDiff, didCompact # to combat memAlloc issues
-        ledOnboard.toggle()
+        rgb_led.toggle()
         loopCnt += 1
         gc.collect() # garbage collection
         # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take longer (timeout)
