@@ -3,7 +3,7 @@
 Github project distance. This file contains some general documentation about the different parts of this project:
 1. bluetooth transmitter: HolyIOT (beacon)
 1. bluetooth receiver: Pico2W with micropython
-1. display: standard LCD display from waveshare
+1. display: 2.8" LCD display from pimoroni
 1. casing: wooden block
 1. website
 1. (currently obsolete) android app
@@ -55,9 +55,11 @@ nRF52840 Dongle / Taiyo Yuden: see documentation below. Both need C/C++ programm
 
 ## Bluetooth-Receiver
 Use a Pico2W, drawback of having only an internal BT antenna
-* micropython, use released version RPI_PICO2_W-20250809-v1.26.0
+* micropython, need an uf2 file with pimoroni picographics included. For RPI2350 (pico 2W). There is no stand-alone library available, needs to be compiled into the uf2<br>
+   Using this one: rpi_pico2_w-v1.26.1-micropython.uf2 (see strommesser repo)
 * aioble already installed, uasyncio already installed
 * [ble api](https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble)
+* for the font, see strommesser repository (or [alright-fonts](https://github.com/Gadgetoid/alright-fonts/tree/feature/16bit-afinate))
 
 ### Alternative
 ESP variants (not tried)
@@ -69,7 +71,7 @@ ESP variants (not tried)
 1. [seed studio for all wireless formats](https://www.heise.de/news/Seeed-Studio-XIAO-ESP32C6-Kleines-Board-fuer-Matter-Zigbee-und-vieles-9743884.html)
 
 ## Display
-Standard LCD one: [waveshare, for pico](https://www.waveshare.com/pico-restouch-lcd-2.8.htm). 240x320px. Works nicely. 
+Standard LCD one: [pimoroni, for pico](https://shop.pimoroni.com/products/pico-display-pack-2-8). 240x320px. Works nicely. 
 
 ### Alternative
 1. 7segment: big ones require voltages of 7.x V. Need to select with lower voltages. Forward voltage is per chip (e.g. 2.0V). What does it mean? (4 LEDs per segment, 2 LEDs per DP)

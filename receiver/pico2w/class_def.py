@@ -1,4 +1,19 @@
+# 
+from pimoroni import RGBLED  # type: ignore (included in uf2 file)
 from time import sleep_ms
+
+class RgbLed(object):
+    def __init__(self):
+        self.led_rgb = RGBLED(26, 27, 28)
+        self.color = (0,0,0)
+        self.led_rgb.set_rgb(*(self.color))
+
+    def toggle(self): # toggles between green and red
+        if self.color == (255,0,0): # red
+            self.color = (0,255,0) # green
+        else:
+            self.color = (255,0,0)
+        
 
 class BEACON_SIM():
     def __init__(self,CONFIG:dict):
