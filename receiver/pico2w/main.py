@@ -1,18 +1,17 @@
 ## see ProjectNotes.md about external dependencies
-import gc
+from gc import collect
+from time import ticks_diff, ticks_ms
 from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY_2, PEN_RGB565  # type: ignore
-from picovector import PicoVector, ANTIALIAS_X16, Polygon # type: ignore See https://github.com/pimoroni/presto/blob/main/docs/picovector.md
-import time
+from picovector import PicoVector, ANTIALIAS_X16, Polygon # type: ignore
 from pngdec import PNG # type: ignore
 from micropython import const # type: ignore
-from math import floor
 import uasyncio as asyncio # type: ignore
-import aioble # type: ignore (this is a pylance ignore warning directive)
-from class_def import RgbLed, BEACON_SIM # class def
+import aioble # type: ignore
+# my own definitions
+from class_def import RgbLed, BEACON_SIM
+from my_config import get_config
 
-import my_config
-
-CONFIG = my_config.get_config() # which device address do I look for and debug stuff like beacon simulation variables
+CONFIG = get_config() # which device address do I look for and debug stuff like beacon simulation variables
 beaconSim = BEACON_SIM(CONFIG)
 
 RSSI_OOR = const(-120) # What value do I give to out-of-range beacons?
@@ -33,12 +32,10 @@ display.set_font('bitmap8') # for the non-fancy text output during startup
 
 vector = PicoVector(display)
 vector.set_antialiasing(ANTIALIAS_X16)
-vector.set_font('font.af', 30) # contains only the characters 'CHFW 0123456789.-' (see notes.md) FIXME: need full set
+vector.set_font('font.af', 30)
 
-BLACK       = display.create_pen(0, 0, 0)
-WHITE       = display.create_pen(255, 255, 255)
-COLOR_PLUS  = display.create_pen(170, 255, 170)
-COLOR_MINUS = display.create_pen(255, 170, 170)
+BLACK = display.create_pen(0, 0, 0)
+WHITE = display.create_pen(255, 255, 255)
 
 
 def print_lcd_dbg(meas:list, laneCounter:int):
@@ -111,7 +108,7 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
 
         if conditionMet:
             laneConditions[condition] = True
-            # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen)) # TODO            
+            # print("condition %d is fullfilled. i=%d. arrLen=%d" % (condition, i, arrLen))            
             histRssi.pop(0) # remove the oldest, so it does not trigger again for this condition
             break # break the for loop
         else:
@@ -120,7 +117,7 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
 
     if laneConditions[0] and laneConditions[1] and laneConditions[2]:
         update_lane_disp(laneCounter+1)
-        # print(histRssi) # TODO
+        # print(histRssi)
         histRssi.clear() # empty the list. Don't want to increase the lane counter on the next value again
         # NB: lists are given as a reference, can clear it here
         return True
@@ -142,7 +139,7 @@ def update_lane_disp(laneCounter:int):
     if laneCounter > 99:
         return
     if laneCounter > 9: # draw it only when there really are two digits
-        draw_digit(digit=floor(laneCounter / 10), posLsb=False)
+        draw_digit(digit=int(laneCounter / 10), posLsb=False)
     draw_digit(digit=(laneCounter % 10), posLsb=True)
     display.update()
     return
@@ -217,7 +214,7 @@ async def main():
     display.update()
 
     
-    startTime = time.ticks_ms() # time 0 for the absolute time measurement
+    startTime = ticks_ms() # time 0 for the absolute time measurement
 
     loopCnt = 0
     rgb_led = RgbLed()
@@ -238,12 +235,12 @@ async def main():
     
     
     while loopCnt < LOOP_MAX:
-        now = time.ticks_ms()
+        now = ticks_ms()
         if CONFIG['simulate_beacon']:
             result = beaconSim.get_sim_val()
         else:
             result = await find_beacon()
-        bleTimeDiff = time.ticks_diff(time.ticks_ms(), now)
+        bleTimeDiff = ticks_diff(ticks_ms(), now)
         meas = [
             loopCnt, # 0: a counter
             0,       # 1: timeAbs in milliseconds
@@ -262,7 +259,7 @@ async def main():
             meas[1] = 27000 # absolute time. Not really nice like this but doesn't matter
         else:
             meas[2] = bleTimeDiff
-            meas[1] = time.ticks_diff(now, startTime) # absolute time, does not really matter whether it's taken before the BLE meas or not
+            meas[1] = ticks_diff(now, startTime) # absolute time, does not really matter whether it's taken before the BLE meas or not
         
         didCompact = fill_some_sec(someSecRssi=someSecRssi, someSecTime=someSecTime, histRssi=histRssi, rssi=(meas[4]*meas[2]), timeDiff=meas[2])
         if didCompact:
@@ -274,7 +271,7 @@ async def main():
         del meas, result, now, bleTimeDiff, didCompact # to combat memAlloc issues
         rgb_led.toggle()
         loopCnt += 1
-        gc.collect() # garbage collection
+        collect() # garbage collection
         # loop time is about 300 ms or 800 ms, with some outliers at 1300 ms. OOR measurements however take longer (timeout)
  
     f_dataLog.close()
