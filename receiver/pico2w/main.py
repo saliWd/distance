@@ -2,7 +2,7 @@
 from gc import collect
 from time import ticks_diff, ticks_ms
 from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY_2, PEN_RGB565  # type: ignore
-from picovector import PicoVector, ANTIALIAS_X16, Polygon # type: ignore
+from picovector import PicoVector, ANTIALIAS_X16 # type: ignore
 from pngdec import PNG # type: ignore
 from micropython import const # type: ignore
 import uasyncio as asyncio # type: ignore
@@ -27,7 +27,7 @@ f_dataLog = open('logData.csv', 'a') # append
 LOOP_MAX = const(20000) # 20k corresponds to at least 2.2h (with 0.4 secs per meas)
 
 display = PicoGraphics(display=DISPLAY_PICO_DISPLAY_2, rotate=0, pen_type=PEN_RGB565)
-display.set_backlight(0.8)
+display.set_backlight(0.7)
 display.set_font('bitmap8') # for the non-fancy text output during startup
 
 vector = PicoVector(display)
@@ -37,37 +37,28 @@ vector.set_font('font.af', 28)
 BLACK = display.create_pen(0, 0, 0)
 WHITE = display.create_pen(255, 255, 255)
 
+def txt_align(txtA: str, txtB:str, y:int)->int:
+    X_TEXT = const(5)
+    X_NUM = const(150)
+    LINE = const(20)
+    vector.text(txtA,X_TEXT,y,0)
+    xa, ya, w, ha = vector.measure_text(txtB, x=X_NUM, y=y, angle=None)
+    vector.text(txtB,int(X_NUM-w),y,0)
+    return y+LINE
 
 def print_lcd_dbg(meas:list, laneCounter:int):
-    X_TEXT = const(10)
-    X_NUM = const(160)
-    Y_0 = const(80)
-    LINE = const(20)
+    yDbg = 95
     display.set_pen(BLACK)
-    display.rectangle(X_TEXT, Y_0-LINE, 284, 6*LINE) # clear the area
+    display.rectangle(5, 75, 150, 120) # clear the area
     display.set_pen(WHITE)
 
-    vector.text('Loop:',X_TEXT,Y_0,0)
-    vector.text('T_abs:',X_TEXT,Y_0+LINE,0)
-    vector.text('T_diff:',X_TEXT,Y_0+2*LINE,0)
-    vector.text('Address:',X_TEXT,Y_0+3*LINE,0)
-    vector.text('RSSI:',X_TEXT,Y_0+4*LINE,0)
-    vector.text('Lane:',X_TEXT,Y_0+5*LINE,0)
-    
-    xa, ya, w_0, ha = vector.measure_text("%4d" % meas[0], x=X_NUM, y=Y_0, angle=None)
-    xa, ya, w_1, ha = vector.measure_text("%6d" % int(meas[1] / 1000), x=X_NUM, y=Y_0, angle=None)
-    xa, ya, w_2, ha = vector.measure_text("%5d" % meas[2], x=X_NUM, y=Y_0, angle=None)
-    xa, ya, w_3, ha = vector.measure_text("%s"  % meas[3], x=X_NUM, y=Y_0, angle=None)
-    xa, ya, w_4, ha = vector.measure_text("%4d" % meas[4], x=X_NUM, y=Y_0, angle=None)
-    xa, ya, w_5, ha = vector.measure_text("%4d" % laneCounter, x=X_NUM, y=Y_0, angle=None)
+    yDbg = txt_align(txtA='Loop:',   txtB="%4d" % meas[0],y=yDbg)
+    yDbg = txt_align(txtA='T_abs:',  txtB="%6d" % int(meas[1] / 1000),y=yDbg)
+    yDbg = txt_align(txtA='T_diff:', txtB="%5d" % meas[2],y=yDbg)
+    yDbg = txt_align(txtA='Address:',txtB="%s" % meas[3],y=yDbg)
+    yDbg = txt_align(txtA='RSSI:',   txtB="%4d" % meas[4],y=yDbg)
+    yDbg = txt_align(txtA='Lane:',   txtB="%4d" % laneCounter,y=yDbg)
 
-    vector.text("%4d" % meas[0],int(X_NUM-w_0),Y_0,0)
-    vector.text("%6d" % int(meas[1] / 1000),int(X_NUM-w_1),Y_0+LINE,0)
-    vector.text("%5d" % meas[2],int(X_NUM-w_2),Y_0+2*LINE,0)
-    vector.text("%s"  % meas[3],int(X_NUM-w_3),Y_0+3*LINE,0)
-    vector.text("%4d" % meas[4],int(X_NUM-w_4),Y_0+4*LINE,0)
-    vector.text("%4d" % laneCounter,int(X_NUM-w_5),Y_0+5*LINE,0)
-    
     display.update()
 
 def print_infos(meas:list, laneCounter:int):
@@ -84,7 +75,7 @@ def fill_some_sec(someSecRssi:list, someSecTime:list, histRssi:list, rssi:int, t
     if (sum(someSecTime) > RANGE_WIDTH): # oldest entry is older than some secs
         histRssi.append(int(sum(someSecRssi) / RANGE_WIDTH)) # rssi-dbms * seconds 
         someSecRssi.clear()
-        someSecTime.clear()        
+        someSecTime.clear()
         if (len(histRssi) > MAX_NUM_HIST):
             histRssi.pop(0) # remove the oldest one
         return True
@@ -195,16 +186,14 @@ def draw_segment(x:int, y:int, horiz:bool):
         if (x+56 > 319) or (y+8 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = [(0,4), (4,0), (52,0), (56,4), (52,8), (4,8)] # unsigned integers array
+        coord = [(x+0,y+4), (x+4,y+0), (x+52,y+0), (x+56,y+4), (x+52,y+8), (x+4,y+8)] # unsigned integers array
     else: # vertical
         if (x+8 > 319) or (y+56 > 239):
             print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
             return
-        coord = [(4,0), (0,4), (0,52), (4,56), (8,52), (8,4)]
-    segment = Polygon()
-    segment.path(*coord)
-    display.update()
-    return # NB: no lcd.show_up as this is called after all segments are drawn
+        coord = [(x+4,y+0), (x+0,y+4), (x+0,y+52), (x+4,y+56), (x+8,y+52), (x+8,y+4)]
+    display.polygon(coord)
+    return # NB: no display.update as this is called after all segments are drawn
 
 async def find_beacon():
     # async with aioble.scan(duration_ms=5000) as scanner: # scan for 5s in passive mode. NB: active mode may generete memAlloc issues
