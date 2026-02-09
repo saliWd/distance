@@ -32,31 +32,42 @@ display.set_font('bitmap8') # for the non-fancy text output during startup
 
 vector = PicoVector(display)
 vector.set_antialiasing(ANTIALIAS_X16)
-vector.set_font('font.af', 30)
+vector.set_font('font.af', 28)
 
 BLACK = display.create_pen(0, 0, 0)
 WHITE = display.create_pen(255, 255, 255)
 
 
 def print_lcd_dbg(meas:list, laneCounter:int):
-    X = const(10)
-    y = 80
-    LINE = const(14)
+    X_TEXT = const(10)
+    X_NUM = const(160)
+    Y_0 = const(80)
+    LINE = const(20)
     display.set_pen(BLACK)
-    display.rectangle(X, y, 114, 6*LINE) # clear the area
+    display.rectangle(X_TEXT, Y_0-LINE, 284, 6*LINE) # clear the area
     display.set_pen(WHITE)
 
-    vector.text("Loop:     %4d" % meas[0],X,y,0)
-    y += LINE
-    vector.text("T_abs:  %6d" % int(meas[1] / 1000),X,y,0)
-    y += LINE
-    vector.text("T_diff:  %5d" % meas[2],X,y,0)
-    y += LINE
-    vector.text("Address: %s"  % meas[3],X,y,0)
-    y += LINE
-    vector.text("RSSI:     %4d" % meas[4],X,y,0)
-    y += LINE    
-    vector.text("Lane:     %4d" % laneCounter,X,y,0)
+    vector.text('Loop:',X_TEXT,Y_0,0)
+    vector.text('T_abs:',X_TEXT,Y_0+LINE,0)
+    vector.text('T_diff:',X_TEXT,Y_0+2*LINE,0)
+    vector.text('Address:',X_TEXT,Y_0+3*LINE,0)
+    vector.text('RSSI:',X_TEXT,Y_0+4*LINE,0)
+    vector.text('Lane:',X_TEXT,Y_0+5*LINE,0)
+    
+    xa, ya, w_0, ha = vector.measure_text("%4d" % meas[0], x=X_NUM, y=Y_0, angle=None)
+    xa, ya, w_1, ha = vector.measure_text("%6d" % int(meas[1] / 1000), x=X_NUM, y=Y_0, angle=None)
+    xa, ya, w_2, ha = vector.measure_text("%5d" % meas[2], x=X_NUM, y=Y_0, angle=None)
+    xa, ya, w_3, ha = vector.measure_text("%s"  % meas[3], x=X_NUM, y=Y_0, angle=None)
+    xa, ya, w_4, ha = vector.measure_text("%4d" % meas[4], x=X_NUM, y=Y_0, angle=None)
+    xa, ya, w_5, ha = vector.measure_text("%4d" % laneCounter, x=X_NUM, y=Y_0, angle=None)
+
+    vector.text("%4d" % meas[0],int(X_NUM-w_0),Y_0,0)
+    vector.text("%6d" % int(meas[1] / 1000),int(X_NUM-w_1),Y_0+LINE,0)
+    vector.text("%5d" % meas[2],int(X_NUM-w_2),Y_0+2*LINE,0)
+    vector.text("%s"  % meas[3],int(X_NUM-w_3),Y_0+3*LINE,0)
+    vector.text("%4d" % meas[4],int(X_NUM-w_4),Y_0+4*LINE,0)
+    vector.text("%4d" % laneCounter,int(X_NUM-w_5),Y_0+5*LINE,0)
+    
     display.update()
 
 def print_infos(meas:list, laneCounter:int):
@@ -277,3 +288,4 @@ async def main():
     f_dataLog.close()
 
 asyncio.run(main())
+
