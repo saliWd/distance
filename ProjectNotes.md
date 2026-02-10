@@ -12,6 +12,13 @@ Github project distance. This file contains some general documentation about the
 1. casing: wooden casing not suitable for more than one or two devices  (styrofoam is easier to handle but not firm enough, edges are crumbling). 
    1. 3d printed casing for the future (haptic feeling of wooden brick however is luxurious though, on the other hand it's quite heavy and big)
    1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
+   1. possible cases (to be evaluated)
+      * [A](https://www.thingiverse.com/thing:6901888)
+      * [B](https://www.printables.com/model/1235809-28-inch-pimoroni-pico-display-case-with-4-buttons)
+      * [C](https://www.printables.com/model/1388727-pimoroni-pico-display-28-robot-case)
+      * [D](https://www.printables.com/model/745130-pimoroni-display-pack-case-with-cutouts-for-picow/related)
+
+
 1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
 1. how to sell it? Go for subscription (CHF 5 per month or CHF 60 per year), transfer the stuff to website. Once 1000 lanes are counted, a transfer is required (and denied for expired subscriptions). Requires another start screen and touchscreen accessibility. Also wireless connection to transmit the data and reset the 1000 lanes counter
 1. Testing on 50m lane

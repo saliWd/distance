@@ -2,7 +2,7 @@
 from gc import collect
 from time import ticks_diff, ticks_ms
 from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY_2, PEN_RGB565  # type: ignore
-from picovector import PicoVector, ANTIALIAS_X16 # type: ignore
+from picovector import PicoVector, ANTIALIAS_X16, Polygon # type: ignore
 from pngdec import PNG # type: ignore
 from micropython import const # type: ignore
 import uasyncio as asyncio # type: ignore
@@ -37,6 +37,7 @@ vector.set_font('font.af', 28)
 BLACK = display.create_pen(0, 0, 0)
 WHITE = display.create_pen(255, 255, 255)
 
+""" does a right align of the txtB for the display and returns the y-coordinate for the next line """
 def txt_align(txtA: str, txtB:str, y:int)->int:
     X_TEXT = const(5)
     X_NUM = const(150)
@@ -46,29 +47,36 @@ def txt_align(txtA: str, txtB:str, y:int)->int:
     vector.text(txtB,int(X_NUM-w),y,0)
     return y+LINE
 
-def print_lcd_dbg(meas:list, laneCounter:int):
+""" prints a table with some debug information. Might be removed later on (currently prints over the lane counter if it's > 19) """
+def print_lcd_dbg(meas:list, laneCounter:int)->None:
     yDbg = 95
     display.set_pen(BLACK)
     display.rectangle(5, 75, 150, 120) # clear the area
     display.set_pen(WHITE)
+    # draw a border around the debug area
+    wOutline = Polygon() # TODO: what's the difference between this polygon and the display.polygon used in draw_segment? Can they be merged?
+    wOutline.rectangle(5,75,150,120, corners=(2, 2, 2, 2), stroke=2)
+    vector.draw(wOutline)
 
     yDbg = txt_align(txtA='Loop:',   txtB="%4d" % meas[0],y=yDbg)
     yDbg = txt_align(txtA='T_abs:',  txtB="%6d" % int(meas[1] / 1000),y=yDbg)
     yDbg = txt_align(txtA='T_diff:', txtB="%5d" % meas[2],y=yDbg)
-    yDbg = txt_align(txtA='Address:',txtB="%s" % meas[3],y=yDbg)
+    yDbg = txt_align(txtA='Address:',txtB="%s"  % meas[3],y=yDbg)
     yDbg = txt_align(txtA='RSSI:',   txtB="%4d" % meas[4],y=yDbg)
     yDbg = txt_align(txtA='Lane:',   txtB="%4d" % laneCounter,y=yDbg)
 
     display.update()
 
-def print_infos(meas:list, laneCounter:int):
+""" prints to file and to serial console """
+def print_infos(meas:list, laneCounter:int)->None:
     txt_csv = "%5d, %6d, %5d, %s, %4d, %4d\n" % (meas[0],int(meas[1] / 1000),meas[2],meas[3],meas[4],laneCounter)
     f_dataLog.write(txt_csv)
     f_dataLog.flush()
     print(txt_csv, end='')
     print_lcd_dbg(meas=meas, laneCounter=laneCounter)
 
-def fill_some_sec(someSecRssi:list, someSecTime:list, histRssi:list, rssi:int, timeDiff:int):
+""" return value: whether data was compacted or not """
+def fill_some_sec(someSecRssi:list, someSecTime:list, histRssi:list, rssi:int, timeDiff:int)->bool:
     someSecRssi.append(rssi) # example: -90 (range -60 to -120)
     someSecTime.append(timeDiff) # example: 400 (range 300 to 5300)
     
@@ -88,7 +96,7 @@ a: rssi goes down. b: beacon low (or out of range) c: rssi goes up
 -> whole sequence takes from 30 seconds to 2 minutes (normal 1 min per 50meter)
 beacon out-of-range measurements take several seconds while others take about 0.3 seconds
 """
-def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
+def lane_decision(histRssi:list, laneConditions:list, laneCounter:int)->bool:
     arrLen = len(histRssi)
     if arrLen < 3: # need at least some ranges to decide
         return False
@@ -126,14 +134,13 @@ def lane_decision(histRssi:list, laneConditions:list, laneCounter:int):
     
     return False
 
-def down_up_check(a, b, down:bool):
+def down_up_check(a, b, down:bool)->bool:
     if down:
         return (a - MIN_DIFF) > b
     else:
         return (a + MIN_DIFF) < b
 
-
-def update_lane_disp(laneCounter:int):
+def update_lane_disp(laneCounter:int)->None:
     display.set_pen(BLACK)
     display.rectangle(130,80,190,160) # clear the area
     display.set_pen(WHITE)
@@ -146,7 +153,8 @@ def update_lane_disp(laneCounter:int):
     display.update()
     return
 
-def draw_digit(digit:int, posLsb:bool):
+""" draws one digit using a 7-seg style """
+def draw_digit(digit:int, posLsb:bool)->None:
     if digit > 9 or digit < 0:
         return
     #          a,b,c,d,e,f,g 
@@ -163,12 +171,12 @@ def draw_digit(digit:int, posLsb:bool):
     segments = arrSeg[digit]
     
     # box size (for two digits) is about 190 x 160
-    # one segment is 56x8, spacing is 5, thus resulting in 61x12 per segment+space
+    # one segment is 56x8, spacing is 4, thus resulting in 60x12 per segment+space
     # x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180
     x = 130 # start point x
     Y = const(80)
-    SPC_BIG = const(61) # 56+5
-    SPC_SML = const(12) # 8+4
+    SPC_BIG = const(60) # 56+4
+    SPC_SML = const(11) # 8+3
     if posLsb:
         x = x + 2*(SPC_SML) + SPC_BIG + 20
   
@@ -181,18 +189,16 @@ def draw_digit(digit:int, posLsb:bool):
     if segments[6]: draw_segment(x=x+SPC_SML,         y=Y+SPC_SML+SPC_BIG,     horiz=True)  # g-segment
     return
 
-def draw_segment(x:int, y:int, horiz:bool):
+"""
+draws one segment of the 7seg number, either horizontal (shown) or vertical. It uses the polygon method from display
+/--------\     Dimensions of the whole segment is 56x8 pixel
+\--------/     The diagonal part is 4px and 48px solid rectangle
+"""
+def draw_segment(x:int, y:int, horiz:bool)->None:
     if horiz:
-        if (x+56 > 319) or (y+8 > 239):
-            print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
-            return
-        coord = [(x+0,y+4), (x+4,y+0), (x+52,y+0), (x+56,y+4), (x+52,y+8), (x+4,y+8)] # unsigned integers array
+        display.polygon([(x,y+4), (x+4,y), (x+52,y), (x+56,y+4), (x+52,y+8), (x+4,y+8)]) # six points, clockwise, starting at the left-most
     else: # vertical
-        if (x+8 > 319) or (y+56 > 239):
-            print("coord error: x=%d, y=%d, horiz=%s" % (x, y, horiz))
-            return
-        coord = [(x+4,y+0), (x+0,y+4), (x+0,y+52), (x+4,y+56), (x+8,y+52), (x+8,y+4)]
-    display.polygon(coord)
+        display.polygon([(x+4,y), (x,y+4), (x,y+52), (x+4,y+56), (x+8,y+52), (x+8,y+4)])
     return # NB: no display.update as this is called after all segments are drawn
 
 async def find_beacon():
@@ -213,7 +219,6 @@ async def main():
     png.decode(0, 0)
     display.update()
 
-    
     startTime = ticks_ms() # time 0 for the absolute time measurement
 
     loopCnt = 0
