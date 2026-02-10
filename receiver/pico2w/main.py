@@ -36,11 +36,12 @@ vector.set_font('font.af', 28)
 
 BLACK = display.create_pen(0, 0, 0)
 WHITE = display.create_pen(255, 255, 255)
+ORANGE = display.create_pen(255, 165, 0)
 
 """ does a right align of the txtB for the display and returns the y-coordinate for the next line """
 def txt_align(txtA: str, txtB:str, y:int)->int:
     X_TEXT = const(5)
-    X_NUM = const(150)
+    X_NUM = const(142)
     LINE = const(20)
     vector.text(txtA,X_TEXT,y,0)
     xa, ya, w, ha = vector.measure_text(txtB, x=X_NUM, y=y, angle=None)
@@ -51,13 +52,14 @@ def txt_align(txtA: str, txtB:str, y:int)->int:
 def print_lcd_dbg(meas:list, laneCounter:int)->None:
     yDbg = 95
     display.set_pen(BLACK)
-    display.rectangle(5, 75, 150, 120) # clear the area
-    display.set_pen(WHITE)
+    display.rectangle(5, 75, 142, 120) # clear the area
+    display.set_pen(ORANGE)
     # draw a border around the debug area
     wOutline = Polygon() # TODO: what's the difference between this polygon and the display.polygon used in draw_segment? Can they be merged?
-    wOutline.rectangle(5,75,150,120, corners=(2, 2, 2, 2), stroke=2)
+    wOutline.rectangle(3,74,146,127, corners=(4, 4, 4, 4), stroke=1)
     vector.draw(wOutline)
-
+    
+    display.set_pen(WHITE)
     yDbg = txt_align(txtA='Loop:',   txtB="%4d" % meas[0],y=yDbg)
     yDbg = txt_align(txtA='T_abs:',  txtB="%6d" % int(meas[1] / 1000),y=yDbg)
     yDbg = txt_align(txtA='T_diff:', txtB="%5d" % meas[2],y=yDbg)
@@ -171,12 +173,12 @@ def draw_digit(digit:int, posLsb:bool)->None:
     segments = arrSeg[digit]
     
     # box size (for two digits) is about 190 x 160
-    # one segment is 56x8, spacing is 4, thus resulting in 60x12 per segment+space
-    # x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180
+    # one segment is 56x8, spacing is 4, thus resulting in 58x10 per segment+space
+    # TODO outdated: x-direction: between digits another 20px is reserved, thus 12+56+12 +20+ 12+56+12 = 180
     x = 130 # start point x
     Y = const(80)
-    SPC_BIG = const(60) # 56+4
-    SPC_SML = const(11) # 8+3
+    SPC_BIG = const(58) # 56+2
+    SPC_SML = const(10) # 8+2
     if posLsb:
         x = x + 2*(SPC_SML) + SPC_BIG + 20
   
