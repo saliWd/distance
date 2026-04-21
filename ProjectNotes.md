@@ -8,7 +8,7 @@ Github project distance. This file contains some general documentation about the
 1. website
 1. (currently obsolete) android app
 
-# TODO
+## TODO
 1. casing: wooden casing not suitable for more than one or two devices  (styrofoam is easier to handle but not firm enough, edges are crumbling). 
    1. 3d printed casing for the future (haptic feeling of wooden brick however is luxurious though, on the other hand it's quite heavy and big)
    1. Better suited usb cables? (bend on micro-USB side?, short length, USB-C instead of USB-A connector (thinner)) [LinkA](https://fpvframe.ch/fpvx/product/usb-c-to-micro-usb-cable/ CHF10 (+5.- shipping))
