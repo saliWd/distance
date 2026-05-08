@@ -17,6 +17,11 @@ Github project distance. This file contains some general documentation about the
       * [B](https://www.printables.com/model/1235809-28-inch-pimoroni-pico-display-case-with-4-buttons): even more basic, buttons are just covered holes and no support for the board itself, just box&lid
    
    -> take B and modify this one
+   1. experiment with prompting for a case (seems doable):  
+   I need a case for the "Pimoroni 2.8 inch pico display". No need to access the buttons on this item. Provide a project file for "Autodesk Fusion 360".
+   The case needs to fit the pico display and a small power bank below the pico display. The power bank measures: TBD. Also provide space for connecting the power bank to the pico by USB cable, this shall all be within the case.
+
+
 
 
 1. website, project documentation, later on maybe also add e.g. kickstarter to promote the thing
